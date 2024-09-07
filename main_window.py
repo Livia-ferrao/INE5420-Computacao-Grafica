@@ -1,14 +1,7 @@
 from PySide6 import QtWidgets, QtGui
+from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
+from PyQt6.QtWidgets import QMessageBox
 
-# from classes.config import *
-# from classes.utils.exceptions import FormValidationError
-
-# from classes.viewport import Viewport
-# from classes.graphic_object import GraphicObject
-# from classes.utils.graphic_object_enum import GraphicObjectEnum
-# from classes.world_window import WorldWindow
-# from classes.g_object_handler import GObjectHandler
-# from classes.display_file import DisplayFile
 from configurations import Configurations
 from window import Window
 from viewport import Viewport
@@ -17,6 +10,7 @@ from add_point import AddPoint
 from add_line import AddLine
 from add_polygon import AddPolygon
 from display_file import DisplayFile
+from operationsMessage import OperationsMessage
 
 class MainWindow(QtWidgets.QMainWindow):
     """
@@ -54,7 +48,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                          Configurations.view_frame()[3])
         self.__view_frame.setStyleSheet("QFrame { background-color: rgb(255, 255, 255); border: 2px solid black; }")
 
-
         # Frame da viewport
         self.__viewport = Viewport(parent=self.__view_frame)
         self.__viewport.setGeometry(Configurations.viewport()[0],
@@ -62,7 +55,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                 Configurations.viewport()[2],
                                 Configurations.viewport()[3])
         self.window.set_viewport(self.__viewport)
-
 
         # Label do frame de objetos
         self.__objects_label = QtWidgets.QLabel("Gerenciar objetos", self.__tools_frame)
@@ -121,12 +113,26 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Botões no frame de objetos
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
-        self.__combo_box.setGeometry(30,30,100,30)
+        self.__combo_box.setGeometry(165, 30, 100, 30)
         self.__combo_box.addItems(["Ponto", "Reta", "Polígono"])
-
+        self.__combo_box.setStyleSheet("background-color: rgb(212,208,200); color: black")
+        
         self.__add_button = QtWidgets.QPushButton('Adicionar', self.__objects_frame)
-        self.__add_button.setGeometry(30, 90, 100, 30)
+        self.__add_button.setGeometry(165, 80, 100, 30)
         self.__add_button.clicked.connect(self.add_object)
+        self.__add_button.setStyleSheet("background-color: rgb(212,208,200); color: black")
+
+        self.__add_button = QtWidgets.QPushButton('Operações', self.__objects_frame)
+        self.__add_button.setGeometry(165, 120, 100, 30)
+        self.__add_button.clicked.connect(self.choose_operation)
+        self.__add_button.setStyleSheet("background-color: rgb(212,208,200); color: black")
+
+        # Lista de objetos
+        self.__object_list = QtWidgets.QListWidget(self.__objects_frame)
+        self.__object_list.setGeometry(10, 10, 140, 145)
+        self.__object_list.setStyleSheet("background-color: rgb(240,240,240); color: black; border: 1px solid black")
+        
+        
         # self.__edit_button = QtWidgets.QPushButton('Editar', self.__objects_frame)
         # self.__remove_button = QtWidgets.QPushButton('Remover', self.__objects_frame)
         # self.__create_button = QtWidgets.QPushButton('Criar', self.__objects_frame)
@@ -138,6 +144,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
 #         # Padding around the buttons
 #         layout.setContentsMargins(10, 10, 10, 10)
+
     def add_object(self):
         selected_option = self.__combo_box.currentText()
         if selected_option == "Ponto":
@@ -151,10 +158,32 @@ class MainWindow(QtWidgets.QMainWindow):
         if add_dialog:
             if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 obj = add_dialog.create()
+                print(obj)
                 self.__display_file.add_object(obj)
+                self.__object_list.addItem(str(obj.name))
                 #self.__viewport.draw_objects(self.__display_file.objects_list)
-    
 
+    def choose_operation(self):
+        operations_message = OperationsMessage()
+        op = operations_message.exec()
+        
+        if op == QtWidgets.QMessageBox.Open:
+            self.delete_object()
+        else:
+            pass
+    
+    def delete_object(self):
+        selected_index = self.__object_list.currentRow()
+        print(selected_index)
+        
+        if selected_index != -1:
+            self.__object_list.takeItem(selected_index)
+            self.__display_file.remove_object(selected_index)
+            # TODO: redesenhar desenhos na tela
+            # self.resetar_desenhos()
+        else:
+            print("No item selected for deletion.")
+                
         
 #     @property
 #     def g_object_handler(self):

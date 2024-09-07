@@ -44,6 +44,7 @@ class AddObject(QDialog):
     
     def get_list_coord(self):
         list_coord = []
+        print(list_coord)
         for i in range(self.n_coord):
             list_coord.append((self.x_inputs[i].value(), self.y_inputs[i].value()))
     
