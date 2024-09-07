@@ -29,3 +29,11 @@ class Configurations:
     @staticmethod
     def control_frame():
         return (10, 195, 280, 175)
+    
+    @staticmethod
+    def min_coord():
+        return -1000000000
+    
+    @staticmethod
+    def max_coord():
+        return 1000000000

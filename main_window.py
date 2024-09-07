@@ -12,6 +12,11 @@ from PySide6 import QtWidgets, QtGui
 from configurations import Configurations
 from window import Window
 from viewport import Viewport
+from qtd_points import QtdPoints
+from add_point import AddPoint
+from add_line import AddLine
+from add_polygon import AddPolygon
+from display_file import DisplayFile
 
 class MainWindow(QtWidgets.QMainWindow):
     """
@@ -20,7 +25,7 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     def __init__(self):
         super().__init__()
-        # self.__display_file = DisplayFile()
+        self.__display_file = DisplayFile()
         # self.__g_object_handler = GObjectHandler(self.__display_file)
         self.window = Window()
         self.setFixedSize(Configurations.window_X(), Configurations.window_Y())
@@ -118,18 +123,42 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.__btnLeft.clicked.connect(self.__move_left)
         # self.__btnRight.clicked.connect(self.__move_right)
 
-        self.__edit_button = QtWidgets.QPushButton('Editar', self.__objects_frame)
-        self.__remove_button = QtWidgets.QPushButton('Remover', self.__objects_frame)
-        self.__create_button = QtWidgets.QPushButton('Criar', self.__objects_frame)
-        layout_objects = QtWidgets.QGridLayout(self.__objects_frame)
+        self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
+        self.__combo_box.setGeometry(30,30,100,30)
+        self.__combo_box.addItems(["Ponto", "Reta", "Polígono"])
 
-        layout_objects.addWidget(self.__edit_button, 0, 1)
-        layout_objects.addWidget(self.__remove_button, 1, 1)
-        layout_objects.addWidget(self.__create_button, 2, 1)
+        self.__add_button = QtWidgets.QPushButton('Adicionar', self.__objects_frame)
+        self.__add_button.setGeometry(30, 90, 100, 30)
+        self.__add_button.clicked.connect(self.add_object)
+        # self.__edit_button = QtWidgets.QPushButton('Editar', self.__objects_frame)
+        # self.__remove_button = QtWidgets.QPushButton('Remover', self.__objects_frame)
+        # self.__create_button = QtWidgets.QPushButton('Criar', self.__objects_frame)
+        # layout_objects = QtWidgets.QGridLayout(self.__objects_frame)
+
+        # layout_objects.addWidget(self.__edit_button, 0, 1)
+        # layout_objects.addWidget(self.__remove_button, 1, 1)
+        # layout_objects.addWidget(self.__create_button, 2, 1)
         
 #         # Padding around the buttons
 #         layout.setContentsMargins(10, 10, 10, 10)
+    def add_object(self):
+        selected_option = self.__combo_box.currentText()
+        if selected_option == "Ponto":
+            add_dialog = AddPoint()
+        elif selected_option == "Reta":
+            add_dialog = AddLine()
+        elif selected_option == "Polígono":
+            qtd_dialog = QtdPoints()
+            if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                add_dialog = AddPolygon(qtd_dialog.qtd_input.value())
+        if add_dialog:
+            if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                obj = add_dialog.create()
+                self.__display_file.add_object(obj)
+                #self.__viewport.draw_objects(self.__display_file.objects_list)
+    
 
+        
 #     @property
 #     def g_object_handler(self):
 #         return self.__g_object_handler
