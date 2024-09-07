@@ -30,18 +30,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window = Window()
         self.setFixedSize(Configurations.window_X(), Configurations.window_Y())
         self.setWindowTitle('Window')
+        self.setStyleSheet("background-color: rgb(212,208,200);")
         self.__draw_elements()
 
     def __build_frame(self, parent, x, y, w, h):
         frame = QtWidgets.QFrame(parent)
         frame.setGeometry(x, y, w, h)
-        frame.setFrameStyle(QtWidgets.QFrame.WinPanel | QtWidgets.QFrame.Plain)
-        return frame
+        frame.setStyleSheet("QFrame { border: 2px solid black; }")
     
-#     def __build_group(self, parent: QtWidgets.QWidget, title: str, geometry: tuple[int]) -> QtWidgets.QGroupBox:
-#         group = QtWidgets.QGroupBox(parent)
-#         group.setTitle(title)
-#         group.setGeometry(geometry[0], geometry[1], geometry[2], geometry[3])
+        return frame
 
     def __draw_elements(self):
         # Frame de ferramentas (lateral esquerda)
@@ -55,9 +52,10 @@ class MainWindow(QtWidgets.QMainWindow):
                                          Configurations.view_frame()[1],
                                          Configurations.view_frame()[2],
                                          Configurations.view_frame()[3])
+        self.__view_frame.setStyleSheet("QFrame { background-color: rgb(255, 255, 255); border: 2px solid black; }")
 
 
-        # Create Viewport instance and add it to the MainWindow layout
+        # Frame da viewport
         self.__viewport = Viewport(parent=self.__view_frame)
         self.__viewport.setGeometry(Configurations.viewport()[0],
                                 Configurations.viewport()[1],
@@ -66,33 +64,31 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window.set_viewport(self.__viewport)
 
 
+        # Label do frame de objetos
+        self.__objects_label = QtWidgets.QLabel("Gerenciar objetos", self.__tools_frame)
+        self.__objects_label.setGeometry(80, Configurations.objects_frame()[1] - 20, 140, 20)
+        self.__objects_label.setStyleSheet("background-color: rgb(212,208,200); color: black; border: none;")
+
         # Frame de objetos
         self.__objects_frame = self.__build_frame(self.__tools_frame, Configurations.objects_frame()[0],
                                          Configurations.objects_frame()[1],
                                          Configurations.objects_frame()[2],
                                          Configurations.objects_frame()[3])
+        self.__objects_frame.setStyleSheet("background-color: rgb(165,165,165);")
 
-
+        # Label do frame de controle da window
+        self.__objects_label = QtWidgets.QLabel("Controle da window", self.__tools_frame)
+        self.__objects_label.setGeometry(80, Configurations.control_frame()[1] - 20, 140, 20)
+        self.__objects_label.setStyleSheet("background-color: rgb(212,208,200); color: black; border: none;")
 
         # Frame de controle da window
         self.__control_frame = self.__build_frame(self.__tools_frame, Configurations.control_frame()[0],
                                          Configurations.control_frame()[1],
                                          Configurations.control_frame()[2],
                                          Configurations.control_frame()[3])
-
+        self.__control_frame.setStyleSheet("background-color: rgb(165,165,165);")
         
-#         # Objects group
-#         group = self.__build_group(self.__tools_frame, OBJECT_GROUP_TITLE, OBJECT_GROUP_GEOMETRY)
-#         self.__objects_group = group
-#         self.__objects_list = ObjectsList(self, self.__tools_frame, self.__g_object_handler, self.viewport)
-
-#         # Window transformation group
-#         group = self.__build_group(self.__tools_frame, WINDOW_TRANSFORM_GROUP_TITLE, WINDOW_TRANSFORM_GROUP_GEOMETRY)
-#         self.__window_group = group
-
-#         self.__window_group_frame = self.__build_frame(self.__tools_frame, WINDOW_TRANSFORM_GROUP_GEOMETRY)
-#         self.__window_group_frame.setFrameStyle(QtWidgets.QFrame.StyledPanel | QtWidgets.QFrame.Plain)
-
+        # Botões de controle da window
         layout = QtWidgets.QGridLayout(self.__control_frame)
 
         self.__btnUp = QtWidgets.QPushButton("", self.__control_frame)
@@ -123,6 +119,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.__btnLeft.clicked.connect(self.__move_left)
         # self.__btnRight.clicked.connect(self.__move_right)
 
+        # Botões no frame de objetos
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
         self.__combo_box.setGeometry(30,30,100,30)
         self.__combo_box.addItems(["Ponto", "Reta", "Polígono"])

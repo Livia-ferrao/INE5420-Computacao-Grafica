@@ -24,11 +24,11 @@ class Configurations:
 
     @staticmethod
     def objects_frame():
-        return (10, 10, 280, 175)
+        return (10, 30, 280, 165)
     
     @staticmethod
     def control_frame():
-        return (10, 195, 280, 175)
+        return (10, 225, 280, 165)
     
     @staticmethod
     def min_coord():
