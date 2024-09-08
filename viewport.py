@@ -9,7 +9,7 @@ class Viewport(QLabel):
     def __init__(self, parent, window):
         super().__init__(parent)
         self.window = window
-
+        self.setStyleSheet("border: none;")
         self.pix_map = QPixmap(Configurations.viewport()[2], Configurations.viewport()[3])
         self.pix_map.fill(Qt.white)
         self.setPixmap(self.pix_map)
@@ -45,9 +45,9 @@ class Viewport(QLabel):
     def calcular_x_viewport(self, Xw):
         # Xw é uma coordenada X no sistema cartesiano da Window
         viewport_variance = Configurations.viewportXmax() - Configurations.viewportXmin()
-        return (((Xw - self.window.x_min)/(self.window.x_max - self.window.x_min)) * viewport_variance)
+        return (((Xw - self.window.xw_min)/(self.window.xw_max - self.window.xw_min)) * viewport_variance)
     
     def calcular_y_viewport(self, Yw):
         # Yw é uma coordenada Y no sistema cartesiano da Window
         viewport_variance = Configurations.viewportYmax() - Configurations.viewportYmin()
-        return ((1 - ((Yw - self.window.y_min)/ (self.window.y_max - self.window.y_min))) * viewport_variance)
+        return ((1 - ((Yw - self.window.yw_min)/ (self.window.yw_max - self.window.yw_min))) * viewport_variance)

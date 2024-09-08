@@ -104,7 +104,7 @@ class MainWindow(QtWidgets.QMainWindow):
         layout.addWidget(self.__btnRight, 1, 2)
         layout.addWidget(self.__btnDown, 2, 1)
  
-        # self.__btnZoomOut.clicked.connect(self.__zoom_out)
+        self.__btnZoomOut.clicked.connect(self.__zoom_out)
         self.__btnZoomIn.clicked.connect(self.__zoom_in)
         self.__btnUp.clicked.connect(self.__move_up)
         self.__btnDown.clicked.connect(self.__move_down)
@@ -199,4 +199,8 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def __zoom_in(self):
         self.window.zoom_in()
+        self.__viewport.draw_objects(self.__display_file.objects_list)
+    
+    def __zoom_out(self):
+        self.window.zoom_out()
         self.__viewport.draw_objects(self.__display_file.objects_list)

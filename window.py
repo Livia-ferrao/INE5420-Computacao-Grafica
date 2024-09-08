@@ -9,14 +9,19 @@ class Window:
         self.scaling_matrix = self.create_scaling_matrix(1, 1)
         self.transform_matrix()
 
-        self.x_min = -1000
-        self.x_max = 1000
-        self.y_min = -1000
-        self.y_max = 1000
-        self.scale = 0.01
+        self.xw_min = -1000
+        self.xw_max = 1000
+        self.yw_min = -1000
+        self.yw_max = 1000
+        self.scale = 0.1
 
         self.x_center = 0
         self.y_center = 0
+        self.x_min = self.xw_min
+        self.x_max = self.xw_max
+        self.y_min = self.yw_min
+        self.y_max = self.yw_max
+        self.current_scale = 1
         # self.Xwminnormalizado = -1
         # self.Xwmaxnormalizado = 1
         # self.Ywminnormalizado = -1
@@ -71,19 +76,31 @@ class Window:
         return (x, y)
     
     def zoom_in(self):
-        x = (self.x_max - self.x_min) * self.scale
-        y = (self.y_max - self.y_min) * self.scale
+        x = ((self.x_max - self.x_min) * self.scale)/2
+        y = ((self.y_max - self.y_min) * self.scale)/2
 
         self.x_min += x
         self.x_max -= x
         self.y_min += y
         self.y_max -= y
 
-        sx = 1/(0.5 * self.x_max-self.x_min)
-        sy = 1/(0.5 * self.y_max-self.y_min)
-        self.scaling_matrix = self.create_scaling_matrix(sx, sy)
+        self.current_scale *= 1+self.scale
+        print(self.current_scale)
+        self.scaling_matrix = self.create_scaling_matrix(self.current_scale, self.current_scale)
         self.transform_matrix()
 
+    def zoom_out(self):
+        x = ((self.x_max - self.x_min) * self.scale)/2
+        y = ((self.y_max - self.y_min) * self.scale)/2
+
+        self.x_min -= x
+        self.x_max += x
+        self.y_min -= y
+        self.y_max += y
+
+        self.current_scale *= 1-self.scale
+        self.scaling_matrix = self.create_scaling_matrix(self.current_scale, self.current_scale)
+        self.transform_matrix()
     # def move_left(self):
     #     left_delta = - Configurations.viewport()[2] * self.scale
     #     print(left_delta)
