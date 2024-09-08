@@ -81,28 +81,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__control_frame.setStyleSheet("background-color: rgb(165,165,165);")
         
         # Botões de controle da window
-        layout = QtWidgets.QGridLayout(self.__control_frame)
+        layout_control = QtWidgets.QGridLayout(self.__control_frame)
 
-        self.__btnUp = QtWidgets.QPushButton("", self.__control_frame)
-        self.__btnDown = QtWidgets.QPushButton("", self.__control_frame)
-        self.__btnLeft = QtWidgets.QPushButton("", self.__control_frame)
-        self.__btnRight = QtWidgets.QPushButton("", self.__control_frame)
-        self.__btnZoomIn = QtWidgets.QPushButton("", self.__control_frame)
-        self.__btnZoomOut = QtWidgets.QPushButton("", self.__control_frame)
+        self.__btnUp = QtWidgets.QPushButton(self.__control_frame)
+        self.__btnDown = QtWidgets.QPushButton(self.__control_frame)
+        self.__btnLeft = QtWidgets.QPushButton(self.__control_frame)
+        self.__btnRight = QtWidgets.QPushButton(self.__control_frame)
+        self.__btnZoomIn = QtWidgets.QPushButton(self.__control_frame)
+        self.__btnZoomOut = QtWidgets.QPushButton(self.__control_frame)
 
-        self.__btnRight.setIcon(QtGui.QIcon("icons/right.png"))
-        self.__btnDown.setIcon(QtGui.QIcon("icons/down.png"))
-        self.__btnLeft.setIcon(QtGui.QIcon("icons/left.png"))
-        self.__btnUp.setIcon(QtGui.QIcon("icons/up.png"))
-        self.__btnZoomIn.setIcon(QtGui.QIcon("icons/zoomin.png"))
-        self.__btnZoomOut.setIcon(QtGui.QIcon("icons/zoomout.png"))
+        self.__btnRight.setIcon(QtGui.QIcon("icons/right-arrow.png"))
+        self.__btnDown.setIcon(QtGui.QIcon("icons/down-arrow.png"))
+        self.__btnLeft.setIcon(QtGui.QIcon("icons/left-arrow.png"))
+        self.__btnUp.setIcon(QtGui.QIcon("icons/up-arrow.png"))
+        self.__btnZoomIn.setIcon(QtGui.QIcon("icons/zoom-in.png"))
+        self.__btnZoomOut.setIcon(QtGui.QIcon("icons/zoom-out.png"))
 
-        layout.addWidget(self.__btnZoomIn, 2, 0)
-        layout.addWidget(self.__btnUp, 1, 1)
-        layout.addWidget(self.__btnZoomOut, 2, 2)
-        layout.addWidget(self.__btnLeft, 1, 0)
-        layout.addWidget(self.__btnRight, 1, 2)
-        layout.addWidget(self.__btnDown, 2, 1)
+        layout_control.addWidget(self.__btnUp, 1, 2)
+        layout_control.addWidget(self.__btnLeft, 2, 1)
+        layout_control.addWidget(self.__btnRight, 2, 3)
+        layout_control.addWidget(self.__btnDown, 3, 2)
+        layout_control.addWidget(self.__btnZoomIn, 1, 0)
+        layout_control.addWidget(self.__btnZoomOut, 3, 0)
  
         self.__btnZoomOut.clicked.connect(self.__zoom_out)
         self.__btnZoomIn.clicked.connect(self.__zoom_in)
@@ -110,6 +110,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__btnDown.clicked.connect(self.__move_down)
         self.__btnLeft.clicked.connect(self.__move_left)
         self.__btnRight.clicked.connect(self.__move_right)
+
+        self.__btnZoomOut.setStyleSheet("background-color: rgb(212,208,200);")
+        self.__btnZoomIn.setStyleSheet("background-color: rgb(212,208,200);")
+        self.__btnUp.setStyleSheet("background-color: rgb(212,208,200);")
+        self.__btnDown.setStyleSheet("background-color: rgb(212,208,200);")
+        self.__btnLeft.setStyleSheet("background-color: rgb(212,208,200);")
+        self.__btnRight.setStyleSheet("background-color: rgb(212,208,200);")
+
+        self.__control_scale = QtWidgets.QDoubleSpinBox()
+        self.__control_scale.setValue(10.00)
+        self.__control_scale.setMinimum(0.01)
+        self.__control_scale.setMaximum(99.99)
+        self.__control_scale.setSingleStep(1)
+        self.__control_scale.setStyleSheet("background-color: rgb(212,208,200); color: black;")
+        self.__scale_label = QtWidgets.QLabel("%")
+        self.__scale_label.setStyleSheet("color: black; border: none;")
+        layout_control.addWidget(self.__control_scale, 0, 0)
+        layout_control.addWidget(self.__scale_label, 0, 1)
+
+
 
         # Botões no frame de objetos
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
@@ -182,25 +202,25 @@ class MainWindow(QtWidgets.QMainWindow):
             print("No item selected for deletion.")
             
     def __move_left(self):
-        self.window.move_left()
+        self.window.move_left(self.__control_scale.value())
         self.__viewport.draw_objects(self.__display_file.objects_list)
     
     def __move_right(self):
-        self.window.move_right()
+        self.window.move_right(self.__control_scale.value())
         self.__viewport.draw_objects(self.__display_file.objects_list)
 
     def __move_up(self):
-        self.window.move_up()
+        self.window.move_up(self.__control_scale.value())
         self.__viewport.draw_objects(self.__display_file.objects_list)
     
     def __move_down(self):
-        self.window.move_down()
+        self.window.move_down(self.__control_scale.value())
         self.__viewport.draw_objects(self.__display_file.objects_list)
     
     def __zoom_in(self):
-        self.window.zoom_in()
+        self.window.zoom_in(self.__control_scale.value())
         self.__viewport.draw_objects(self.__display_file.objects_list)
     
     def __zoom_out(self):
-        self.window.zoom_out()
+        self.window.zoom_out(self.__control_scale.value())
         self.__viewport.draw_objects(self.__display_file.objects_list)

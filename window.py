@@ -13,7 +13,6 @@ class Window:
         self.xw_max = 1000
         self.yw_min = -1000
         self.yw_max = 1000
-        self.scale = 0.1
 
         self.x_center = 0
         self.y_center = 0
@@ -41,31 +40,37 @@ class Window:
         t_np = np.array(self.translating_matrix)
         s_np = np.array(self.scaling_matrix)
         result = np.matmul(t_np, s_np)
+        print("translating", t_np)
+        print("scaling", s_np)
         self.transforming_matrix = result.tolist()
 
     def set_viewport(self, viewport):
         self._viewport = viewport
 
-    def move_left(self):
-        d = (self.x_max - self.x_min) * self.scale
+    def move_left(self, scale):
+        d = (self.x_max - self.x_min) * (scale/100)
         self.x_center += d
         self.translating_matrix = self.create_translating_matrix(self.x_center, self.y_center)
         self.transform_matrix()
     
-    def move_right(self):
-        d = (self.x_max - self.x_min) * self.scale
+    def move_right(self, scale):
+        d = (self.x_max - self.x_min) * (scale/100)
+        print('d', d)
+        print('xmin', self.x_min)
+        print('xmax', self.x_max)
         self.x_center -= d
+        print(self.x_center)
         self.translating_matrix = self.create_translating_matrix(self.x_center, self.y_center)
         self.transform_matrix()
     
-    def move_up(self):
-        d = (self.y_max - self.y_min) * self.scale
+    def move_up(self, scale):
+        d = (self.y_max - self.y_min) * (scale/100)
         self.y_center -= d
         self.translating_matrix = self.create_translating_matrix(self.x_center, self.y_center)
         self.transform_matrix()
     
-    def move_down(self):
-        d = (self.y_max - self.y_min) * self.scale
+    def move_down(self, scale):
+        d = (self.y_max - self.y_min) * (scale/100)
         self.y_center += d
         self.translating_matrix = self.create_translating_matrix(self.x_center, self.y_center)
         self.transform_matrix()
@@ -75,31 +80,48 @@ class Window:
         y = (self.y_max+self.y_min)/2
         return (x, y)
     
-    def zoom_in(self):
-        x = ((self.x_max - self.x_min) * self.scale)/2
-        y = ((self.y_max - self.y_min) * self.scale)/2
+    def zoom_in(self, scale):
+        scale = scale/100
+        x = ((self.x_max - self.x_min) * scale)/2
+        y = ((self.y_max - self.y_min) * scale)/2
 
+        print("antes", self.x_min, self.x_max)
+        print("x", x)
+        print("y", y)
         self.x_min += x
         self.x_max -= x
         self.y_min += y
         self.y_max -= y
+        # self.current_scale *= 1+scale
+        # print(self.current_scale)
+        print("depois", self.x_min, self.x_max)
 
-        self.current_scale *= 1+self.scale
-        print(self.current_scale)
-        self.scaling_matrix = self.create_scaling_matrix(self.current_scale, self.current_scale)
+        sx = 2000/(self.x_max-self.x_min)
+        sy = 2000/(self.y_max-self.y_min)
+        print(sx, sy)
+        self.scaling_matrix = self.create_scaling_matrix(sx, sy)
         self.transform_matrix()
 
-    def zoom_out(self):
-        x = ((self.x_max - self.x_min) * self.scale)/2
-        y = ((self.y_max - self.y_min) * self.scale)/2
-
+    def zoom_out(self, scale):
+        scale = scale/100
+        x = ((self.x_max - self.x_min) * scale)/2
+        y = ((self.y_max - self.y_min) * scale)/2
+        print("antes", self.x_min, self.x_max)
+        print("x", x)
+        print("y", y)
         self.x_min -= x
         self.x_max += x
         self.y_min -= y
         self.y_max += y
 
-        self.current_scale *= 1-self.scale
-        self.scaling_matrix = self.create_scaling_matrix(self.current_scale, self.current_scale)
+        #self.current_scale *= 1/(1+scale)
+        #print(self.current_scale)
+        print("depois", self.x_min, self.x_max)
+        
+        sx = 2000/(self.x_max-self.x_min)
+        sy = 2000/(self.y_max-self.y_min)
+        print(sx, sy)
+        self.scaling_matrix = self.create_scaling_matrix(sx, sy)
         self.transform_matrix()
     # def move_left(self):
     #     left_delta = - Configurations.viewport()[2] * self.scale

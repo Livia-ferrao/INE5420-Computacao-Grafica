@@ -11,5 +11,4 @@ class Wireframe(Object):
         painter.setPen(pen)
 
         polygon = QPolygonF([QPointF(x, y) for x, y in coord_viewport])
-        print(polygon)
         painter.drawPolygon(polygon)

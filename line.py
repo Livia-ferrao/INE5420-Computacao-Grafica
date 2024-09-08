@@ -6,7 +6,6 @@ class Line(Object):
         super().__init__(name, "line", coord)
     
     def draw(self, coord_viewport, painter):
-        print("RETA: ", coord_viewport)
         pen = QPen(QColor('black'), 3)
         painter.setPen(pen)
         painter.drawLine(
