@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
-from PyQt6.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QMessageBox
 
 from configurations import Configurations
 from window import Window
@@ -46,15 +46,15 @@ class MainWindow(QtWidgets.QMainWindow):
                                          Configurations.view_frame()[1],
                                          Configurations.view_frame()[2],
                                          Configurations.view_frame()[3])
-        self.__view_frame.setStyleSheet("QFrame { background-color: rgb(255, 255, 255); border: 2px solid black; }")
+        #self.__view_frame.setStyleSheet("background-color: rgb(165,165,165);")
 
         # Frame da viewport
-        self.__viewport = Viewport(parent=self.__view_frame)
+        self.__viewport = Viewport(self.__view_frame, self.window)
         self.__viewport.setGeometry(Configurations.viewport()[0],
                                 Configurations.viewport()[1],
                                 Configurations.viewport()[2],
                                 Configurations.viewport()[3])
-        self.window.set_viewport(self.__viewport)
+        #self.window.set_viewport(self.__viewport)
 
         # Label do frame de objetos
         self.__objects_label = QtWidgets.QLabel("Gerenciar objetos", self.__tools_frame)
@@ -105,11 +105,11 @@ class MainWindow(QtWidgets.QMainWindow):
         layout.addWidget(self.__btnDown, 2, 1)
  
         # self.__btnZoomOut.clicked.connect(self.__zoom_out)
-        # self.__btnZoomIn.clicked.connect(self.__zoom_in)
-        # self.__btnUp.clicked.connect(self.__move_up)
-        # self.__btnDown.clicked.connect(self.__move_down)
-        # self.__btnLeft.clicked.connect(self.__move_left)
-        # self.__btnRight.clicked.connect(self.__move_right)
+        self.__btnZoomIn.clicked.connect(self.__zoom_in)
+        self.__btnUp.clicked.connect(self.__move_up)
+        self.__btnDown.clicked.connect(self.__move_down)
+        self.__btnLeft.clicked.connect(self.__move_left)
+        self.__btnRight.clicked.connect(self.__move_right)
 
         # Botões no frame de objetos
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
@@ -158,10 +158,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if add_dialog:
             if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 obj = add_dialog.create()
-                print(obj)
                 self.__display_file.add_object(obj)
                 self.__object_list.addItem(str(obj.name))
-                #self.__viewport.draw_objects(self.__display_file.objects_list)
+                self.__viewport.draw_objects(self.__display_file.objects_list)
 
     def choose_operation(self):
         operations_message = OperationsMessage()
@@ -174,329 +173,30 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def delete_object(self):
         selected_index = self.__object_list.currentRow()
-        print(selected_index)
-        
+
         if selected_index != -1:
             self.__object_list.takeItem(selected_index)
             self.__display_file.remove_object(selected_index)
-            # TODO: redesenhar desenhos na tela
-            # self.resetar_desenhos()
+            self.__viewport.draw_objects(self.__display_file.objects_list)
         else:
             print("No item selected for deletion.")
-                
-        
-#     @property
-#     def g_object_handler(self):
-#         return self.__g_object_handler
+            
+    def __move_left(self):
+        self.window.move_left()
+        self.__viewport.draw_objects(self.__display_file.objects_list)
     
-#     @property
-#     def objects_list(self):
-#         return self.__objects_list
+    def __move_right(self):
+        self.window.move_right()
+        self.__viewport.draw_objects(self.__display_file.objects_list)
+
+    def __move_up(self):
+        self.window.move_up()
+        self.__viewport.draw_objects(self.__display_file.objects_list)
     
-#     def write_feedback(self, text: str) -> None:
-#         self.__feedback_label.setText(text)
-
-#     def __zoom_in(self) -> None:
-#         in_scale = 1 - self.__scale_spin.value()/100
-#         self.__proceed_window_zoom(in_scale)
-
-#     def __zoom_out(self) -> None:
-#         out_scale = 1 + self.__scale_spin.value()/100
-#         self.__proceed_window_zoom(out_scale)
-
-#     def __proceed_window_zoom(self, scale: float) -> None:
-#         self.world_window.zoom(scale, scale)
-#         self.viewport.update()
-
-    # def __move_up(self):
-    #     up_delta = self.viewport.height()/100
-    #     self.__procced_move_y(up_delta)
-
-#     def __move_down(self):
-#         up_delta = - self.viewport.height() * self.__scale_spin.value()/100
-#         self.__procced_move_y(up_delta)
-
-#     def __move_left(self):
-#         left_delta = - self.viewport.width() * self.__scale_spin.value()/100
-#         self.__proceed_move_x(left_delta)
-
-#     def __move_right(self):
-#         right_delta = self.viewport.width() * self.__scale_spin.value()/100
-#         self.__proceed_move_x(right_delta)
-
-#     def __proceed_move_x(self, delta: float) -> None:
-#         self.world_window.translate(delta, 0)
-#         self.viewport.update()
-
-    # def __procced_move_y(self, delta: float) -> None:
-    #     self.window.translate(0, delta)
-    #     self.viewport.update()
-
-#     def run_object_creation(self, name: str, validated_fields: list[tuple[int]]) -> None:
-#         points = [CartesianPoint(item[0], item[1]) for item in validated_fields]
-#         self.__g_object_handler.create_element(name, points)
-#         self.__objects_list.add_element(name)
-#         self.viewport.update()
-#         self.write_feedback(f'[SUCESSO] Objeto {name} (pontos {validated_fields}) criado!')
-
-#     def run_object_creation_from_shape(self, final_shape: GraphicObject) -> None:
-#         self.__g_object_handler.create_element_from_object(final_shape)
-#         self.__objects_list.add_element(final_shape.name)
-#         self.viewport.update()
-#         self.write_feedback(f'[SUCESSO] Objeto {final_shape.name} (pontos {final_shape.points}) criado!')
-
-#     def run_object_remotion(self, index: int) -> None:
-#         removed = self.__g_object_handler.remove_element(index)
-#         self.viewport.update()
-#         self.write_feedback(f'[SUCESSO] Objeto {removed.name} (pontos {removed.points}) removido')
-
-#     def run(self):
-#         self.show()
-
-# class ObjectsList(QtWidgets.QListWidget):
-#     def __init__(self, root: QtWidgets.QWidget, parent: QtWidgets.QFrame, g_object_handler: GObjectHandler, viewport: Viewport):
-#         super().__init__(parent)
-#         self.__root = root
-#         self.setGeometry(OBJECT_LIST_GEOMETRY)
-#         layout = QtWidgets.QVBoxLayout()
-#         self.__edit_button = self.__build_button('Editar', (GENERAL_MARGIN, 130, CRUD_BUTTONS_SIZE[0], CRUD_BUTTONS_SIZE[1]), parent, layout, BACKGROUND_YELLOW)
-#         self.__remove_button = self.__build_button('Remover', (GENERAL_MARGIN, 150, CRUD_BUTTONS_SIZE[0], CRUD_BUTTONS_SIZE[1]), parent, layout, BACKGROUND_RED)
-#         self.__create_button = self.__build_button('Criar objeto', (GENERAL_MARGIN, 170, CRUD_BUTTONS_SIZE[0], CRUD_BUTTONS_SIZE[1]), parent, layout, BACKGROUND_GREEN)
-#         self.__layout = layout
-#         self.viewport = viewport
-
-#         self.__edit_button.clicked.connect(self.__handle_click_on_edit)
-#         self.__create_button.clicked.connect(self.__handle_click_on_create)
-#         self.__remove_button.clicked.connect(self.__handle_click_on_remove)
-#         self.itemDoubleClicked.connect(self.__handle_click_on_edit)
-
-#     def __build_button(self, text: str, geometry: tuple[int], parent: QtWidgets.QWidget, layout: QtWidgets.QLayout, style: str) -> QtWidgets.QPushButton:
-#         button = QtWidgets.QPushButton(text, parent)
-#         button.setGeometry(geometry[0], geometry[1], geometry[2], geometry[3])
-#         layout.addWidget(button)
-#         button.setStyleSheet(style)
-#         return button
-
-#     def add_element(self, name: str, g_type: GraphicObjectEnum = None) -> None:
-#         self.addItem(f'{name}')
+    def __move_down(self):
+        self.window.move_down()
+        self.__viewport.draw_objects(self.__display_file.objects_list)
     
-#     def remove_element(self, row: int) -> None:
-#         self.takeItem(row)
-
-#     def __handle_click_on_create(self, root: QtWidgets.QWidget) -> None:
-#         creation_popup = CreationPopup(self.__root, self.viewport)
-#         creation_popup.exec_()
-
-#     def __handle_click_on_remove(self, root: QtWidgets.QWidget) -> None:
-#         selected_item = self.currentItem()
-#         if selected_item != None:
-#             selected_item_name = self.currentItem().text()
-#             selected_row = self.currentRow()
-#             remove_popup = RemovePopup(self.__root, selected_item_name, selected_row)
-#             if remove_popup.exec_() == QtWidgets.QDialog.Accepted:
-#                 self.takeItem(selected_row)
-    
-    
-#     def __handle_click_on_edit(self):
-#         selected_item = self.currentItem()
-#         if selected_item:
-#             edit_popup = EditPopup(self.currentRow(), self)
-#             if edit_popup.exec_() == QtWidgets.QDialog.Accepted:
-#                 # TODO PARA O TRABALHO 2
-#                 # Chamar o GObjectHandler.edit(), passando as informações do formulário
-#                 pass
-
-# class RemovePopup(QtWidgets.QDialog):
-#     """
-#     Class to handle with remotion of elements on list
-#     """
-#     # TODO identificar e passar o tipo nesse construtor
-#     def __init__(self, parent: QtWidgets.QWidget, name: str, index: int):
-#         super().__init__(parent)
-#         self.setWindowTitle(REMOVE_POPUP_TITLE)
-#         self.__label = QtWidgets.QLabel(f"Você quer mesmo deletar o objeto {name}?")
-#         self.__object_index = index
-#         self.__draw_elements()
-#         self.__configure()
-        
-#     def __configure(self) -> None:
-#         self.__confirm_button.clicked.connect(self.__handle_confirm)
-#         self.__cancel_button.clicked.connect(self.__handle_cancel)
-    
-#     def __draw_elements(self) -> None:
-#         self.__confirm_button = QtWidgets.QPushButton("Sim, deletar")
-#         self.__confirm_button.setStyleSheet(BACKGROUND_RED)
-#         self.__cancel_button = QtWidgets.QPushButton("Cancelar")
-
-#         layout = QtWidgets.QGridLayout()
-#         layout.addWidget(self.__label, 0, 0)
-#         layout.addWidget(self.__confirm_button, 1, 0)
-#         layout.addWidget(self.__cancel_button, 1, 1)
-#         self.setLayout(layout)
-
-#     def __handle_confirm(self) -> None:
-#         self.parent().run_object_remotion(self.__object_index)
-#         self.accept()
-    
-#     def __handle_cancel(self) -> None:
-#         self.reject()
-
-
-# class CreationPopup(QtWidgets.QDialog):
-#     """
-#     Class to the popup of graphic objects cretion
-#     """
-#     def __init__(self, parent: QtWidgets.QWidget, viewport: Viewport):
-#         super().__init__(parent)
-#         self.__configure()
-#         self.__draw_elements()
-#         self.viewport = viewport
-
-#     def __configure(self):
-#         self.setModal(True)
-#         self.setFixedSize(POPUP_SIZE[0], POPUP_SIZE[1])
-#         self.setWindowTitle(CREATION_POPUP_TITLE)
-
-#     def __draw_elements(self) -> None:
-#         """
-#         Draw PyQT5 elements on the popup
-#         """
-#         tab = QtWidgets.QTabWidget(self)
-#         tab.setGeometry(0, 0, POPUP_SIZE[0], POPUP_SIZE[1] - 200)
-
-#         items = {
-#             'POINT': 1,
-#             'LINE': 2
-#         }
-
-#         fields = {}
-
-#         for num, item in enumerate(GraphicObjectEnum):
-#             if item == GraphicObjectEnum.TEMP_SHAPE:
-#                 break
-#             item_str = GraphicObjectEnum.get_value(item)
-
-#             item_tab = QtWidgets.QWidget()
-#             form = QtWidgets.QFormLayout()
-#             item_tab.setLayout(form)
-#             tab.addTab(item_tab, item_str)
-
-#             name_field = QtWidgets.QLineEdit()
-#             form.addRow(f'Nome do {item_str}:', name_field)
-#             points_field = QtWidgets.QLineEdit()
-#             placeholder_txt = self.__generate_placeholder(num + 1)
-#             points_field.setPlaceholderText(placeholder_txt)
-#             form.addRow(f'Ponto(s):', points_field)
-
-#             fields[item_str] = [name_field]
-#             fields[item_str].append(points_field)
-
-#             if item == GraphicObjectEnum.WIREFRAME:
-#                 qtd_points_field = QtWidgets.QSpinBox(value=3,
-#                                                minimum=3,
-#                                                maximum=100,
-#                                                singleStep=1)
-#                 form.addRow('Qtd de pontos', qtd_points_field)
-#                 fields[item_str].append(qtd_points_field)
-
-#         button = QtWidgets.QPushButton('Criar elemento', self,
-#                                  clicked = lambda: self.__create_object(tab.currentIndex()))
-#         button.setGeometry(SUBMIT_CREATION_BUTTON_GEOMETRY)
-
-#         dyn_button = QtWidgets.QPushButton('Criar elemento por cliques', self,
-#                                      clicked = lambda: (self.__validate_and_allow_clicking(tab.currentIndex()), self.close()))
-#         dyn_button.setGeometry(MOUSE_CREATION_BUTTON_GEOMETRY)
-#         dyn_button.setStyleSheet(BACKGROUND_GREEN)
-
-#         self.__fields = fields
-
-#     def __validate_and_allow_clicking(self, tab_index: int):
-#         try:
-#             name = self.__validate_name_field(tab_index)
-#             if tab_index > 2:
-#                 self.viewport.allow_clicking_points(tab_index, name, None)
-#             else:
-#                 self.viewport.allow_clicking_points(tab_index, name, self.__fields['WIREFRAME'][2].value())
-#         except Exception as e:
-#             self.parent().write_feedback('[ERRO] Formulário de criação inválido! Tente novamente...')
-#             self.reject()
-
-#     def __validate_name_field(self, tab_index: int) -> str:
-#         fields = self.__fields[list(self.__fields.keys())[tab_index]]
-#         fields_text = [field.text() for field in fields]
-#         if fields_text[0] == '':
-#             raise FormValidationError()
-#         return fields_text[0]
-
-#     def __generate_placeholder(self, qtd: int) -> str:
-#         string = ''
-#         for i in range(qtd): string += f'(x{i}, y{1}),'
-#         return string[:-1]
-
-#     def __create_object(self, tab_index: int) -> None:
-#         """
-#         High level logic of creation
-#         """
-#         try:
-#             name, validated_fields = self.__validate_form(tab_index)
-#             self.parent().run_object_creation(name, validated_fields)
-#             self.accept()
-#         except Exception as e:
-#             self.parent().write_feedback('[ERRO] Formulário de criação inválido! Tente novamente...')
-#             self.reject()
-
-#     def __validate_form(self, tab_index: int) -> list:
-#         """
-#         Validates the form of creation of elements
-#         """
-#         try:
-#             name = self.__validate_name_field(tab_index)
-#             fields = self.__fields[list(self.__fields.keys())[tab_index]]
-#             validated_coords = []
-#             points_str = fields[1].text()[1:-1].split('),(')
-#             if tab_index == 2: assert len(points_str) == int(fields[2].value())
-#             for point in points_str:
-#                 x_str, y_str = point.strip().split(',')
-#                 new_point = (float(x_str), float(y_str))
-#                 validated_coords.append(new_point)
-#             return name, validated_coords
-#         except Exception as e:
-#             raise FormValidationError()
-
-#     def run(self):
-#         self.show()
-    
-# class EditPopup(QtWidgets.QDialog):
-#     # TODO definir para o trabalho 2
-#     """
-#     Popup to be used to edit the elements (tranformations)
-#     """
-#     def __init__(self, index: int, parent: QtWidgets.QWidget):
-#         super().__init__(parent)
-#         self.setWindowTitle(EDIT_POPUP_TITLE)
-#         self.__label = QtWidgets.QLabel("Essa tela será utilizada no trabalho 2")
-#         self.__draw_elements()
-#         self.__configure()
-        
-#     def __configure(self):
-#         self.__save_button.clicked.connect(self.__handle_save)
-#         self.__cancel_button.clicked.connect(self.reject)
-    
-#     def __draw_elements(self):
-#         self.__save_button = QtWidgets.QPushButton("Salvar")
-#         self.__cancel_button = QtWidgets.QPushButton("Cancelar")
-
-#         layout = QtWidgets.QVBoxLayout()
-#         layout.addWidget(self.__label)
-#         # layout.addWidget(self.__text_edit)
-#         layout.addWidget(self.__save_button)
-#         layout.addWidget(self.__cancel_button)
-#         self.setLayout(layout)
-
-#     def __handle_save(self):
-#         # TODO PARA O TRABALHO 2
-#         # new_text = self.text_edit.text()
-#         # if new_text:
-#         self.accept()
-#         # else:
-#             # QtWidgets.QMessageBox.warning(self, "Aviso", "O texto não pode estar vazio!")
+    def __zoom_in(self):
+        self.window.zoom_in()
+        self.__viewport.draw_objects(self.__display_file.objects_list)

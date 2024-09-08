@@ -20,7 +20,7 @@ class Configurations:
     
     @staticmethod
     def viewport():
-        return (0, 0, Configurations.view_frame()[2], Configurations.view_frame()[3])
+        return (10, 30, 550, 540)
 
     @staticmethod
     def objects_frame():
@@ -37,3 +37,20 @@ class Configurations:
     @staticmethod
     def max_coord():
         return 1000000000
+
+    # ViewPort
+    @staticmethod
+    def viewportXmin():
+        return Configurations.viewport()[0]
+
+    @staticmethod
+    def viewportXmax():
+        return Configurations.viewport()[0] + Configurations.viewport()[2]
+
+    @staticmethod
+    def viewportYmin():
+        return Configurations.viewport()[1]
+
+    @staticmethod
+    def viewportYmax():
+        return Configurations.viewport()[1] + Configurations.viewport()[3]
