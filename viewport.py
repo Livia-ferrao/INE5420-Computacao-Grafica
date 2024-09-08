@@ -21,11 +21,14 @@ class Viewport(QLabel):
         painter = QPainter(self.pix_map)
         for obj in obj_list:
             transformed_coord = []
+            print("coord", obj.coord)
             for x, y in obj.coord:
                 coord_np = np.array([x, y, 1])
                 matrix_np = np.array(transforming_matrix)
-                dot_product = np.dot(matrix_np, coord_np)
+                print("matrix", matrix_np)
+                dot_product = np.dot(coord_np, matrix_np)
                 transformed_coord.append(dot_product.tolist()[0:2])
+            print("transformed", transformed_coord)
             #if self.in_viewport(transformed_coord):
 
             coord_viewport = []

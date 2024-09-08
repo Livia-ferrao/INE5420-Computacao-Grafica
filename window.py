@@ -5,7 +5,7 @@ class Window:
     def __init__(self):
         self._viewport = None
         
-        self.translating_matrix = self.create_translating_matrix(1, 1)
+        self.translating_matrix = self.create_translating_matrix(0, 0)
         self.scaling_matrix = self.create_scaling_matrix(1, 1)
         self.transform_matrix()
 
@@ -14,6 +14,9 @@ class Window:
         self.y_min = -1000
         self.y_max = 1000
         self.scale = 0.01
+
+        self.x_center = 0
+        self.y_center = 0
         # self.Xwminnormalizado = -1
         # self.Xwmaxnormalizado = 1
         # self.Ywminnormalizado = -1
@@ -40,34 +43,26 @@ class Window:
 
     def move_left(self):
         d = (self.x_max - self.x_min) * self.scale
-        self.x_max -= d
-        self.x_min -= d
-        x_center, y_center = self.getCenter()
-        self.translating_matrix = self.create_translating_matrix(x_center, y_center)
+        self.x_center += d
+        self.translating_matrix = self.create_translating_matrix(self.x_center, self.y_center)
         self.transform_matrix()
     
     def move_right(self):
         d = (self.x_max - self.x_min) * self.scale
-        self.x_max += d
-        self.x_min += d
-        x_center, y_center = self.getCenter()
-        self.translating_matrix = self.create_translating_matrix(x_center, y_center)
+        self.x_center -= d
+        self.translating_matrix = self.create_translating_matrix(self.x_center, self.y_center)
         self.transform_matrix()
     
     def move_up(self):
         d = (self.y_max - self.y_min) * self.scale
-        self.y_max += d
-        self.y_min += d
-        x_center, y_center = self.getCenter()
-        self.translating_matrix = self.create_translating_matrix(x_center, y_center)
+        self.y_center -= d
+        self.translating_matrix = self.create_translating_matrix(self.x_center, self.y_center)
         self.transform_matrix()
     
     def move_down(self):
         d = (self.y_max - self.y_min) * self.scale
-        self.y_max -= d
-        self.y_min -= d
-        x_center, y_center = self.getCenter()
-        self.translating_matrix = self.create_translating_matrix(x_center, y_center)
+        self.y_center += d
+        self.translating_matrix = self.create_translating_matrix(self.x_center, self.y_center)
         self.transform_matrix()
 
     def getCenter(self):
