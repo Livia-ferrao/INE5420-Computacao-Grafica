@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets, QtGui, QtCore
 from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 from PySide6.QtWidgets import QMessageBox
-from edit_object import EditObject
+#from edit_object import EditObject
 
 from configurations import Configurations
 from window import Window

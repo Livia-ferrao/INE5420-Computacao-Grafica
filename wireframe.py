@@ -1,6 +1,6 @@
 from object import Object
 from PySide6.QtGui import QColor, QPen, QPolygonF, QBrush
-from PySide6.QtCore import QPointF
+from PySide6.QtCore import QPointF, Qt
 
 class Wireframe(Object):
     def __init__(self, name, coord, fill):
@@ -16,3 +16,4 @@ class Wireframe(Object):
             brush = QBrush(QColor('black'))
             painter.setBrush(brush)
         painter.drawPolygon(polygon)
+        painter.setBrush(QBrush(Qt.NoBrush))
