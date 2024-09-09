@@ -7,11 +7,13 @@ class OperationsMessage(QMessageBox):
         self.setWindowTitle("Operações")
         self.setText("Escolha a operação a ser realizada")
         self.setStyleSheet("background-color: rgb(165,165,165); color: black;")
+        self.setFixedSize(400, 200)
 
         # Criando os botoes
         self.setStandardButtons(
             QtWidgets.QMessageBox.Open
             | QtWidgets.QMessageBox.Cancel
+            | QtWidgets.QMessageBox.Ok
         )
 
         # Renomeando o botao de deletar objeto
@@ -19,8 +21,14 @@ class OperationsMessage(QMessageBox):
         delete_button.setText("Deletar Objeto")
         delete_button.setFixedSize(150, 30)
         delete_button.setStyleSheet("background-color: rgb(212,208,200); color: black;")
-        
         delete_button.setIcon(QtGui.QIcon())
+
+        # Renomeando o botao de editar
+        edit_button = self.button(QtWidgets.QMessageBox.Ok)
+        edit_button.setText("Editar")
+        edit_button.setFixedSize(150, 30)
+        edit_button.setStyleSheet("background-color: rgb(212,208,200); color: black;")
+        edit_button.setIcon(QtGui.QIcon())
 
         # Renomeando o botao de cancelar
         cancel_button = self.button(QtWidgets.QMessageBox.Cancel)

@@ -12,3 +12,9 @@ class DisplayFile:
     def remove_object(self, i):
         self.objects_list.pop(i)
     
+    def get_names(self):
+        names = []
+        for obj in self.objects_list:
+            names.append(obj.name)
+        return names
+    

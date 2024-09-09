@@ -1,16 +1,25 @@
-from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QSpinBox
+from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QSpinBox, QScrollArea, QWidget, QVBoxLayout, QMessageBox
 from configurations import Configurations
 from abc import abstractmethod
 
 class AddObject(QDialog):
-    def __init__(self):
+    def __init__(self, list_names):
         super().__init__()
-
+        self.names = list_names
+        self.main_layout = QVBoxLayout(self)
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_content = QWidget()
+        self.scroll_area.setWidget(self.scroll_content)
+        self.layout = QGridLayout(self.scroll_content)
+        self.scroll_content.setLayout(self.layout)
+        self.setFixedSize(400, 200)
+        self.main_layout.addWidget(self.scroll_area)
         self.name_label = QLabel("Nome:")
         self.name_input = QLineEdit()
-        self.layout = QGridLayout(self)
         self.layout.addWidget(self.name_label, 0, 0)
         self.layout.addWidget(self.name_input, 0, 1)
+        self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
 
         self.draw_x_y_inputs()
         self.draw_buttons()
@@ -52,6 +61,32 @@ class AddObject(QDialog):
     def setTitle(self):
         pass
 
+    def accept(self):
+        name = self.name_input.text().strip()
+        if len(name) == 0:
+            self.no_name()
+        elif name in self.names:
+            self.repeated_name()
+        else:
+            super().accept() 
+
     @abstractmethod
     def create(self):
         pass
+
+    def no_name(self):
+        message = QMessageBox()
+        message.setWindowTitle("Aviso")
+        message.setText("Dê um nome ao objeto")
+        message.setStyleSheet("background-color: rgb(212,208,200); color: black;")
+        message.setFixedSize(400, 200)
+        message.exec()
+    
+    def repeated_name(self):
+        message = QMessageBox()
+        message.setWindowTitle("Aviso")
+        message.setText("Esse nome já existe")
+        message.setStyleSheet("background-color: rgb(212,208,200); color: black;")
+        message.setFixedSize(400, 200)
+        message.exec()
+    

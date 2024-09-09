@@ -21,10 +21,6 @@ class Window:
         self.y_min = self.yw_min
         self.y_max = self.yw_max
         self.current_scale = 1
-        # self.Xwminnormalizado = -1
-        # self.Xwmaxnormalizado = 1
-        # self.Ywminnormalizado = -1
-        # self.Ywmaxnormalizado = 1
     
     def create_translating_matrix(self, x, y):
         return [[1, 0, 0],
@@ -123,44 +119,3 @@ class Window:
         print(sx, sy)
         self.scaling_matrix = self.create_scaling_matrix(sx, sy)
         self.transform_matrix()
-    # def move_left(self):
-    #     left_delta = - Configurations.viewport()[2] * self.scale
-    #     print(left_delta)
-    #     self.__proceed_move_x(left_delta)
-
-    # def __proceed_move_x(self, delta: float) -> None:
-    #     self.translate(delta, 0)
-    #     self.viewport.update()
-
-    # def translate(self, dx: float, dy: float) -> None:
-    #     matrix = self.create_translating_matrix(dx, dy)
-    #     self.__transform(matrix)
-
-    # def __transform(self, matrix: list[list[float]]) -> None:
-    #     self.coord = [self.transform(point, matrix) for point in self.coord]
-
-    # def transform(self, point: tuple[float, float, float], matrix: list[list[float]]):
-    #     multiplied = self.__multiply_matrices([[point[0], point[1], 1]], matrix)
-    #     return (multiplied[0][0], multiplied[0][1], point[2])
-
-    # def __multiply_matrices(self, mat1, mat2):
-    #     return np.dot(mat1, mat2)
-
-    # # def __multiply_matrices(self, a: list[list[float]], b: list[list[float]]) -> list[list[float]]:
-    # #     result = []
-
-    # #     # Populate the result matrix with zeros
-    # #     for i in range(0, len(a)):
-    # #         result.append([])
-    # #         for j in range(0, len(b[0])):
-    # #             result[i].append(0)
-
-    # #     for i in range(len(a)):
-    # #         for j in range(len(b[0])):
-    # #             for k in range(len(b)):
-    # #                 result[i][j] += a[i][k] * b[k][j]
-
-    # #     return result
-
-
-

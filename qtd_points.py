@@ -8,6 +8,8 @@ class QtdPoints(QDialog):
         self.qtd_label = QLabel("Quantidade de pontos do polígono")
         self.qtd_input = QSpinBox()
         self.qtd_input.setRange(3, 1000000)
+        self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
+        self.setFixedSize(400, 200)
 
         self.preencher = QCheckBox("Preencher polígono")
         self.ok_button = QPushButton("Ok")
