@@ -138,13 +138,19 @@ class MainWindow(QtWidgets.QMainWindow):
         # Lista de objetos
         self.__object_list = QtWidgets.QListWidget(self.__objects_frame)
         self.__object_list.setStyleSheet("background-color: rgb(240,240,240); color: black; border: 1px solid black")
-
+        
+        # Label "Lista de objetos"
+        self.__obj_list_label = QtWidgets.QLabel("Lista de objetos")
+        self.__obj_list_label.setFixedHeight(13)
+        self.__obj_list_label.setStyleSheet("color: black; border: none; font-size: 13px")
+        
         # Layout do frame de objetos
         self.__layout_objects = QtWidgets.QGridLayout(self.__objects_frame)
-        self.__layout_objects.addWidget(self.__combo_box, 0, 1)
-        self.__layout_objects.addWidget(self.__add_button, 1, 1)
-        self.__layout_objects.addWidget(self.__operations_button, 2, 1)
-        self.__layout_objects.addWidget(self.__object_list, 0, 0, 3, 1)
+        self.__layout_objects.addWidget(self.__combo_box, 1, 1)
+        self.__layout_objects.addWidget(self.__add_button, 2, 1)
+        self.__layout_objects.addWidget(self.__operations_button, 3, 1)
+        self.__layout_objects.addWidget(self.__object_list, 1, 0, 3, 1)
+        self.__layout_objects.addWidget(self.__obj_list_label, 0, 0)
 
     # Ação do botão de adicionar objeto
     def __addObject(self):
@@ -178,7 +184,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # Mensagem aparece se nenhum objeto for selecionado
             message = QMessageBox()
             message.setWindowTitle("Aviso")
-            message.setText("Selecione um objeto para realizar uma operação")
+            message.setText("Selecione um objeto na lista de objetos para realizar uma operação")
             message.setStyleSheet("background-color: rgb(212,208,200); color: black;")
             message.setFixedSize(400, 200)
             message.exec()
