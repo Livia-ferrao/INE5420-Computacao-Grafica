@@ -1,9 +1,10 @@
 from object import Object
 from PySide6.QtGui import QColor, QPen
+from type import Type
 
 class Point(Object):
     def __init__(self, name, coord):
-        super().__init__(name, "point", coord)
+        super().__init__(name, Type.POINT, coord)
     
     def draw(self, coord_viewport, painter):
         pen = QPen(QColor('black'), 3)

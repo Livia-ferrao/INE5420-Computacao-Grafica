@@ -37,6 +37,22 @@ class Configurations:
     @staticmethod
     def max_coord():
         return 1000000000
+    
+    @staticmethod
+    def windowXmax():
+        return 1000
+    
+    @staticmethod
+    def windowXmin():
+        return -1000
+    
+    @staticmethod
+    def windowYmax():
+        return 1000
+    
+    @staticmethod
+    def windowYmin():
+        return -1000
 
     # ViewPort
     @staticmethod

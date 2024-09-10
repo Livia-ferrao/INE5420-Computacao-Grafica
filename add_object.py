@@ -3,78 +3,92 @@ from configurations import Configurations
 from abc import abstractmethod
 
 class AddObject(QDialog):
-    def __init__(self, list_names):
+    def __init__(self, display_file, object_list):
         super().__init__()
-        self.names = list_names
-        self.main_layout = QVBoxLayout(self)
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(True)
-        self.scroll_content = QWidget()
-        self.scroll_area.setWidget(self.scroll_content)
-        self.layout = QGridLayout(self.scroll_content)
-        self.scroll_content.setLayout(self.layout)
+        self.__display_file = display_file
+        self.__object_list = object_list
+
         self.setFixedSize(400, 200)
-        self.main_layout.addWidget(self.scroll_area)
-        self.name_label = QLabel("Nome:")
-        self.name_input = QLineEdit()
-        self.layout.addWidget(self.name_label, 0, 0)
-        self.layout.addWidget(self.name_input, 0, 1)
+        # Definindo área de scrool e layout
+        self.__main_layout = QVBoxLayout(self)
+        self.__scroll_area = QScrollArea()
+        self.__scroll_area.setWidgetResizable(True)
+        self.__scroll_content = QWidget()
+        self.__scroll_area.setWidget(self.__scroll_content)
+        self.__layout = QGridLayout(self.__scroll_content)
+        self.__scroll_content.setLayout(self.__layout)
+        self.__main_layout.addWidget(self.__scroll_area)
+
+        # Label "Nome" e input para nome
+        self.__name_label = QLabel("Nome:")
+        self.__name_input = QLineEdit()
+        self.__layout.addWidget(self.__name_label, 0, 0)
+        self.__layout.addWidget(self.__name_input, 0, 1)
+
         self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
 
-        self.draw_x_y_inputs()
-        self.draw_buttons()
+        self.__drawXYinputs()
+        self.__drawButtons()
         self.setTitle()
 
-    def draw_x_y_inputs(self):
-        self.x_inputs = []
-        self.y_inputs = []
+    # Labels xi e yi e input para pontos xi e yi
+    def __drawXYinputs(self):
+        self.__x_inputs = []
+        self.__y_inputs = []
         for i in range(self.n_coord):
             x_label = QLabel(f"x{i+1}")
-            self.x_inputs.append(QSpinBox())
-            self.x_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
+            self.__x_inputs.append(QSpinBox())
+            self.__x_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
             y_label = QLabel(f"y{i+1}")
-            self.y_inputs.append(QSpinBox())
-            self.y_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
+            self.__y_inputs.append(QSpinBox())
+            self.__y_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
 
-            self.layout.addWidget(x_label, 1+2*i, 0)
-            self.layout.addWidget(self.x_inputs[i], 1+2*i, 1)
-            self.layout.addWidget(y_label, 2+2*i, 0)
-            self.layout.addWidget(self.y_inputs[i], 2+2*i, 1)
+            self.__layout.addWidget(x_label, 1+2*i, 0)
+            self.__layout.addWidget(self.__x_inputs[i], 1+2*i, 1)
+            self.__layout.addWidget(y_label, 2+2*i, 0)
+            self.__layout.addWidget(self.__y_inputs[i], 2+2*i, 1)
     
-    def draw_buttons(self):
+    # Botôes ok e cancelar
+    def __drawButtons(self):
         line = self.n_coord*2 + 1
-        self.cancel_button = QPushButton("Cancelar")
-        self.layout.addWidget(self.cancel_button, line, 0)
-        self.ok_button = QPushButton("OK")
-        self.layout.addWidget(self.ok_button, line, 1)
+        self.__ok_button = QPushButton("OK")
+        self.__layout.addWidget(self.__ok_button, line, 1)
+        self.__cancel_button = QPushButton("Cancelar")
+        self.__layout.addWidget(self.__cancel_button, line, 0)
 
-        self.cancel_button.clicked.connect(self.reject)
-        self.ok_button.clicked.connect(self.accept)
+        self.__cancel_button.clicked.connect(self.reject)
+        self.__ok_button.clicked.connect(self.ok)
     
-    def get_list_coord(self):
+    # Retorna lista das coordenadas inseridas
+    def getListCoord(self):
         list_coord = []
         for i in range(self.n_coord):
-            list_coord.append((self.x_inputs[i].value(), self.y_inputs[i].value()))
+            list_coord.append((self.__x_inputs[i].value(), self.__y_inputs[i].value()))
         return list_coord
-    
-    @abstractmethod
-    def setTitle(self):
-        pass
 
-    def accept(self):
-        name = self.name_input.text().strip()
+    def ok(self):
+        # Verifica se nome é repetido ou vazio
+        name = self.__name_input.text().strip()
         if len(name) == 0:
-            self.no_name()
-        elif name in self.names:
-            self.repeated_name()
+            self.noName()
+        elif name in self.__display_file.getNames():
+            self.repeatedName()
         else:
+            obj = self.create()
+            self.__display_file.addObject(obj)
+            self.__object_list.addItem(str(obj.name))
             super().accept() 
 
     @abstractmethod
     def create(self):
         pass
 
-    def no_name(self):
+    @abstractmethod
+    def setTitle(self):
+        pass
+
+    # Aviso sem nome
+    def noName(self):
         message = QMessageBox()
         message.setWindowTitle("Aviso")
         message.setText("Dê um nome ao objeto")
@@ -82,7 +96,8 @@ class AddObject(QDialog):
         message.setFixedSize(400, 200)
         message.exec()
     
-    def repeated_name(self):
+    # Aviso nome repetido
+    def repeatedName(self):
         message = QMessageBox()
         message.setWindowTitle("Aviso")
         message.setText("Esse nome já existe")
@@ -90,3 +105,18 @@ class AddObject(QDialog):
         message.setFixedSize(400, 200)
         message.exec()
     
+    @property
+    def display_file(self):
+        return self.__display_file
+    
+    @property
+    def name_input(self):
+        return self.__name_input
+    
+    @property
+    def x_inputs(self):
+        return self.__x_inputs
+    
+    @property
+    def y_inputs(self):
+        return self.__y_inputs

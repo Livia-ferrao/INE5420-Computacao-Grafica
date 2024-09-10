@@ -1,26 +1,40 @@
-# from configurations import Configurations
-# from abc import abstractmethod
-# from add_object import AddObject
+from add_object import AddObject
 
-# class EditObject(AddObject):
-#     def __init__(self, existing_object):
-#         super().__init__()
-#         self.existing_object = existing_object
-#         self.populate_fields()
+class EditObject(AddObject):
+    def __init__(self, existing_object, display_file, object_list):
+        self.__n_coord = len(existing_object.coord)
+        super().__init__(display_file, object_list)
+        self.__existing_object = existing_object
+        self.__populateFields()
 
-#     def populate_fields(self):
-#         self.name_input.setText(self.existing_object.name)
-#         for i, (x, y) in enumerate(zip(self.existing_object.x_coords, self.existing_object.y_coords)):
-#             if i < len(self.x_inputs):
-#                 self.x_inputs[i].setValue(x)
-#                 self.y_inputs[i].setValue(y)
+    # Coloca o nome e coordenadas do objeto como valores iniciais da tela de edição
+    def __populateFields(self):
+        self.name_input.setText(self.__existing_object.name)
+        for i, (x, y) in enumerate(self.__existing_object.coord):
+            self.x_inputs[i].setValue(x)
+            self.y_inputs[i].setValue(y)
 
-#     def setTitle(self):
-#         self.setWindowTitle("Edit Object")
+    def setTitle(self):
+        self.setWindowTitle("Edit Object")
 
-#     def accept(self):
-#         # Update the existing object with the data from the input fields
-#         self.existing_object.name = self.name_input.text()
-#         self.existing_object.x_coords = [spinbox.value() for spinbox in self.x_inputs]
-#         self.existing_object.y_coords = [spinbox.value() for spinbox in self.y_inputs]
-#         super().accept()
+    def ok(self):
+        # Verifica se nome é repetido ou vazio
+        name = self.name_input.text().strip()
+        existing_names = self.display_file.getNames()
+        existing_names.remove(self.__existing_object.name)
+        if len(name) == 0:
+            self.noName()
+        elif name in existing_names:
+            self.repeatedName()
+        else:
+            self.__existing_object.name = self.name_input.text()
+            self.__existing_object.coord = self.getListCoord()
+            super().accept()
+    
+    @property
+    def existing_object(self):
+        return self.__existing_object
+    
+    @property
+    def n_coord(self):
+        return self.__n_coord

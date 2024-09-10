@@ -1,20 +1,32 @@
 
 class DisplayFile:
-    """
-    Class containing the objects
-    """
     def __init__(self):
-        self.objects_list = []
+        self.__objects_list = []
 
-    def add_object(self, g_object):
-        self.objects_list.append(g_object)
+    def addObject(self, g_object):
+        self.__objects_list.append(g_object)
     
-    def remove_object(self, i):
-        self.objects_list.pop(i)
+    def removeObject(self, i):
+        self.__objects_list.pop(i)
     
-    def get_names(self):
+    # Retorna os nomes de todos os objetos do display file
+    def getNames(self):
         names = []
-        for obj in self.objects_list:
+        for obj in self.__objects_list:
             names.append(obj.name)
         return names
+    
+    # Dado o nome de um objeto, retorna o objeto 
+    def getObject(self, name):
+        for obj in self.__objects_list:
+            if name == obj.name:
+                return obj
+        return None
+    
+    def updateObject(self, index, updated_object):
+        self.__objects_list[index] = updated_object
+
+    @property
+    def objects_list(self):
+        return self.__objects_list
     

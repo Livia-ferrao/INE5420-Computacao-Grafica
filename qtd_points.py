@@ -5,22 +5,25 @@ class QtdPoints(QDialog):
         super().__init__()
         self.setWindowTitle("Criar Polígono")
 
-        self.qtd_label = QLabel("Quantidade de pontos do polígono")
-        self.qtd_input = QSpinBox()
-        self.qtd_input.setRange(3, 1000000)
+        self.__qtd_label = QLabel("Quantidade de pontos do polígono")
+        self.__qtd_input = QSpinBox()
+        self.__qtd_input.setRange(3, 1000000)
         self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
-        self.setFixedSize(400, 200)
+        self.setFixedSize(400, 100)
 
-        self.preencher = QCheckBox("Preencher polígono")
-        self.ok_button = QPushButton("Ok")
-        self.cancel_button = QPushButton("Cancelar")
-        self.layout = QGridLayout(self)
+        # Botões 
+        self.__ok_button = QPushButton("Ok")
+        self.__cancel_button = QPushButton("Cancelar")
+        self.__ok_button.clicked.connect(self.accept)
+        self.__cancel_button.clicked.connect(self.reject)
 
-        self.layout.addWidget(self.qtd_label, 0, 0)
-        self.layout.addWidget(self.qtd_input, 0, 1)
-        self.layout.addWidget(self.preencher, 1, 0, 1, 2)
-        self.layout.addWidget(self.ok_button, 2, 1)
-        self.layout.addWidget(self.cancel_button, 2, 0)
+        # Layout
+        self.__layout = QGridLayout(self)
+        self.__layout.addWidget(self.__qtd_label, 0, 0)
+        self.__layout.addWidget(self.__qtd_input, 0, 1)
+        self.__layout.addWidget(self.__ok_button, 1, 1)
+        self.__layout.addWidget(self.__cancel_button, 1, 0)
+    
+    def qtdPoints(self):
+        return self.__qtd_input.value()
 
-        self.ok_button.clicked.connect(self.accept)
-        self.cancel_button.clicked.connect(self.reject)
