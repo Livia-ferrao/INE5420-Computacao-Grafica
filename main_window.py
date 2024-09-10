@@ -37,9 +37,10 @@ class MainWindow(QtWidgets.QMainWindow):
         return label
     
     # Construção dos botões de controle da window (movimentação e zoom)
-    def __createControlFrameButton(self, path_icon, function):
+    def __createControlFrameButton(self, path_icon, function, text):
         button = QtWidgets.QPushButton(self.__control_frame)
         button.setIcon(QtGui.QIcon(path_icon))
+        button.setToolTip(text)
         button.clicked.connect(function)
         button.setStyleSheet("background-color: rgb(212,208,200);")
         return button
@@ -96,12 +97,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         # Botões de controle da window
-        self.__button_up = self.__createControlFrameButton("icons/up-arrow.png", self.__moveUp)
-        self.__button_down = self.__createControlFrameButton("icons/down-arrow.png", self.__moveDown)
-        self.__button_left = self.__createControlFrameButton("icons/left-arrow.png", self.__moveLeft)
-        self.__button_right = self.__createControlFrameButton("icons/right-arrow.png", self.__moveRight)
-        self.__button_zoom_in = self.__createControlFrameButton("icons/zoom-in.png", self.__zoomIn)
-        self.__button_zoom_out = self.__createControlFrameButton("icons/zoom-out.png", self.__zoomOut)
+        self.__button_up = self.__createControlFrameButton("icons/up-arrow.png", self.__moveUp, "Mover window para cima")
+        self.__button_down = self.__createControlFrameButton("icons/down-arrow.png", self.__moveDown, "Mover window para baixo")
+        self.__button_left = self.__createControlFrameButton("icons/left-arrow.png", self.__moveLeft, "Mover window para esquerda")
+        self.__button_right = self.__createControlFrameButton("icons/right-arrow.png", self.__moveRight, "Mover window para direita")
+        self.__button_zoom_in = self.__createControlFrameButton("icons/zoom-in.png", self.__zoomIn, "Zoom in")
+        self.__button_zoom_out = self.__createControlFrameButton("icons/zoom-out.png", self.__zoomOut, "Zoom out")
 
         # Spin box da porcentagem de movimentação/zoom
         self.__control_scale = QtWidgets.QDoubleSpinBox()
