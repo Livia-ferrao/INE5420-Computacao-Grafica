@@ -18,7 +18,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__display_file = DisplayFile()
         self.__window = Window()
         self.setFixedSize(Configurations.window_X(), Configurations.window_Y())
-        self.setWindowTitle('Window')
+        self.setWindowTitle('Sistema gráfico')
         self.setStyleSheet("background-color: rgb(212,208,200);")
         self.__drawElements()
 
@@ -69,9 +69,11 @@ class MainWindow(QtWidgets.QMainWindow):
         # Viewport
         self.__viewport = Viewport(self.__view_frame, self.__window)
 
-        # Label da viewport
-        self.__viewport_label = self.__buildLabel("Viewport", self.__view_frame, 
-                                            250, Configurations.viewport()[1] - 20, 140, 20)
+        # Label de informações sobre a window
+        self.__messages_label = QtWidgets.QLabel(f"Window está mostrando de {self.__window.xw_min} a {self.__window.xw_max} no eixo x e de {self.__window.yw_min} a {self.__window.yw_max} no eixo y", self.__view_frame)
+        self.__messages_label.setStyleSheet("color: black; border: none;")
+        self.__messages_label.setWordWrap(True)
+        self.__messages_label.setGeometry(10, 515, 500, 60)
 
         # Frame de objetos
         self.__objects_frame = self.__buildFrame(self.__tools_frame, Configurations.objects_frame()[0],
@@ -153,6 +155,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_objects.addWidget(self.__object_list, 1, 0, 3, 1)
         self.__layout_objects.addWidget(self.__obj_list_label, 0, 0)
 
+    # Redesenha objetos e atualiza mensagem de informações sobre a window
+    def __updateViewframe(self):
+        self.__messages_label.setText(f"Window está mostrando de {self.__window.xw_min} a {self.__window.xw_max} no eixo x e de {self.__window.yw_min} a {self.__window.yw_max} no eixo y")
+        self.__viewport.drawObjects(self.__display_file.objects_list)
+
     # Ação do botão de adicionar objeto
     def __addObject(self):
         selected_option = self.__combo_box.currentText()
@@ -168,8 +175,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 add_dialog = None
         if add_dialog:
             if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                # Se um objeto for adicionado, desenha objetos da window na viewport
-                self.__viewport.drawObjects(self.__display_file.objects_list)
+                self.__updateViewframe()
 
     # Ação do botão de operações para um objeto selecionado da lista
     def __chooseOperation(self):
@@ -194,7 +200,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __deleteObject(self, index_selected_obj):
         self.__object_list.takeItem(index_selected_obj)
         self.__display_file.removeObject(index_selected_obj)
-        self.__viewport.drawObjects(self.__display_file.objects_list)
+        self.__updateViewframe()
 
     # Editar objeto
     def __editObject(self, index_selected_obj):
@@ -207,34 +213,34 @@ class MainWindow(QtWidgets.QMainWindow):
                     updated_object = edit_window.existing_object
                     selected_item.setText(updated_object.name) 
                     self.__display_file.updateObject(index_selected_obj, updated_object)
-                    self.__viewport.drawObjects(self.__display_file.objects_list)
+                    self.__updateViewframe()
 
     # Movimentação para esquerda
     def __moveLeft(self):
         self.__window.moveLeft(self.__control_scale.value())
-        self.__viewport.drawObjects(self.__display_file.objects_list)
+        self.__updateViewframe()
     
     # Movimentação para direita
     def __moveRight(self):
         self.__window.moveRight(self.__control_scale.value())
-        self.__viewport.drawObjects(self.__display_file.objects_list)
+        self.__updateViewframe()
 
     # Movimentação para cima
     def __moveUp(self):
         self.__window.moveUp(self.__control_scale.value())
-        self.__viewport.drawObjects(self.__display_file.objects_list)
+        self.__updateViewframe()
     
     # Movimentação para baixo
     def __moveDown(self):
         self.__window.moveDown(self.__control_scale.value())
-        self.__viewport.drawObjects(self.__display_file.objects_list)
+        self.__updateViewframe()
     
     # Zoom in
     def __zoomIn(self):
         self.__window.zoomIn(self.__control_scale.value())
-        self.__viewport.drawObjects(self.__display_file.objects_list)
+        self.__updateViewframe()
     
     # Zoom out
     def __zoomOut(self):
         self.__window.zoomOut(self.__control_scale.value())
-        self.__viewport.drawObjects(self.__display_file.objects_list)
+        self.__updateViewframe()

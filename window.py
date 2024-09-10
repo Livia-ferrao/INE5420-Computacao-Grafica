@@ -3,107 +3,58 @@ from configurations import Configurations
 
 class Window:
     def __init__(self):
-        self.__translating_matrix = self.__createTranslatingMatrix(0, 0)
-        self.__scaling_matrix = self.__createScalingMatrix(1, 1)
-        self.__transformMatrix()
-
-        # X e Y max e min da window inicial
+        # X e Y max e min da window
         self.__xw_min = Configurations.windowXmin()
         self.__xw_max = Configurations.windowXmax()
         self.__yw_min = Configurations.windowYmin()
         self.__yw_max = Configurations.windowYmax()
 
-        # Centro da window (meio que dá de ver na viewport)
-        self.__x_center = 0
-        self.__y_center = 0
-        # X e Y max e min da window atual (que dá de ver na viewport)
-        self.__x_min = self.__xw_min
-        self.__x_max = self.__xw_max
-        self.__y_min = self.__yw_min
-        self.__y_max = self.__yw_max
-    
-    # Matriz de translação
-    def __createTranslatingMatrix(self, dx, dy):
-        return [[1, 0, 0],
-                [0, 1, 0],
-                [dx, dy, 1]]
-    
-    # Matriz de escalonamento
-    def __createScalingMatrix(self, sx, sy):
-        return [[sx, 0, 0],
-                [0, sy, 0],
-                [0, 0, 1]]
-    
-    def __transformMatrix(self):
-        t_np = np.array(self.__translating_matrix)
-        s_np = np.array(self.__scaling_matrix)
-        result = np.matmul(t_np, s_np)
-        self.__transforming_matrix = result.tolist()
-
     # Movimentação para esquerda
     def moveLeft(self, scale):
-        d = (self.__x_max - self.__x_min) * (scale/100)
-        self.__x_center += d
-        self.__translating_matrix = self.__createTranslatingMatrix(self.__x_center, self.__y_center)
-        self.__transformMatrix()
-    
+        d = (self.__xw_max - self.__xw_min) * (scale/100)
+        self.__xw_max -= d
+        self.__xw_min -= d
+
     # Movimentação para direita
     def moveRight(self, scale):
-        d = (self.__x_max - self.__x_min) * (scale/100)
-        self.__x_center -= d
-        self.__translating_matrix = self.__createTranslatingMatrix(self.__x_center, self.__y_center)
-        self.__transformMatrix()
-    
+        d = (self.__xw_max - self.__xw_min) * (scale/100)
+        self.__xw_max += d
+        self.__xw_min += d
+
     # Movimentação para cima
     def moveUp(self, scale):
-        d = (self.__y_max - self.__y_min) * (scale/100)
-        self.__y_center -= d
-        self.__translating_matrix = self.__createTranslatingMatrix(self.__x_center, self.__y_center)
-        self.__transformMatrix()
-    
+        d = (self.__yw_max - self.__yw_min) * (scale/100)
+        self.__yw_max += d
+        self.__yw_min += d
+
     # Movimentação para baixo
     def moveDown(self, scale):
-        d = (self.__y_max - self.__y_min) * (scale/100)
-        self.__y_center += d
-        self.__translating_matrix = self.__createTranslatingMatrix(self.__x_center, self.__y_center)
-        self.__transformMatrix()
-    
+        d = (self.__yw_max - self.__yw_min) * (scale/100)
+        self.__yw_max -= d
+        self.__yw_min -= d
+
     # Zoom in
     def zoomIn(self, scale):
         scale = scale/100
-        x = ((self.__x_max - self.__x_min) * scale)/2
-        y = ((self.__y_max - self.__y_min) * scale)/2
+        dx = ((self.__xw_max - self.__xw_min) * scale)/2
+        dy = ((self.__yw_max - self.__yw_min) * scale)/2
 
-        self.__x_min += x
-        self.__x_max -= x
-        self.__y_min += y
-        self.__y_max -= y
-
-        sx = 2000/(self.__x_max-self.__x_min)
-        sy = 2000/(self.__y_max-self.__y_min)
-        self.__scaling_matrix = self.__createScalingMatrix(sx, sy)
-        self.__transformMatrix()
+        self.__xw_min += dx
+        self.__xw_max -= dx
+        self.__yw_min += dy
+        self.__yw_max -= dy
 
     # Zoom out
     def zoomOut(self, scale):
         scale = scale/100
-        x = ((self.__x_max - self.__x_min) * scale)/2
-        y = ((self.__y_max - self.__y_min) * scale)/2
+        dx = ((self.__xw_max - self.__xw_min) * scale)/2
+        dy = ((self.__yw_max - self.__yw_min) * scale)/2
 
-        self.__x_min -= x
-        self.__x_max += x
-        self.__y_min -= y
-        self.__y_max += y
+        self.__xw_min -= dx
+        self.__xw_max += dx
+        self.__yw_min -= dy
+        self.__yw_max += dy
 
-        sx = 2000/(self.__x_max-self.__x_min)
-        sy = 2000/(self.__y_max-self.__y_min)
-        self.__scaling_matrix = self.__createScalingMatrix(sx, sy)
-        self.__transformMatrix()
-
-    @property
-    def transforming_matrix(self):
-        return self.__transforming_matrix
-    
     @property
     def xw_min(self):
         return self.__xw_min
