@@ -157,7 +157,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Redesenha objetos e atualiza mensagem de informações sobre a window
     def __updateViewframe(self):
-        self.__messages_label.setText(f"Window está mostrando de {self.__window.xw_min} a {self.__window.xw_max} no eixo x e de {self.__window.yw_min} a {self.__window.yw_max} no eixo y")
+        self.__messages_label.setText(f"Window está mostrando de {self.__window.xw_min:.2f} a {self.__window.xw_max:.2f} no eixo x e de {self.__window.yw_min:.2f} a {self.__window.yw_max:.2f} no eixo y")
         self.__viewport.drawObjects(self.__display_file.objects_list)
 
     # Ação do botão de adicionar objeto
