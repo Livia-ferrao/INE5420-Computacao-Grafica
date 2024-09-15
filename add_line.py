@@ -10,7 +10,7 @@ class AddLine(AddObject):
         self.setWindowTitle("Adicionar Reta")
     
     def create(self):
-        return Line(self.name_input.text(), self.getListCoord())
+        return Line(self.name_input.text(), self.getListCoord(), self.color)
 
     @property
     def n_coord(self):

@@ -1,13 +1,15 @@
-from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QSpinBox, QScrollArea, QWidget, QVBoxLayout, QMessageBox
+from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QSpinBox, QScrollArea, QWidget, QVBoxLayout, QMessageBox, QHBoxLayout
+from PySide6.QtGui import QColor
 from configurations import Configurations
 from abc import abstractmethod
+from color_picker import ColorPicker
 
 class AddObject(QDialog):
     def __init__(self, display_file, object_list):
         super().__init__()
         self.__display_file = display_file
         self.__object_list = object_list
-
+    
         self.setFixedSize(400, 200)
         # Definindo área de scrool e layout
         self.__main_layout = QVBoxLayout(self)
@@ -28,6 +30,7 @@ class AddObject(QDialog):
         self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
 
         self.__drawXYinputs()
+        self.__drawColorInput()
         self.__drawButtons()
         self.setTitle()
 
@@ -48,9 +51,9 @@ class AddObject(QDialog):
             self.__layout.addWidget(y_label, 2+2*i, 0)
             self.__layout.addWidget(self.__y_inputs[i], 2+2*i, 1)
     
-    # Botôes ok e cancelar
+    # Botões ok e cancelar
     def __drawButtons(self):
-        line = self.n_coord*2 + 1
+        line = self.n_coord*2 + 2
         self.__ok_button = QPushButton("OK")
         self.__layout.addWidget(self.__ok_button, line, 1)
         self.__cancel_button = QPushButton("Cancelar")
@@ -58,7 +61,47 @@ class AddObject(QDialog):
 
         self.__cancel_button.clicked.connect(self.reject)
         self.__ok_button.clicked.connect(self.ok)
+        self.__ok_button.setFocus()
     
+    # Seleção de cor
+    def __drawColorInput(self):
+        line = self.n_coord*2 + 1
+        
+        color_label = QLabel("Cor")
+        self.__layout.addWidget(color_label, line, 0)
+
+        line_layout = QHBoxLayout()
+        # Retângulo da cor selecionada
+        self.__color_display = QLabel()
+        self.__color_display.setFixedSize(80, 20)
+        line_layout.addWidget(self.__color_display)
+
+        # Label do código da cor selecionada
+        self.__color_code_label = QLabel()
+        line_layout.addWidget(self.__color_code_label)
+        
+        # Cor inicial: preto
+        self.__updateColor(QColor(0, 0, 0))
+
+        # Botão para selecionar outra cor
+        self.__select_color_button = QPushButton("Trocar cor")
+        self.__select_color_button.clicked.connect(self.__drawColorPicker)
+        line_layout.addWidget(self.__select_color_button)
+
+        self.__layout.addLayout(line_layout, line, 1)
+        
+    # Desenha um QDialog (ColorPicker) para selecionar a cor
+    def __drawColorPicker(self):
+        self.__color_picker = ColorPicker(self.__color)
+        if self.__color_picker.exec() == QDialog.DialogCode.Accepted:
+            self.__updateColor(self.__color_picker.selected_color)
+    
+    # Atualiza a cor
+    def __updateColor(self, color):
+        self.__color = color
+        self.__color_display.setStyleSheet(f"background-color: {self.__color.name()};")
+        self.__color_code_label.setText(self.__color.name())
+
     # Retorna lista das coordenadas inseridas
     def getListCoord(self):
         list_coord = []
@@ -120,3 +163,7 @@ class AddObject(QDialog):
     @property
     def y_inputs(self):
         return self.__y_inputs
+    
+    @property
+    def color(self):
+        return self.__color

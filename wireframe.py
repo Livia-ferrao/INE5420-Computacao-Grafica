@@ -4,11 +4,11 @@ from PySide6.QtCore import QPointF, Qt
 from type import Type
 
 class Wireframe(Object):
-    def __init__(self, name, coord):
-        super().__init__(name, Type.WIREFRAME, coord)
+    def __init__(self, name, coord, color):
+        super().__init__(name, Type.WIREFRAME, coord, color)
 
     def draw(self, coord_viewport, painter):
-        pen = QPen(QColor('black'), 3)
+        pen = QPen(self.color, 3)
         painter.setPen(pen)
 
         # Desenhando linhas do polígono

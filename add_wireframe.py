@@ -10,7 +10,7 @@ class AddWireframe(AddObject):
         self.setWindowTitle("Adicionar Polígono")
     
     def create(self):
-        return Wireframe(self.name_input.text(), self.getListCoord())
+        return Wireframe(self.name_input.text(), self.getListCoord(), self.color)
     
     @property
     def n_coord(self):

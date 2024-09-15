@@ -10,7 +10,7 @@ class AddPoint(AddObject):
         self.setWindowTitle("Adicionar Ponto")
     
     def create(self):
-        return Point(self.name_input.text(), self.getListCoord())
+        return Point(self.name_input.text(), self.getListCoord(), self.color)
     
     @property
     def n_coord(self):

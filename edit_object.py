@@ -13,6 +13,7 @@ class EditObject(AddObject):
         for i, (x, y) in enumerate(self.__existing_object.coord):
             self.x_inputs[i].setValue(x)
             self.y_inputs[i].setValue(y)
+        self._AddObject__updateColor(self.__existing_object.color)
 
     def setTitle(self):
         self.setWindowTitle("Edit Object")
@@ -29,6 +30,7 @@ class EditObject(AddObject):
         else:
             self.__existing_object.name = self.name_input.text()
             self.__existing_object.coord = self.getListCoord()
+            self.__existing_object.color = self.color
             super().accept()
     
     @property
