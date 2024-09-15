@@ -187,6 +187,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.__deleteObject(index_selected_obj)
                 elif operations.clicked_button == "edit":
                     self.__editObject(index_selected_obj)
+                elif operations.clicked_button == "transformations":
+                    self.__transformObject(index_selected_obj)
         else:
             # Mensagem aparece se nenhum objeto for selecionado
             message = QMessageBox()
@@ -214,6 +216,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     selected_item.setText(updated_object.name) 
                     self.__display_file.updateObject(index_selected_obj, updated_object)
                     self.__updateViewframe()
+    
+    # Criar e executar transformações em um objeto
+    def __transformObject(self, index_selected_obj):
+        selected_obj = self.__display_file.objects_list[index_selected_obj]
 
     # Movimentação para esquerda
     def __moveLeft(self):

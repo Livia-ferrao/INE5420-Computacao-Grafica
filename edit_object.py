@@ -3,8 +3,8 @@ from add_object import AddObject
 class EditObject(AddObject):
     def __init__(self, existing_object, display_file, object_list):
         self.__n_coord = len(existing_object.coord)
-        super().__init__(display_file, object_list)
         self.__existing_object = existing_object
+        super().__init__(display_file, object_list)
         self.__populateFields()
 
     # Coloca o nome e coordenadas do objeto como valores iniciais da tela de edição
@@ -16,7 +16,7 @@ class EditObject(AddObject):
         self._AddObject__updateColor(self.__existing_object.color)
 
     def setTitle(self):
-        self.setWindowTitle("Edit Object")
+        self.setWindowTitle(f"Editar objeto \"{self.__existing_object.name}\"")
 
     def ok(self):
         # Verifica se nome é repetido ou vazio
