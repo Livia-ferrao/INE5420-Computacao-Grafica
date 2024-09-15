@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QDialog, QLabel, QGridLayout, QPushButton, QSpinBox, QCheckBox
+from PySide6.QtWidgets import QDialog, QLabel, QGridLayout, QPushButton, QSpinBox
 
 class QtdPoints(QDialog):
     def __init__(self):

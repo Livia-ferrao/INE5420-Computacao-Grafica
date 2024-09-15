@@ -1,6 +1,5 @@
 from object import Object
-from PySide6.QtGui import QColor, QPen, QPolygonF, QBrush
-from PySide6.QtCore import QPointF, Qt
+from PySide6.QtGui import QPen
 from type import Type
 
 class Wireframe(Object):
@@ -17,4 +16,3 @@ class Wireframe(Object):
                 painter.drawLine(x, y, coord_viewport[0][0], coord_viewport[0][1])
             else:
                 painter.drawLine(x, y, coord_viewport[i+1][0], coord_viewport[i+1][1])
-        polygon = QPolygonF([QPointF(x, y) for x, y in coord_viewport])

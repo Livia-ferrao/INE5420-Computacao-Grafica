@@ -1,5 +1,5 @@
 from object import Object
-from PySide6.QtGui import QColor, QPen
+from PySide6.QtGui import QPen
 from type import Type
 
 class Line(Object):
