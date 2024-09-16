@@ -39,7 +39,7 @@ class Object(ABC):
     def color(self, new_color):
         self.__color = new_color
     
-    def get_center(self):
+    def getCenter(self):
         coord_len = len(self.__coord)
         center_x = center_y = 0
         for x, y in self.__coord:

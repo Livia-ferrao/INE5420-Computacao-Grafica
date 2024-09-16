@@ -5,7 +5,7 @@ class Operations(QDialog):
     def __init__(self, name):
         super().__init__()
 
-        self.setFixedSize(400, 100)
+        self.setFixedSize(450, 100)
         self.setWindowTitle("Operações")
         self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
 
