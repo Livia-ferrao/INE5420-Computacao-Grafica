@@ -38,3 +38,11 @@ class Object(ABC):
     @color.setter
     def color(self, new_color):
         self.__color = new_color
+    
+    def get_center(self):
+        coord_len = len(self.__coord)
+        center_x = center_y = 0
+        for x, y in self.__coord:
+            center_x += x/coord_len
+            center_y += y/coord_len
+        return (center_x, center_y)

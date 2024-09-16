@@ -11,6 +11,7 @@ from add_line import AddLine
 from add_wireframe import AddWireframe
 from display_file import DisplayFile
 from operations import Operations
+from transformations_dialog import TransformationsDialog
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -220,6 +221,9 @@ class MainWindow(QtWidgets.QMainWindow):
     # Criar e executar transformações em um objeto
     def __transformObject(self, index_selected_obj):
         selected_obj = self.__display_file.objects_list[index_selected_obj]
+        transform_window = TransformationsDialog(selected_obj)
+        if transform_window.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+            self.__updateViewframe()
 
     # Movimentação para esquerda
     def __moveLeft(self):
