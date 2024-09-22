@@ -16,7 +16,7 @@ class EditObject(AddObject):
         self._AddObject__updateColor(self.__existing_object.color)
 
     def setTitle(self):
-        self.setWindowTitle(f"Editar objeto \"{self.__existing_object.name}\"")
+        self.setWindowTitle(f"Editar objeto")
 
     def ok(self):
         # Verifica se nome é repetido ou vazio

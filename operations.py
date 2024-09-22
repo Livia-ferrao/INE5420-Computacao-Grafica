@@ -10,7 +10,8 @@ class Operations(QDialog):
         self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
 
         self.__label = QtWidgets.QLabel(f"Escolha uma operação para fazer com o objeto \"{name}\"")
-
+        self.__label.setWordWrap(True) 
+        
         # Botões
         self.__edit_button = QtWidgets.QPushButton("Editar")
         self.__delete_button = QtWidgets.QPushButton("Deletar")
