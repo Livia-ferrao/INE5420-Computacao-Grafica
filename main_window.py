@@ -106,6 +106,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__button_right = self.__createControlFrameButton("icons/right-arrow.png", self.__moveRight, "Mover window para direita")
         self.__button_zoom_in = self.__createControlFrameButton("icons/zoom-in.png", self.__zoomIn, "Zoom in")
         self.__button_zoom_out = self.__createControlFrameButton("icons/zoom-out.png", self.__zoomOut, "Zoom out")
+        self.__button_rotate_right = self.__createControlFrameButton("icons/rotate-right", self.__rotateRight, "Rotacionar window para direita")
+        self.__button_rotate_left = self.__createControlFrameButton("icons/rotate-left.png", self.__rotateLeft, "Rotacionar window para esquerda")
 
         # Spin box da porcentagem de movimentação/zoom
         self.__control_scale = QtWidgets.QDoubleSpinBox()
@@ -118,17 +120,28 @@ class MainWindow(QtWidgets.QMainWindow):
         # Label "%" do lado da spin box da porcentagem de movimentação/zoom
         self.__scale_label = QtWidgets.QLabel("%")
         self.__scale_label.setStyleSheet("color: black; border: none;")
+        
+        # Spin box do ângulo para rotação
+        self.__angle_spin = QtWidgets.QSpinBox()
+        self.__angle_spin.setValue(30)
+        self.__angle_spin.setMinimum(0)
+        self.__angle_spin.setMaximum(360)
+        self.__angle_spin.setSingleStep(1)
+        self.__angle_spin.setStyleSheet("background-color: rgb(212,208,200); color: black;")
 
         # Layout do frame de controle
         self.__layout_control = QtWidgets.QGridLayout(self.__control_frame)
         self.__layout_control.addWidget(self.__control_scale, 0, 0)
         self.__layout_control.addWidget(self.__scale_label, 0, 1)
+        self.__layout_control.addWidget(self.__angle_spin, 0, 1)
         self.__layout_control.addWidget(self.__button_up, 1, 2)
         self.__layout_control.addWidget(self.__button_left, 2, 1)
         self.__layout_control.addWidget(self.__button_right, 2, 3)
         self.__layout_control.addWidget(self.__button_down, 3, 2)
         self.__layout_control.addWidget(self.__button_zoom_in, 1, 0)
-        self.__layout_control.addWidget(self.__button_zoom_out, 3, 0)
+        self.__layout_control.addWidget(self.__button_zoom_out, 2, 0)
+        self.__layout_control.addWidget(self.__button_rotate_right, 3, 0)
+        self.__layout_control.addWidget(self.__button_rotate_left, 4, 0)
 
         # Combo box para escolher entre ponto, reta e polígono
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
@@ -224,6 +237,17 @@ class MainWindow(QtWidgets.QMainWindow):
         transform_window = TransformationsDialog(selected_obj)
         if transform_window.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             self.__updateViewframe()
+
+    # Rotacionar para esquerda
+    def __rotateLeft(self):
+        self.__window.rotateLeft(-self.__angle_spin.value())
+        self.__updateViewframe()
+
+     # Rotacionar para direita
+    def __rotateRight(self):
+        pass
+        # self.__window.rotateRoght(self.__angle_spin.value())
+        # self.__updateViewframe()      
 
     # Movimentação para esquerda
     def __moveLeft(self):

@@ -8,6 +8,16 @@ class Window:
         self.__xw_max = Configurations.windowXmax()
         self.__yw_min = Configurations.windowYmin()
         self.__yw_max = Configurations.windowYmax()
+        # Vetor aponta inicialmente para cima
+        self.__view_up_vector = np.array([0, 1])
+        
+    def get_center(self):
+        center_x = (self.__xw_max + self.__xw_min) / 2
+        center_y = (self.__yw_max + self.__yw_min) / 2
+        return np.array([center_x, center_y])
+        
+    def rotateLeft(self, theta):
+        pass
 
     # Movimentação para esquerda
     def moveLeft(self, scale):
