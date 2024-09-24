@@ -144,11 +144,11 @@ class TransformationsDialog(QDialog):
 
     # Faz a translação do objeto
     def __translateObject(self):
-        #rotation = MatrixGenerator.generateRotationMatrix(-self.window.angle)
+        rotation = MatrixGenerator.generateRotationMatrix(self.window.angle)
         translating_matrix = MatrixGenerator.generateTranslationMatrix(self.__translation_dx.value(), self.__translation_dy.value())
-        #rotation_back = MatrixGenerator.generateRotationMatrix(self.window.angle)
-        #transforming_matrix = np.matmul(np.matmul(rotation, translating_matrix), rotation_back)
-        transforming_matrix = translating_matrix
+        rotation_back = MatrixGenerator.generateRotationMatrix(-self.window.angle)
+        transforming_matrix = np.matmul(np.matmul(rotation, translating_matrix), rotation_back)
+        #transforming_matrix = translating_matrix
         self.__transformObject(transforming_matrix)
         self.accept()
         
