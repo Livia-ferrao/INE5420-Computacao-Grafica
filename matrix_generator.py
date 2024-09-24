@@ -19,6 +19,6 @@ class MatrixGenerator:
         angle = np.radians(theta)
         cos = np.cos(angle)
         sin = np.sin(angle)
-        return np.array([[cos, sin, 0],
-                         [-sin,  cos, 0],
+        return np.array([[cos, -sin, 0],
+                         [sin,  cos, 0],
                          [  0,    0, 1]])

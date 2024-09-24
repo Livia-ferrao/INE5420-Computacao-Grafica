@@ -234,7 +234,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # Criar e executar transformações em um objeto
     def __transformObject(self, index_selected_obj):
         selected_obj = self.__display_file.objects_list[index_selected_obj]
-        transform_window = TransformationsDialog(selected_obj)
+        transform_window = TransformationsDialog(selected_obj, self.__window)
         if transform_window.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             self.__updateViewframe()
 
