@@ -241,7 +241,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # Rotacionar para esquerda
     def __rotateLeft(self):
         self.__window.rotateLeft(-self.__angle_spin.value())
-        self.__updateViewframe()
+        self.__updateViewframe() 
 
      # Rotacionar para direita
     def __rotateRight(self):
