@@ -20,9 +20,6 @@ class Viewport(QLabel):
         self.setPixmap(self.__pix_map)
 
     def drawObjects(self, obj_list):
-        # TESTE
-        # self.__window.atualizaCoordenadaAposRotacao()
-        
         self.__pix_map.fill(Qt.white)
         painter = QPainter(self.__pix_map)
         
@@ -42,8 +39,7 @@ class Viewport(QLabel):
     
    # Normalizar coordenadas
     def normalizeCoords(self, obj_list):
-        self.__window.windowNormalize()
-        transforming_matrix = self.__window.transforming_matrix
+        transforming_matrix = self.__window.windowNormalize()
         
         # Coordenadas normalizadas de todos objetos da tela
         normalized_coords = []

@@ -70,12 +70,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # Viewport
         self.__viewport = Viewport(self.__view_frame, self.__window)
 
-        # Label de informações sobre a window
-        self.__messages_label = QtWidgets.QLabel(f"Window está mostrando de {self.__window.xw_min} a {self.__window.xw_max} no eixo x e de {self.__window.yw_min} a {self.__window.yw_max} no eixo y", self.__view_frame)
-        self.__messages_label.setStyleSheet("color: black; border: none;")
-        self.__messages_label.setWordWrap(True)
-        self.__messages_label.setGeometry(10, 515, 500, 60)
-
         # Frame de objetos
         self.__objects_frame = self.__buildFrame(self.__tools_frame, Configurations.objects_frame()[0],
                                          Configurations.objects_frame()[1],
@@ -169,9 +163,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_objects.addWidget(self.__object_list, 1, 0, 3, 1)
         self.__layout_objects.addWidget(self.__obj_list_label, 0, 0)
 
-    # Redesenha objetos e atualiza mensagem de informações sobre a window
+    # Redesenha objetos
     def __updateViewframe(self):
-        self.__messages_label.setText(f"Window está mostrando de {self.__window.xw_min:.2f} a {self.__window.xw_max:.2f} no eixo x e de {self.__window.yw_min:.2f} a {self.__window.yw_max:.2f} no eixo y")
         self.__viewport.drawObjects(self.__display_file.objects_list)
 
     # Ação do botão de adicionar objeto
