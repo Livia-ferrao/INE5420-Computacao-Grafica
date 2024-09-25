@@ -19,9 +19,6 @@ class Window:
         # View up vector aponta inicialmente para cima
         self.__view_up_vector = [0, 1]
 
-        # Ângulo de rotação da window
-        self.__angle = 0 
-
     # Retorna o centro da window
     def __getCenter(self):
         x_cont = y_cont = 0
@@ -89,7 +86,6 @@ class Window:
         self.__yw_max += dy
     
     def rotate(self, theta):
-        self.__angle += theta
         self.__view_up_vector = self.__rotatePoint(self.__view_up_vector, theta)
         self.__updateEdges(theta)
     
@@ -118,8 +114,11 @@ class Window:
         Sx = 2/(self.__xw_max - self.__xw_min)
         Sy = 2/(self.__yw_max - self.__yw_min)
 
+        np_viewup = np.array(self.__view_up_vector)
+        angle = np.degrees(np.arctan2(np_viewup[0], np_viewup[1]))
+
         translating_matrix = MatrixGenerator.generateTranslationMatrix(-Wxc, -Wyc)
-        rotating_matrix = MatrixGenerator.generateRotationMatrix(-self.__angle)
+        rotating_matrix = MatrixGenerator.generateRotationMatrix(-angle)
         scaling_matrix = MatrixGenerator.generateScalingMatrix(Sx, Sy)
         result = np.matmul(np.matmul(translating_matrix, rotating_matrix), scaling_matrix)
         return result.tolist()
@@ -141,5 +140,5 @@ class Window:
         return self.__yw_max
     
     @property
-    def angle(self):
-        return self.__angle
+    def view_up_vector(self):
+        return self.__view_up_vector
