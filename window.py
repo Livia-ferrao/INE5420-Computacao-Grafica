@@ -88,9 +88,9 @@ class Window:
         self.__yw_min -= dy
         self.__yw_max += dy
     
-    def rotateLeft(self, theta):
+    def rotate(self, theta):
         self.__angle += theta
-        self.__view_up_vector = self.__rotatePoint(self.__view_up_vector, -theta)
+        self.__view_up_vector = self.__rotatePoint(self.__view_up_vector, theta)
         self.__updateEdges(theta)
     
     def __rotatePoint(self, point, angle):
@@ -119,7 +119,7 @@ class Window:
         Sy = 2/(self.__yw_max - self.__yw_min)
 
         translating_matrix = MatrixGenerator.generateTranslationMatrix(-Wxc, -Wyc)
-        rotating_matrix = MatrixGenerator.generateRotationMatrix(self.__angle)
+        rotating_matrix = MatrixGenerator.generateRotationMatrix(-self.__angle)
         scaling_matrix = MatrixGenerator.generateScalingMatrix(Sx, Sy)
         result = np.matmul(np.matmul(translating_matrix, rotating_matrix), scaling_matrix)
         return result.tolist()
