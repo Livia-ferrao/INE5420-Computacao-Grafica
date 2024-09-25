@@ -24,7 +24,7 @@ class Viewport(QLabel):
         painter = QPainter(self.__pix_map)
         
         # Normalizar as coordenadas
-        normalized_coords = self.normalizeCoords(obj_list)
+        normalized_coords = self.__normalizeCoords(obj_list)
 
         # Desenha todos os objetos de obj_list (e transforma pra Viewport)
         for idx, obj in enumerate(obj_list):
@@ -38,7 +38,7 @@ class Viewport(QLabel):
         self.setPixmap(self.__pix_map)
     
    # Normalizar coordenadas
-    def normalizeCoords(self, obj_list):
+    def __normalizeCoords(self, obj_list):
         transforming_matrix = self.__window.windowNormalize()
         
         # Coordenadas normalizadas de todos objetos da tela
@@ -46,12 +46,8 @@ class Viewport(QLabel):
         for obj in obj_list:
             obj_transformed_coords = []
             for x, y in obj.coord:
-                coord_np = np.array([x, y, 1])
-                matrix_np = np.array(transforming_matrix)
-                dot_product = np.dot(coord_np, matrix_np)
-                transformed_coord = dot_product.tolist()
+                transformed_coord = (np.dot(np.array([x, y, 1]), np.array(transforming_matrix))).tolist()
                 obj_transformed_coords.append(transformed_coord[:2])
-                
             normalized_coords.append(obj_transformed_coords)
         return normalized_coords
 

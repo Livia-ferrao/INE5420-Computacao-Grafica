@@ -32,34 +32,35 @@ class Window:
         distance = (self.__xw_max - self.__xw_min) * (scale/100)
         (x_viewup, y_viewup) = self.__view_up_vector
         vector = self.__rotatePoint([x_viewup, y_viewup], -90)
-        distance_vector = (distance*np.array(vector)).tolist()
-        self.__move(distance_vector)
+        (dx, dy) = (distance*np.array(vector)).tolist()
+        self.__move(dx, dy)
 
     # Movimentação para direita
     def moveRight(self, scale):
         distance = (self.__xw_max - self.__xw_min) * (scale/100)
         (x_viewup, y_viewup) = self.__view_up_vector
         vector = self.__rotatePoint([x_viewup, y_viewup], 90)
-        distance_vector = (distance*np.array(vector)).tolist()
-        self.__move(distance_vector)
+        (dx, dy) = (distance*np.array(vector)).tolist()
+        self.__move(dx, dy)
 
     # Movimentação para cima
     def moveUp(self, scale):
         distance = (self.__yw_max - self.__yw_min) * (scale/100)
-        distance_vector = (distance*np.array(self.__view_up_vector)).tolist()
-        self.__move(distance_vector)
+        (dx, dy) = (distance*np.array(self.__view_up_vector)).tolist()
+        self.__move(dx, dy)
 
     # Movimentação para baixo
     def moveDown(self, scale):
         distance = (self.__yw_max - self.__yw_min) * (scale/100)
-        distance_vector = (distance*np.array(self.__view_up_vector)*-1).tolist()
-        self.__move(distance_vector)
+        (dx, dy) = (distance*np.array(self.__view_up_vector)*-1).tolist()
+        self.__move(dx, dy)
 
-    def __move(self, distance):
-        translation_matrix = MatrixGenerator.generateTranslationMatrix(distance[0], distance[1])
+    # Função chamada por todas as movimentações para fazer a movimentação efetiva da window
+    def __move(self, dx, dy):
+        translation_matrix = MatrixGenerator.generateTranslationMatrix(dx, dy)
         new_edges = []
         for x, y in self.__edges:
-            new_edge = np.dot(np.array([x, y, 1]), translation_matrix)
+            new_edge = np.matmul(np.array([x, y, 1]), translation_matrix)
             new_edges.append((new_edge[0], new_edge[1]))
         self.__edges = new_edges
     
@@ -85,35 +86,41 @@ class Window:
         self.__yw_min -= dy
         self.__yw_max += dy
     
+    # Rotação da window
     def rotate(self, theta):
         self.__view_up_vector = self.__rotatePoint(self.__view_up_vector, theta)
         self.__updateEdges(theta)
     
+    # Rotaciona um ponto por um ângulo
     def __rotatePoint(self, point, angle):
         rotation_matrix = MatrixGenerator.generateRotationMatrix(angle)
-        result = np.dot(np.array([[point[0], point[1], 1]]), rotation_matrix).tolist()
-        return [result[0][0], result[0][1]]
+        result = np.matmul(np.array([point[0], point[1], 1]), rotation_matrix).tolist()[0:2]
+        return result
     
+    # Atualiza os cantos da window quando uma rotação acontece
     def __updateEdges(self, theta):
         (dx, dy) = self.__getCenter()
         translation_matrix1 = MatrixGenerator.generateTranslationMatrix(-dx, -dy)
         rotation_matrix = MatrixGenerator.generateRotationMatrix(theta)
         translation_matrix2 = MatrixGenerator.generateTranslationMatrix(dx, dy)
-        transforming_matrix = np.dot(translation_matrix1, np.dot(rotation_matrix, translation_matrix2))
+        transforming_matrix = np.matmul(translation_matrix1, np.matmul(rotation_matrix, translation_matrix2))
 
         new_edges = []
         for x, y in self.__edges:
-            new_edge = np.dot(np.array([[x, y, 1]]), transforming_matrix).tolist()[0][0:2]
+            new_edge = np.matmul(np.array([x, y, 1]), transforming_matrix).tolist()[0:2]
             new_edges.append(new_edge)
         self.__edges = new_edges
-        
-    def windowNormalize(self):        
-
+    
+    # Retorna a matriz de transformação para normalizar os objetos
+    def windowNormalize(self):
+        # Deslocamento (centro da window) da matriz de translação
         (Wxc, Wyc) = self.__getCenter()
 
+        # Escala da matriz de escalonamento
         Sx = 2/(self.__xw_max - self.__xw_min)
         Sy = 2/(self.__yw_max - self.__yw_min)
 
+        # Ângulo (do view up vector comparado ao vetor para cima [0, 1]) da matriz de rotação
         np_viewup = np.array(self.__view_up_vector)
         angle = np.degrees(np.arctan2(np_viewup[0], np_viewup[1]))
 

@@ -1,5 +1,6 @@
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtWidgets import QMessageBox
+from PySide6.QtCore import Qt
 
 from edit_object import EditObject
 from configurations import Configurations
@@ -115,6 +116,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__scale_label = QtWidgets.QLabel("%")
         self.__scale_label.setStyleSheet("color: black; border: none;")
         
+        # Label em cima do spin box do ângulo de rotação
+        self.__rotation_label = QtWidgets.QLabel("Ângulo de rotação")
+        self.__rotation_label.setStyleSheet("color: black; border: none;")
+        self.__rotation_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
         # Spin box do ângulo para rotação
         self.__angle_spin = QtWidgets.QSpinBox()
         self.__angle_spin.setValue(30)
@@ -127,16 +133,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_control = QtWidgets.QGridLayout(self.__control_frame)
         self.__layout_control.addWidget(self.__control_scale, 0, 0)
         self.__layout_control.addWidget(self.__scale_label, 0, 1)
-        self.__layout_control.addWidget(self.__angle_spin, 0, 1)
-        self.__layout_control.addWidget(self.__button_up, 1, 2)
-        self.__layout_control.addWidget(self.__button_left, 2, 1)
-        self.__layout_control.addWidget(self.__button_right, 2, 3)
-        self.__layout_control.addWidget(self.__button_down, 3, 2)
+        self.__layout_control.addWidget(self.__angle_spin, 4, 2)
+        self.__layout_control.addWidget(self.__button_up, 0, 2)
+        self.__layout_control.addWidget(self.__button_left, 1, 1)
+        self.__layout_control.addWidget(self.__button_right, 1, 3)
+        self.__layout_control.addWidget(self.__button_down, 2, 2)
         self.__layout_control.addWidget(self.__button_zoom_in, 1, 0)
         self.__layout_control.addWidget(self.__button_zoom_out, 2, 0)
-        self.__layout_control.addWidget(self.__button_rotate_right, 3, 0)
-        self.__layout_control.addWidget(self.__button_rotate_left, 4, 0)
-
+        self.__layout_control.addWidget(self.__button_rotate_right, 4, 3)
+        self.__layout_control.addWidget(self.__button_rotate_left, 4, 1)
+        self.__layout_control.addWidget(self.__rotation_label, 3, 1, 1, 3)
+        
         # Combo box para escolher entre ponto, reta e polígono
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
         self.__combo_box.addItems(["Ponto", "Reta", "Polígono"])
