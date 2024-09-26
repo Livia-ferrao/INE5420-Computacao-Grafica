@@ -36,6 +36,11 @@ class Configurations:
     def control_frame():
         return (10, 225, 280, 165)
     
+    # Geometria do frame de gerência de arquivos
+    @staticmethod
+    def files_frame():
+        return (10, 420, 280, 140)
+    
     # Menor coordenada possível para x ou y do objeto
     @staticmethod
     def min_coord():

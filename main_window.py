@@ -47,12 +47,18 @@ class MainWindow(QtWidgets.QMainWindow):
         button.setStyleSheet("background-color: rgb(212,208,200);")
         return button
     
-    # Construção dos botões do frame de objetos
-    def __createObjectFrameButton(self, name, function):
-        button = QtWidgets.QPushButton(name, self.__objects_frame)
+    # Construção dos botões do frame de objetos e arquivos
+    def __createObjectFileFrameButton(self, name, function, frame):
+        button = QtWidgets.QPushButton(name, frame)
         button.clicked.connect(function)
         button.setStyleSheet("background-color: rgb(212,208,200); color: black")
         return button
+    
+    # Construção dos inputs do frame de arquivos
+    def __createFileFrameInput(self):
+        input_file = QtWidgets.QLineEdit(self.__files_frame)
+        input_file.setStyleSheet("background-color: rgb(212,208,200); color: black")
+        return input_file
     
     # Desenha principais elementos da tela
     def __drawElements(self):
@@ -92,7 +98,17 @@ class MainWindow(QtWidgets.QMainWindow):
         # Label do frame de controle da window
         self.__control_label = self.__buildLabel("Controle da window", self.__tools_frame,
                                            80, Configurations.control_frame()[1] - 20, 140, 20)
-
+        
+        # Frame de gerenciar arquivos
+        self.__files_frame = self.__buildFrame(self.__tools_frame, Configurations.files_frame()[0],
+                                         Configurations.files_frame()[1],
+                                         Configurations.files_frame()[2],
+                                         Configurations.files_frame()[3])
+        self.__files_frame.setStyleSheet("background-color: rgb(165,165,165);")
+        
+        # Label do frame de gerencia de arquivos
+        self.___files_label = self.__buildLabel("Gerência de arquivos", self.__tools_frame,
+                                           80, Configurations.files_frame()[1] - 20, 140, 20)
 
         # Botões de controle da window
         self.__button_up = self.__createControlFrameButton("icons/up-arrow.png", self.__moveUp, "Mover window para cima")
@@ -150,8 +166,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__combo_box.setStyleSheet("background-color: rgb(212,208,200); color: black")
         
         # Botões no frame de objetos
-        self.__add_button = self.__createObjectFrameButton('Adicionar', self.__addObject)
-        self.__operations_button = self.__createObjectFrameButton('Operações', self.__chooseOperation)
+        self.__add_button = self.__createObjectFileFrameButton('Adicionar', self.__addObject, self.__objects_frame)
+        self.__operations_button = self.__createObjectFileFrameButton('Operações', self.__chooseOperation, self.__objects_frame)
 
         # Lista de objetos
         self.__object_list = QtWidgets.QListWidget(self.__objects_frame)
@@ -169,7 +185,30 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_objects.addWidget(self.__operations_button, 3, 1)
         self.__layout_objects.addWidget(self.__object_list, 1, 0, 3, 1)
         self.__layout_objects.addWidget(self.__obj_list_label, 0, 0)
-
+        
+        # Inputs no frame de arquiovs
+        self.__read_file_label = self.__createFileFrameInput()
+        self.__save_file_label = self.__createFileFrameInput()
+        
+        # # Botões no frame de arquivos
+        self.__read_file_button = self.__createObjectFileFrameButton('Ler arquivo', self.__readFile, self.__files_frame)
+        self.__save_file_button = self.__createObjectFileFrameButton('Salvar arquivo', self.__saveFile, self.__files_frame)
+        
+        # # Layout do frame de arquivos
+        self.__layout_files = QtWidgets.QGridLayout(self.__files_frame)
+        self.__layout_files.addWidget(self.__read_file_label, 1, 0)
+        self.__layout_files.addWidget(self.__save_file_label, 1, 1)
+        self.__layout_files.addWidget(self.__read_file_button, 2, 0)
+        self.__layout_files.addWidget(self.__save_file_button, 2, 1)
+        
+    def __readFile(self):
+        pass
+    
+    def __saveFile(self):
+        # name_file = self.__save_file_label.text()
+        # generate = GenerateOBJ(name_file, self.__display_file)
+        pass
+    
     # Redesenha objetos
     def __updateViewframe(self):
         self.__viewport.drawObjects(self.__display_file.objects_list)

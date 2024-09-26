@@ -51,7 +51,6 @@ class Viewport(QLabel):
             normalized_coords.append(obj_transformed_coords)
         return normalized_coords
 
-
     # Cálculo do x da viewport conforme a transformada de viewport
     def __calcularXviewport(self, Xw):
         viewport_variance = Configurations.viewportXmax() - Configurations.viewportXmin()
