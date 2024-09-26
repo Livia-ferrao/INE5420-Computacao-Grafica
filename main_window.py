@@ -13,6 +13,8 @@ from add_wireframe import AddWireframe
 from display_file import DisplayFile
 from operations import Operations
 from transformations_dialog import TransformationsDialog
+from generate_obj import GenerateOBJ
+from reader_obj import ReaderOBJ
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -55,9 +57,11 @@ class MainWindow(QtWidgets.QMainWindow):
         return button
     
     # Construção dos inputs do frame de arquivos
-    def __createFileFrameInput(self):
+    def __createFileFrameInput(self, name, placeholder):
         input_file = QtWidgets.QLineEdit(self.__files_frame)
         input_file.setStyleSheet("background-color: rgb(212,208,200); color: black")
+        input_file.setObjectName(name) 
+        input_file.setPlaceholderText(placeholder) 
         return input_file
     
     # Desenha principais elementos da tela
@@ -186,33 +190,42 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_objects.addWidget(self.__object_list, 1, 0, 3, 1)
         self.__layout_objects.addWidget(self.__obj_list_label, 0, 0)
         
-        # Inputs no frame de arquiovs
-        self.__read_file_label = self.__createFileFrameInput()
-        self.__save_file_label = self.__createFileFrameInput()
+        # Inputs no frame de arquivos
+        self.__read_file_label = self.__createFileFrameInput("read_file_input", "Nome arquivo")
+        self.__save_file_label = self.__createFileFrameInput("save_file_input", "Nome arquivo")
         
         # # Botões no frame de arquivos
         self.__read_file_button = self.__createObjectFileFrameButton('Ler arquivo', self.__readFile, self.__files_frame)
         self.__save_file_button = self.__createObjectFileFrameButton('Salvar arquivo', self.__saveFile, self.__files_frame)
         
-        # # Layout do frame de arquivos
+        # Layout do frame de arquivos
         self.__layout_files = QtWidgets.QGridLayout(self.__files_frame)
         self.__layout_files.addWidget(self.__read_file_label, 1, 0)
         self.__layout_files.addWidget(self.__save_file_label, 1, 1)
         self.__layout_files.addWidget(self.__read_file_button, 2, 0)
         self.__layout_files.addWidget(self.__save_file_button, 2, 1)
-        
-    def __readFile(self):
-        pass
-    
-    def __saveFile(self):
-        # name_file = self.__save_file_label.text()
-        # generate = GenerateOBJ(name_file, self.__display_file)
-        pass
     
     # Redesenha objetos
     def __updateViewframe(self):
         self.__viewport.drawObjects(self.__display_file.objects_list)
-
+    
+    # Ler arquivo .obj
+    def __readFile(self):
+        name_file = self.__read_file_label.text()
+        reader =  ReaderOBJ(name_file, self.__display_file)
+        reader.openFile(name_file, self.__display_file)
+        
+        for obj in reader.objects:
+            print("OBJETO: ", obj)
+            self.__display_file.addObject(obj)
+        self.__updateViewframe()
+    
+    # Salvar arquivo .obj
+    def __saveFile(self):
+        name_file = self.__save_file_label.text()
+        generator = GenerateOBJ(name_file, self.__display_file)
+        generator.generateFileObj()
+    
     # Ação do botão de adicionar objeto
     def __addObject(self):
         selected_option = self.__combo_box.currentText()
