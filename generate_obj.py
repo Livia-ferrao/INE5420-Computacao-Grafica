@@ -1,79 +1,86 @@
 from descritor_obj import DescritorOBJ
+from type import Type
+from PySide6.QtGui import QColor
 
 class GenerateOBJ(DescritorOBJ):
-    def __init__(self, nome_arquivo, display_file):
-        # self.erro = self.verificar_nome_escrita(nome_arquivo)
-        # if self.erro:
-        #     return
+    def __init__(self, display_file):
+        objects, edges = self.generateEdges(display_file)
 
-    #     objetos, vertices = self.gerar_lista_vertices(display_file)
+        self.objects = objects
+        self.edges = edges
+        self.colors = []
 
-        # self.nome_arquivo = "data/wavefront/" + nome_arquivo
-        self.nome_arquivo = nome_arquivo
+    def generateFileObj(self, name_file):
+        # self.verificar_nome_escrita(self.nome_arquivo)
+        name_file = "wavefront/" + name_file
         
-    #     self.objetos = objetos
-    #     self.vertices = vertices
-    #     self.cores = []
+        with open("wavefront/cores.mtl", "w") as file:
+            file.write("")
 
-    def generateFileOBJ(self):
-        self.verificar_nome_escrita(self.nome_arquivo)
-        #  with open("data/wavefront/cores.mtl", "w") as arquivo:
-        #      arquivo.write("")
-        # with open(self.nome_arquivo, "w") as arquivo:
-        #     for i in range(len(self.vertices)):
-        #         saida = (
-        #             "v "
-        #             + str(self.vertices[i][0])
-        #             + " "
-        #             + str(self.vertices[i][1])
-        #             + " "
-        #             + str(self.vertices[i][2])
-        #             + "\n"
-        #         )
-        #         arquivo.write(saida)
-        #     arquivo.write("mtllib cores.mtl\n\n")
-        #     for key, val in self.objetos.items():
-        #         nome = "o " + key + "\n"
-        #         arquivo.write(nome)
-        #         cor = self.gerarArquivoMTL(val[1])
-        #         arquivo.write(cor)
-        #         pontos = (
-        #             val[0]
-        #             + " "
-        #             + str(val[2]).replace("[", "").replace("]", "").replace(",", "")
-        #             + "\n"
-        #         )
-        #         arquivo.write(pontos)
+        with open(name_file, "w") as file:
+            for i in range(len(self.edges)):
+                saida = (
+                    "v "
+                    + str(self.edges[i][0])
+                    + " "
+                    + str(self.edges[i][1])
+                    + "\n"
+                )
+                file.write(saida)
+            file.write("mtllib cores.mtl\n\n")
+            for key, val in self.objects.items():
+                name = "o " + key + "\n"
+                file.write(name)
+                color = self.generateMTLFile(val[2])
+                file.write(color)
+                coords = (
+                    val[0]
+                    + " "
+                    + str(val[1]).replace("[", "").replace("]", "").replace(",", "")
+                    + "\n"
+                )
+                file.write(coords)
 
-    # def gerarArquivoMTL(self, rgb):
-    #     nova_cor = False
-    #     if rgb not in self.cores:
-    #         nova_cor = True
-    #         self.cores.append(rgb)
-    #     nome = "Cor_" + str(self.cores.index(rgb) + 1) + "\n"
-    #     if nova_cor:
-    #         with open("data/wavefront/cores.mtl", "a") as arquivo:
-    #             arquivo.write("newmtl " + nome)
-    #             cor = (
-    #                 "Kd " + str(rgb[0]) + " " + str(rgb[1]) + " " + str(rgb[2]) + "\n\n"
-    #             )
-    #             arquivo.write(cor)
-    #     return "usemtl " + nome
+    # Converte o QColor para valores RGB
+    def generateMTLFile(self, qcolor):
+        r, g, b, _ = qcolor.getRgbF()
+        
+        rgb = (r, g, b)
+        new_color = False
+        if rgb not in self.colors:
+            new_color = True
+            self.colors.append(rgb)
+        
+        name = "Cor_" + str(self.colors.index(rgb) + 1) + "\n"
+        
+        if new_color:
+            with open("wavefront/cores.mtl", "a") as file:
+                file.write("newmtl " + name)
+                color = "Kd {:.6f} {:.6f} {:.6f}\n\n".format(r, g, b)
+                file.write(color)
+        
+        return "usemtl " + name
 
-    # def gerar_lista_vertices(self, display_file):
-    #     objetos = {}
-    #     vertices = []
-    #     for objeto in display_file.getListaElementosGraficos():
-    #         objetos[objeto.get_nome()] = ["", (), []]
-    #         for ponto in objeto.get_coordenadas():
-    #             if ponto not in vertices:
-    #                 vertices.append(ponto)
-    #             if objeto.get_tipo() == "Ponto":
-    #                 objetos[objeto.get_nome()][0] = "p"
-    #             elif objeto.get_tipo() == "Wireframe" and objeto.preenchido:
-    #                 objetos[objeto.get_nome()][0] = "f"
-    #             else:
-    #                 objetos[objeto.get_nome()][0] = "l"
-    #             objetos[objeto.get_nome()][1] = objeto.get_cor()
-    #             objetos[objeto.get_nome()][2].append(vertices.index(ponto) + 1)
-    #     return objetos, vertices
+    def generateEdges(self, display_file):
+        objects = {}
+        edges = []
+        for obj in display_file.objects_list:
+            objects[obj.name] = ["", [], ()]
+            for coord in obj.coord:
+                if coord not in edges:
+                    edges.append(coord)
+                    
+                if obj.tipo == Type.POINT:
+                    objects[obj.name][0] = "p"
+                elif obj.tipo == Type.WIREFRAME and obj.filled:
+                    objects[obj.name][0] = "f"
+                else:
+                    objects[obj.name][0] = "l"
+                    
+                objects[obj.name][1].append(edges.index(coord) + 1)
+                objects[obj.name][2] = obj.color
+                
+        print("objects: ", objects)
+        print()
+        print("edges: ", edges)
+        return objects, edges

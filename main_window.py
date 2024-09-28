@@ -212,7 +212,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # Ler arquivo .obj
     def __readFile(self):
         name_file = self.__read_file_label.text()
-        reader =  ReaderOBJ(name_file, self.__display_file)
+        reader =  ReaderOBJ()
         reader.openFile(name_file, self.__display_file)
         
         for obj in reader.objects:
@@ -223,8 +223,8 @@ class MainWindow(QtWidgets.QMainWindow):
     # Salvar arquivo .obj
     def __saveFile(self):
         name_file = self.__save_file_label.text()
-        generator = GenerateOBJ(name_file, self.__display_file)
-        generator.generateFileObj()
+        generator = GenerateOBJ(self.__display_file)
+        generator.generateFileObj(name_file)
     
     # Ação do botão de adicionar objeto
     def __addObject(self):
@@ -236,7 +236,7 @@ class MainWindow(QtWidgets.QMainWindow):
         elif selected_option == "Polígono":
             qtd_dialog = QtdPoints() # Tela para indicar a quantidade de pontos do polígono
             if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                add_dialog = AddWireframe(self.__display_file, self.__object_list, qtd_dialog.qtdPoints())
+                add_dialog = AddWireframe(self.__display_file, self.__object_list, qtd_dialog.qtdPoints(),  qtd_dialog.isFilled())
             else:
                 add_dialog = None
         if add_dialog:
