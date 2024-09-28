@@ -21,10 +21,9 @@ class GenerateOBJ(DescritorOBJ):
             for i in range(len(self.edges)):
                 saida = (
                     "v "
-                    + str(self.edges[i][0])
-                    + " "
-                    + str(self.edges[i][1])
-                    + "\n"
+                    + "{:.1f}".format(self.edges[i][0]) + " "
+                    + "{:.1f}".format(self.edges[i][1]) + " "
+                    + "0.0\n"
                 )
                 file.write(saida)
             file.write("mtllib cores.mtl\n\n")
@@ -41,10 +40,14 @@ class GenerateOBJ(DescritorOBJ):
                 )
                 file.write(coords)
 
-    # Converte o QColor para valores RGB
+    # Converte o QColor para valores RGB normais
     def generateMTLFile(self, qcolor):
         r, g, b, _ = qcolor.getRgbF()
-        
+
+        r = int(r * 255)
+        g = int(g * 255)
+        b = int(b * 255)
+
         rgb = (r, g, b)
         new_color = False
         if rgb not in self.colors:
@@ -56,7 +59,7 @@ class GenerateOBJ(DescritorOBJ):
         if new_color:
             with open("wavefront/cores.mtl", "a") as file:
                 file.write("newmtl " + name)
-                color = "Kd {:.6f} {:.6f} {:.6f}\n\n".format(r, g, b)
+                color = "Kd {} {} {}\n\n".format(r, g, b)
                 file.write(color)
         
         return "usemtl " + name
