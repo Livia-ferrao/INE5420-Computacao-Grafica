@@ -7,7 +7,7 @@ class Line(Object):
         super().__init__(name, Type.LINE, coord, color)
     
     def draw(self, coord_viewport, painter):
-        pen = QPen(self.color, 3)
+        pen = QPen(self.color, 2)
         painter.setPen(pen)
         painter.drawLine(
             coord_viewport[0][0],
