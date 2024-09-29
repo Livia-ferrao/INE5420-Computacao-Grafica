@@ -21,10 +21,15 @@ class Configurations:
     def view_frame():
         return (320, 10, 520, 580)
     
+    # Geometria da 
+    @staticmethod
+    def view_area():
+        return (10, 10, 500, 500)
+    
     # Geometria da viewport
     @staticmethod
     def viewport():
-        return (10, 10, 500, 500)
+        return (10, 10, 480, 480)
 
     # Geometria do frame de objetos
     @staticmethod

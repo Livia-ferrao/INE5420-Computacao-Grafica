@@ -4,6 +4,12 @@ from matrix_generator import MatrixGenerator
 
 class Window:
     def __init__(self):
+        # X e Y max e min normalizados
+        self.__xmin_scn = -1
+        self.__xmax_scn = 1
+        self.__ymin_scn = -1
+        self.__ymax_scn = 1
+
         # X e Y max e min da window para controlar o escalonamento
         self.__xw_min = Configurations.windowXmin()
         self.__xw_max = Configurations.windowXmax()
@@ -149,3 +155,19 @@ class Window:
     @property
     def view_up_vector(self):
         return self.__view_up_vector
+    
+    @property
+    def xmin_scn(self):
+        return self.__xmin_scn
+
+    @property
+    def xmax_scn(self):
+        return self.__xmax_scn
+    
+    @property
+    def ymin_scn(self):
+        return self.__ymin_scn
+    
+    @property
+    def ymax_scn(self):
+        return self.__ymax_scn

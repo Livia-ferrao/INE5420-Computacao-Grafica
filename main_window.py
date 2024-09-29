@@ -15,6 +15,7 @@ from operations import Operations
 from transformations_dialog import TransformationsDialog
 from generate_obj import GenerateOBJ
 from reader_obj import ReaderOBJ
+from clipping import Clipping
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -70,8 +71,15 @@ class MainWindow(QtWidgets.QMainWindow):
                                          Configurations.view_frame()[2],
                                          Configurations.view_frame()[3])
 
+        self.__view_area = QtWidgets.QLabel("", self.__view_frame)
+        self.__view_area.setStyleSheet("border: none;")
+        self.__view_area.setGeometry(*Configurations.view_area())
+        # Pixmap para desenhar objetos
+        self.__pix_map = QtGui.QPixmap(Configurations.view_area()[2], Configurations.view_area()[3])
+        self.__pix_map.fill(Qt.white)
+        self.__view_area.setPixmap(self.__pix_map)
         # Viewport
-        self.__viewport = Viewport(self.__view_frame, self.__window)
+        self.__viewport = Viewport(self.__view_area, self.__window)
 
         # Frame de objetos
         self.__objects_frame = self.__buildFrame(self.__tools_frame, Configurations.objects_frame()[0],
@@ -193,7 +201,24 @@ class MainWindow(QtWidgets.QMainWindow):
     
     # Redesenha objetos
     def __updateViewframe(self):
-        self.__viewport.drawObjects(self.__display_file.objects_list)
+        self.__pix_map.fill(Qt.white)
+        painter = QtGui.QPainter(self.__pix_map)
+        
+        # Normalizar as coordenadas
+        normalized_coords = self.__viewport.normalizeCoords(self.__display_file.objects_list)
+
+        # Desenha todos os objetos de obj_list (e transforma pra Viewport)
+        for idx, obj in enumerate(self.__display_file.objects_list):
+            (draw, coords) = Clipping.clip(obj, normalized_coords[idx], self.__window)
+            if draw:
+                coord_viewport = []
+                for coord in coords:
+                    x_viewport = self.__viewport.calcularXviewport(coord[0])
+                    y_viewport = self.__viewport.calcularYviewport(coord[1])
+                    coord_viewport.append((x_viewport, y_viewport))
+                obj.draw(coord_viewport, painter)
+        
+        self.__view_area.setPixmap(self.__pix_map)
     
     # Ler arquivo .obj
     def __readFile(self):
