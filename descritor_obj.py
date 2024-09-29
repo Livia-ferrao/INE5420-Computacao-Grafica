@@ -57,7 +57,6 @@ class DescritorOBJ:
         #         if not self.arquivo_encontrado(nome_arquivo):
         #             return True
 
-        
 
     # def arquivo_encontrado(self, nome) -> bool:
     #     encontrado = ArquivoEncontradoMessage(nome)

@@ -56,14 +56,6 @@ class MainWindow(QtWidgets.QMainWindow):
         button.setStyleSheet("background-color: rgb(212,208,200); color: black")
         return button
     
-    # Construção dos inputs do frame de arquivos
-    def __createFileFrameInput(self, name, placeholder):
-        input_file = QtWidgets.QLineEdit(self.__files_frame)
-        input_file.setStyleSheet("background-color: rgb(212,208,200); color: black")
-        input_file.setObjectName(name) 
-        input_file.setPlaceholderText(placeholder) 
-        return input_file
-    
     # Desenha principais elementos da tela
     def __drawElements(self):
         # Frame de ferramentas (lateral esquerda)
@@ -191,8 +183,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_objects.addWidget(self.__obj_list_label, 0, 0)
         
         # # Botões no frame de arquivos
-        self.__read_file_button = self.__createObjectFileFrameButton('Ler arquivo', self.__readFile, self.__files_frame)
-        self.__save_file_button = self.__createObjectFileFrameButton('Salvar arquivo', self.__saveFile, self.__files_frame)
+        self.__read_file_button = self.__createObjectFileFrameButton('Importar arquivo', self.__readFile, self.__files_frame)
+        self.__save_file_button = self.__createObjectFileFrameButton('Exportar arquivo', self.__saveFile, self.__files_frame)
         
         # Layout do frame de arquivos
         self.__layout_files = QtWidgets.QGridLayout(self.__files_frame)
