@@ -5,11 +5,10 @@ from wireframe import Wireframe
 from PySide6.QtGui import QColor
 
 class ReaderOBJ(DescritorOBJ):
-    def __init__(self):
+    def __init__(self):       
         self.objects = []
 
     def openFile(self, name_file, display_file):
-        # self.valid_name_file(name_file)
         edges, graphics_elements = self.readFileObj(name_file)
 
         for key, val in graphics_elements.items():
@@ -53,8 +52,6 @@ class ReaderOBJ(DescritorOBJ):
         return QColor.fromRgbF(r, g, b, 1.0)
     
     def readFileObj(self, name_file: str) -> dict:
-        name_file = "wavefront/" + name_file
-
         edges = []
         graphics_elements = {}
         nameObj = ""

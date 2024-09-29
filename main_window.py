@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets, QtGui
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QMessageBox, QFileDialog
 from PySide6.QtCore import Qt
 
 from edit_object import EditObject
@@ -190,20 +190,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_objects.addWidget(self.__object_list, 1, 0, 3, 1)
         self.__layout_objects.addWidget(self.__obj_list_label, 0, 0)
         
-        # Inputs no frame de arquivos
-        self.__read_file_label = self.__createFileFrameInput("read_file_input", "Nome arquivo")
-        self.__save_file_label = self.__createFileFrameInput("save_file_input", "Nome arquivo")
-        
         # # Botões no frame de arquivos
         self.__read_file_button = self.__createObjectFileFrameButton('Ler arquivo', self.__readFile, self.__files_frame)
         self.__save_file_button = self.__createObjectFileFrameButton('Salvar arquivo', self.__saveFile, self.__files_frame)
         
         # Layout do frame de arquivos
         self.__layout_files = QtWidgets.QGridLayout(self.__files_frame)
-        self.__layout_files.addWidget(self.__read_file_label, 1, 0)
-        self.__layout_files.addWidget(self.__save_file_label, 1, 1)
-        self.__layout_files.addWidget(self.__read_file_button, 2, 0)
-        self.__layout_files.addWidget(self.__save_file_button, 2, 1)
+        self.__layout_files.addWidget(self.__read_file_button, 0, 0)
+        self.__layout_files.addWidget(self.__save_file_button, 0, 1)
     
     # Redesenha objetos
     def __updateViewframe(self):
@@ -211,20 +205,29 @@ class MainWindow(QtWidgets.QMainWindow):
     
     # Ler arquivo .obj
     def __readFile(self):
-        name_file = self.__read_file_label.text()
+        file_dialog = QFileDialog()
+        filepath = file_dialog.getOpenFileName(caption="Open Image", filter="Wavefront files (*.obj)")
+        
+        if filepath[0] == '':
+            return
+
         reader =  ReaderOBJ()
-        reader.openFile(name_file, self.__display_file)
+        reader.openFile(filepath[0], self.__display_file)
         
         for obj in reader.objects:
-            print("OBJETO: ", obj)
             self.__display_file.addObject(obj)
+            self.__object_list.addItem(str(obj.name))
         self.__updateViewframe()
     
     # Salvar arquivo .obj
     def __saveFile(self):
-        name_file = self.__save_file_label.text()
+        filename = QFileDialog.getSaveFileName(caption="File to export", filter="Wavefront files (*.obj)")
+        
+        if filename[0] == '':
+            return
+        
         generator = GenerateOBJ(self.__display_file)
-        generator.generateFileObj(name_file)
+        generator.generateFileObj(filename[0])
     
     # Ação do botão de adicionar objeto
     def __addObject(self):

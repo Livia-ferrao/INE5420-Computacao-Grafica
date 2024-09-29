@@ -1,4 +1,3 @@
-
 class DescritorOBJ:
     def __init__(self):
         pass
@@ -39,16 +38,16 @@ class DescritorOBJ:
 
     #     return False
 
-    def valid_name_file(self, name_file):
-        print("nome: ", name_file)
-        if name_file.replace(" ", "") == "":
-            print("erro")
+    # def valid_name_file(self, name_file):
+    #     print("nome: ", name_file)
+    #     if name_file.replace(" ", "") == "":
+    #         print("erro")
 
-        if name_file[-4:] != ".obj":
-            print("erro")
+    #     if name_file[-4:] != ".obj":
+    #         print("erro")
 
-        if exists(name_file):
-            print("erro")
+    #     if exists(name_file):
+    #         print("erro")
             # if not self.arquivo_encontrado(nome_arquivo):
             #     return True
 

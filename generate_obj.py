@@ -10,10 +10,7 @@ class GenerateOBJ(DescritorOBJ):
         self.edges = edges
         self.colors = []
 
-    def generateFileObj(self, name_file):
-        # self.verificar_nome_escrita(self.nome_arquivo)
-        name_file = "wavefront/" + name_file
-        
+    def generateFileObj(self, name_file):        
         with open("wavefront/cores.mtl", "w") as file:
             file.write("")
 
