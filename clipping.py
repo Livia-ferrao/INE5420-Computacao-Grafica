@@ -6,7 +6,8 @@ class Clipping:
         if obj.tipo == Type.POINT:
             return Clipping.pointClipping(coords, window)
         elif obj.tipo == Type.LINE:
-            return Clipping.cohenSutherland(coords, window)
+            #return Clipping.cohenSutherland(coords, window)
+            return Clipping.liangBarsky(coords, window)
         elif obj.tipo == Type.WIREFRAME:
             return Clipping.poligono(obj, coords, window)
     
@@ -75,6 +76,39 @@ class Clipping:
         elif y > window.ymax_scn:
             code |= 0b1000
         return code
+    
+    @staticmethod
+    def liangBarsky(coords, window):
+        x1 = coords[0][0]
+        y1 = coords[0][1]
+        x2 = coords[1][0]
+        y2 = coords[1][1]
+
+        p = [-(x2 - x1), x2 - x1, -(y2 - y1), y2 - y1]
+        q = [x1 - window.xmin_scn, window.xmax_scn - x1, y1 - window.ymin_scn, window.ymax_scn - y1]
+
+        fora_dentro = 0
+        dentro_fora = 1
+
+        for idx, pk in enumerate(p):
+            if pk == 0 and q[idx] < 0:
+                return (False, coords)
+            elif pk < 0:
+                r = q[idx]/pk
+                fora_dentro = max(fora_dentro, r)
+            elif pk > 0:
+                r = q[idx]/pk
+                dentro_fora = min(dentro_fora, r)
+
+        if fora_dentro > dentro_fora:
+            return (False, coords)
+        
+        new_x1 = x1 + fora_dentro*(x2-x1)
+        new_y1 = y1 + fora_dentro*(y2-y1)
+        new_x2 = x1 + dentro_fora*(x2-x1)
+        new_y2 = y1 + dentro_fora*(y2-y1)
+        print(new_x1, new_y1, new_x2, new_y2)
+        return (True, [[new_x1, new_y1], [new_x2, new_y2]])
     
     @staticmethod
     def poligono(coords, window):
