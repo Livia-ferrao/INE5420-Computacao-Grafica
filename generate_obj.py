@@ -10,6 +10,7 @@ class GenerateOBJ(DescritorOBJ):
         self.edges = edges
         self.colors = []
 
+    # Cria arquivo com os objetos da viewport
     def generateFileObj(self, name_file):        
         with open("wavefront/cores.mtl", "w") as file:
             file.write("")
@@ -61,6 +62,7 @@ class GenerateOBJ(DescritorOBJ):
         
         return "usemtl " + name
 
+    # Cria os vértices
     def generateEdges(self, display_file):
         objects = {}
         edges = []
@@ -80,7 +82,4 @@ class GenerateOBJ(DescritorOBJ):
                 objects[obj.name][1].append(edges.index(coord) + 1)
                 objects[obj.name][2] = obj.color
                 
-        print("objects: ", objects)
-        print()
-        print("edges: ", edges)
         return objects, edges

@@ -9,7 +9,7 @@ class Clipping:
             #return Clipping.cohenSutherland(coords, window)
             return Clipping.liangBarsky(coords, window)
         elif obj.tipo == Type.WIREFRAME:
-            return Clipping.poligono(obj, coords, window)
+            return Clipping.poligono(coords, window)
     
     @staticmethod
     def pointClipping(coords, window):

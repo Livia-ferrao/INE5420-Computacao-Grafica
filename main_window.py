@@ -229,24 +229,18 @@ class MainWindow(QtWidgets.QMainWindow):
     def __readFile(self):
         file_dialog = QFileDialog()
         filepath = file_dialog.getOpenFileName(caption="Open Image", filter="Wavefront files (*.obj)")
-        
-        if filepath[0] == '':
-            return
 
-        reader =  ReaderOBJ()
-        reader.openFile(filepath[0], self.__display_file)
-        
-        for obj in reader.objects:
-            self.__display_file.addObject(obj)
-            self.__object_list.addItem(str(obj.name))
-        self.__updateViewframe()
+        reader =  ReaderOBJ(filepath[0])
+        if not reader.erro:
+            reader.openFile(filepath[0], self.__display_file)
+            for obj in reader.objects:
+                self.__display_file.addObject(obj)
+                self.__object_list.addItem(str(obj.name))
+            self.__updateViewframe()
     
     # Salvar arquivo .obj
     def __saveFile(self):
         filename = QFileDialog.getSaveFileName(caption="File to export", filter="Wavefront files (*.obj)")
-        
-        if filename[0] == '':
-            return
         
         generator = GenerateOBJ(self.__display_file)
         generator.generateFileObj(filename[0])
