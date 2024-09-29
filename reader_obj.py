@@ -3,11 +3,17 @@ from point import Point
 from line import Line
 from wireframe import Wireframe
 from PySide6.QtGui import QColor
+from os.path import exists
 
 class ReaderOBJ(DescritorOBJ):
-    def __init__(self):       
+    def __init__(self, name_file):  
+        # Verifica possíveis erros     
+        self.erro = self.verify_valid_read_file(name_file)
+        if self.erro:
+            return
         self.objects = []
 
+    # Abrir arquivo
     def openFile(self, name_file, display_file):
         edges, graphics_elements = self.readFileObj(name_file)
 
@@ -22,15 +28,15 @@ class ReaderOBJ(DescritorOBJ):
                 element = Wireframe(name, self.getEdges(val[2], edges), val[1], val[3])
 
             self.objects.append(element)
-        
-        print('OBJECTS: ', self.objects)
-
+    
+    # Retorna os vértices
     def getEdges(self, index, edges):
         v = []
         for i in index:
             v.append((edges[i - 1][0], edges[i - 1][1]))
         return v
 
+    # Le arquivo de cores (MTL)
     def readMTLFile(self, name_file: str) -> dict:
         colors = {}
         name = ""
@@ -51,6 +57,7 @@ class ReaderOBJ(DescritorOBJ):
         r, g, b = (component / 255.0 for component in rgb)
         return QColor.fromRgbF(r, g, b, 1.0)
     
+    # Le o arquivo dos objetos
     def readFileObj(self, name_file: str) -> dict:
         edges = []
         graphics_elements = {}
@@ -67,10 +74,9 @@ class ReaderOBJ(DescritorOBJ):
                 if word[0] == "mtllib":
                     name_mtl = "wavefront/" + word[1].strip()
                     colors = self.readMTLFile(name_mtl)
-                    
+                            
                 elif word[0] == "usemtl":
                     colorObj = colors[word[1]]
-                    print("colorObj: ", colorObj)
                     
                 elif word[0] == "v":
                     edges.append(self.readTuple(word))
@@ -98,13 +104,13 @@ class ReaderOBJ(DescritorOBJ):
                 
                 line = file.readline()
         
-        print(graphics_elements)
-        print(edges)
         return edges, graphics_elements
 
+    # Leitura de tupla
     def readTuple(self, words: list) -> tuple:
         return (float(words[1]), float(words[2]), float(words[3]))
 
+    # Leitura de lista
     def readList(self, words: list) -> list:
         points = []
         for point in words:
