@@ -198,11 +198,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_files = QtWidgets.QGridLayout(self.__files_frame)
         self.__layout_files.addWidget(self.__read_file_button, 0, 0)
         self.__layout_files.addWidget(self.__save_file_button, 0, 1)
-    
+        self.__updateViewframe()
+
     # Redesenha objetos
     def __updateViewframe(self):
         self.__pix_map.fill(Qt.white)
         painter = QtGui.QPainter(self.__pix_map)
+
+        pen = QtGui.QPen(QtGui.QColor(255, 0, 0), 2)
+        painter.setPen(pen)
+        painter.drawRect(*Configurations.viewport())
         
         # Normalizar as coordenadas
         normalized_coords = self.__viewport.normalizeCoords(self.__display_file.objects_list)

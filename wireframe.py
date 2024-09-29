@@ -9,7 +9,7 @@ class Wireframe(Object):
         self.filled = filled
 
     def draw(self, coord_viewport, painter):
-        pen = QPen(self.color, 3)
+        pen = QPen(self.color, 2)
         painter.setPen(pen)
 
         # Desenhar as linhas do polígono

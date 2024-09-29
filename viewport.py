@@ -1,24 +1,24 @@
-from PySide6.QtWidgets import QLabel
+from PySide6.QtWidgets import QLabel, QFrame
 from PySide6.QtGui import QPixmap, QPainter
 from PySide6.QtCore import Qt
 from configurations import Configurations
 import numpy as np
 
 
-class Viewport(QLabel):
+class Viewport():
     def __init__(self, parent, window):
-        super().__init__(parent)
+        # super().__init__(parent)
         self.__window = window
-        self.setStyleSheet(
-            "background-color: rgba(255, 255, 255, 0);\n"
-            "border-color: rgb(255, 0, 0);\n"
-            "border-width: 1.5px;\n"
-            "border-style: solid;\n"
-        )
-        self.setGeometry(Configurations.viewport()[0],
-                        Configurations.viewport()[1],
-                        Configurations.viewport()[2],
-                        Configurations.viewport()[3])
+        # self.setStyleSheet(
+        #     "background-color: rgba(255, 255, 255, 0);\n"
+        #     "border-color: rgb(255, 0, 0);\n"
+        #     "border-width: 1.5px;\n"
+        #     "border-style: solid;\n"
+        # )
+        # self.setGeometry(Configurations.viewport()[0],
+        #                 Configurations.viewport()[1],
+        #                 Configurations.viewport()[2],
+        #                 Configurations.viewport()[3])
         # Pixmap para desenhar objetos
         # self.__pix_map = QPixmap(Configurations.viewport()[2], Configurations.viewport()[3])
         # self.__pix_map.fill(Qt.white)
