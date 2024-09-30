@@ -9,3 +9,7 @@ class RotationType(Enum):
     OBJECT_CENTER = "Centro do objeto"
     WORLD_CENTER = "Centro do mundo"
     ARBITRARY_POINT = "Ponto Arbitrário"
+
+class ClippingAlgorithm(Enum):
+    COHEN = "Método de Cohen Sutherland"
+    LIANG = "Método de Liang Barsky"

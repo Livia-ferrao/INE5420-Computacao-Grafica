@@ -1,13 +1,15 @@
-from type import Type
+from type import Type, ClippingAlgorithm
 
 class Clipping:
     @staticmethod
-    def clip(obj, coords, window):
+    def clip(obj, coords, window, algorithm):
         if obj.tipo == Type.POINT:
             return Clipping.pointClipping(coords, window)
         elif obj.tipo == Type.LINE:
-            #return Clipping.cohenSutherland(coords, window)
-            return Clipping.liangBarsky(coords, window)
+            if algorithm == ClippingAlgorithm.COHEN:
+                return Clipping.cohenSutherland(coords, window)
+            else:
+                return Clipping.liangBarsky(coords, window)
         elif obj.tipo == Type.WIREFRAME:
             return Clipping.sutherlandHodgeman(coords, window)
     

@@ -44,7 +44,12 @@ class Configurations:
     # Geometria do frame de gerência de arquivos
     @staticmethod
     def files_frame():
-        return (10, 420, 280, 70)
+        return (10, 420, 280, 60)
+    
+    # Geometria do frame de escolher método de clipping de linhas
+    @staticmethod
+    def clipping_frame():
+        return (10, 510, 280, 60)
     
     # Menor coordenada possível para x ou y do objeto
     @staticmethod

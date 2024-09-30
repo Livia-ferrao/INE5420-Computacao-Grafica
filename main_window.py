@@ -16,6 +16,7 @@ from transformations_dialog import TransformationsDialog
 from generate_obj import GenerateOBJ
 from reader_obj import ReaderOBJ
 from clipping import Clipping
+from type import ClippingAlgorithm
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -104,15 +105,19 @@ class MainWindow(QtWidgets.QMainWindow):
                                            80, Configurations.control_frame()[1] - 20, 140, 20)
         
         # Frame de gerenciar arquivos
-        self.__files_frame = self.__buildFrame(self.__tools_frame, Configurations.files_frame()[0],
-                                         Configurations.files_frame()[1],
-                                         Configurations.files_frame()[2],
-                                         Configurations.files_frame()[3])
+        self.__files_frame = self.__buildFrame(self.__tools_frame, *Configurations.files_frame())
         self.__files_frame.setStyleSheet("background-color: rgb(165,165,165);")
         
         # Label do frame de gerencia de arquivos
         self.___files_label = self.__buildLabel("Gerência de arquivos", self.__tools_frame,
                                            80, Configurations.files_frame()[1] - 20, 140, 20)
+
+        # Frame de escolha de clipping
+        self.__clipping_frame = self.__buildFrame(self.__tools_frame, *Configurations.clipping_frame())
+        self.__clipping_frame.setStyleSheet("background-color: rgb(165,165,165);")
+
+        self.__clipping_label = self.__buildLabel("Clipagem de segmentos de reta", self.__tools_frame,
+                                                  40, Configurations.clipping_frame()[1] - 20, 215, 20)
 
         # Botões de controle da window
         self.__button_up = self.__createControlFrameButton("icons/up-arrow.png", self.__moveUp, "Mover window para cima")
@@ -190,7 +195,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_objects.addWidget(self.__object_list, 1, 0, 3, 1)
         self.__layout_objects.addWidget(self.__obj_list_label, 0, 0)
         
-        # # Botões no frame de arquivos
+        # Botões no frame de arquivos
         self.__read_file_button = self.__createObjectFileFrameButton('Importar arquivo', self.__readFile, self.__files_frame)
         self.__save_file_button = self.__createObjectFileFrameButton('Exportar arquivo', self.__saveFile, self.__files_frame)
         
@@ -198,6 +203,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_files = QtWidgets.QGridLayout(self.__files_frame)
         self.__layout_files.addWidget(self.__read_file_button, 0, 0)
         self.__layout_files.addWidget(self.__save_file_button, 0, 1)
+
+        # Radio buttons do frame de clipping
+        self.__radio = [QtWidgets.QRadioButton(ClippingAlgorithm.COHEN.value), QtWidgets.QRadioButton(ClippingAlgorithm.LIANG.value)]
+        self.__radio[0].setChecked(True)
+        self.__clipping_algorithm = ClippingAlgorithm.COHEN
+
+        # Layout do frame de clipping
+        self.__layout_clipping = QtWidgets.QVBoxLayout(self.__clipping_frame)
+        for radio in self.__radio:
+            radio.toggled.connect(self.__changeClipping)
+            radio.setStyleSheet("color: black;")
+            self.__layout_clipping.addWidget(radio)
+
         self.__updateViewframe()
 
     # Redesenha objetos
@@ -208,13 +226,13 @@ class MainWindow(QtWidgets.QMainWindow):
         pen = QtGui.QPen(QtGui.QColor(255, 0, 0), 2)
         painter.setPen(pen)
         painter.drawRect(*Configurations.viewport())
-        
+
         # Normalizar as coordenadas
         normalized_coords = self.__viewport.normalizeCoords(self.__display_file.objects_list)
 
         # Desenha todos os objetos de obj_list (e transforma pra Viewport)
         for idx, obj in enumerate(self.__display_file.objects_list):
-            (draw, coords) = Clipping.clip(obj, normalized_coords[idx], self.__window)
+            (draw, coords) = Clipping.clip(obj, normalized_coords[idx], self.__window, self.__clipping_algorithm)
             if draw:
                 coord_viewport = []
                 for coord in coords:
@@ -244,6 +262,14 @@ class MainWindow(QtWidgets.QMainWindow):
         
         generator = GenerateOBJ(self.__display_file)
         generator.generateFileObj(filename[0])
+    
+    # Trocar algoritmo de clipping de linhas
+    def __changeClipping(self):
+        if self.__radio[0].isChecked():
+            self.__clipping_algorithm = ClippingAlgorithm.COHEN
+        else:
+            self.__clipping_algorithm = ClippingAlgorithm.LIANG
+        self.__updateViewframe()
     
     # Ação do botão de adicionar objeto
     def __addObject(self):
