@@ -1,5 +1,4 @@
 from os.path import exists, splitext
-from PySide6.QtWidgets import QMessageBox
 from messages.not_found_error import FileNotFound
 
 class DescritorOBJ:

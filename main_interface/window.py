@@ -1,6 +1,6 @@
 import numpy as np
-from configurations import Configurations
-from matrix_generator import MatrixGenerator
+from main_interface.configurations import Configurations
+from tools.matrix_generator import MatrixGenerator
 
 class Window:
     def __init__(self):

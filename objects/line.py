@@ -1,6 +1,6 @@
-from object import Object
+from objects.object import Object
 from PySide6.QtGui import QPen
-from type import Type
+from tools.type import Type
 
 class Line(Object):
     def __init__(self, name, coord, color):

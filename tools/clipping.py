@@ -1,4 +1,4 @@
-from type import Type, ClippingAlgorithm
+from tools.type import Type, ClippingAlgorithm
 
 class Clipping:
     @staticmethod

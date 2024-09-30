@@ -1,4 +1,4 @@
-from add_object import AddObject
+from popups.add_object import AddObject
 
 class EditObject(AddObject):
     def __init__(self, existing_object, display_file, object_list):

@@ -1,6 +1,5 @@
-from descritor_obj import DescritorOBJ
-from type import Type
-from PySide6.QtGui import QColor
+from import_export.descritor_obj import DescritorOBJ
+from tools.type import Type
 
 class GenerateOBJ(DescritorOBJ):
     def __init__(self, display_file):

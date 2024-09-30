@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QLabel, QFrame
 from PySide6.QtGui import QPixmap, QPainter
 from PySide6.QtCore import Qt
-from configurations import Configurations
+from main_interface.configurations import Configurations
 import numpy as np
 
 

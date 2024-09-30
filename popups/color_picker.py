@@ -1,4 +1,3 @@
-import sys
 from PySide6.QtWidgets import QDialog, QLabel, QGridLayout, QSlider, QPushButton, QHBoxLayout
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QPixmap, QImage, QColor, QPainter

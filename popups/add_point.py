@@ -1,5 +1,5 @@
-from add_object import AddObject
-from point import Point
+from popups.add_object import AddObject
+from objects.point import Point
 
 class AddPoint(AddObject):
     def __init__(self, display_file, object_list):

@@ -1,6 +1,5 @@
-from add_object import AddObject
-from wireframe import Wireframe
-from PySide6.QtWidgets import QCheckBox
+from popups.add_object import AddObject
+from objects.wireframe import Wireframe
 
 class AddWireframe(AddObject):
     def __init__(self, display_file, object_list, n_coord, filled=False):

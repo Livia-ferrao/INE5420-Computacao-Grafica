@@ -1,5 +1,5 @@
-from add_object import AddObject
-from line import Line
+from popups.add_object import AddObject
+from objects.line import Line
 
 class AddLine(AddObject):
     def __init__(self, display_file, object_list):

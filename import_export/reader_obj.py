@@ -1,7 +1,7 @@
-from descritor_obj import DescritorOBJ
-from point import Point
-from line import Line
-from wireframe import Wireframe
+from import_export.descritor_obj import DescritorOBJ
+from objects.point import Point
+from objects.line import Line
+from objects.wireframe import Wireframe
 from PySide6.QtGui import QColor
 from os.path import exists
 

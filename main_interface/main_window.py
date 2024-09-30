@@ -2,21 +2,21 @@ from PySide6 import QtWidgets, QtGui
 from PySide6.QtWidgets import QMessageBox, QFileDialog
 from PySide6.QtCore import Qt
 
-from edit_object import EditObject
-from configurations import Configurations
-from window import Window
-from viewport import Viewport
-from qtd_points import QtdPoints
-from add_point import AddPoint
-from add_line import AddLine
-from add_wireframe import AddWireframe
-from display_file import DisplayFile
-from operations import Operations
-from transformations_dialog import TransformationsDialog
-from generate_obj import GenerateOBJ
-from reader_obj import ReaderOBJ
-from clipping import Clipping
-from type import ClippingAlgorithm
+from popups.edit_object import EditObject
+from main_interface.configurations import Configurations
+from main_interface.window import Window
+from main_interface.viewport import Viewport
+from popups.qtd_points import QtdPoints
+from popups.add_point import AddPoint
+from popups.add_line import AddLine
+from popups.add_wireframe import AddWireframe
+from main_interface.display_file import DisplayFile
+from popups.operations import Operations
+from popups.transformations_dialog import TransformationsDialog
+from import_export.generate_obj import GenerateOBJ
+from import_export.reader_obj import ReaderOBJ
+from tools.clipping import Clipping
+from tools.type import ClippingAlgorithm
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):

@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QSpinBox, QScrollArea, QWidget, QVBoxLayout, QMessageBox, QHBoxLayout
 from PySide6.QtGui import QColor
-from configurations import Configurations
+from main_interface.configurations import Configurations
 from abc import abstractmethod
-from color_picker import ColorPicker
+from popups.color_picker import ColorPicker
 
 class AddObject(QDialog):
     def __init__(self, display_file, object_list):

@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import QDialog, QTabWidget, QWidget
-from PySide6.QtWidgets import QComboBox, QDialog, QLabel, QRadioButton, QGridLayout, QPushButton, QSpinBox, QScrollArea, QWidget, QDoubleSpinBox
-from configurations import Configurations
-from matrix_generator import MatrixGenerator
+from PySide6.QtWidgets import QComboBox, QDialog, QLabel, QGridLayout, QPushButton, QSpinBox, QWidget, QDoubleSpinBox
+from main_interface.configurations import Configurations
+from tools.matrix_generator import MatrixGenerator
 import numpy as np
-from type import RotationType
+from tools.type import RotationType
 
 class TransformationsDialog(QDialog):
     def __init__(self, selected_obj, window):
