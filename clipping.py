@@ -9,7 +9,7 @@ class Clipping:
             #return Clipping.cohenSutherland(coords, window)
             return Clipping.liangBarsky(coords, window)
         elif obj.tipo == Type.WIREFRAME:
-            return Clipping.poligono(coords, window)
+            return Clipping.sutherlandHodgeman(coords, window)
     
     @staticmethod
     def pointClipping(coords, window):
@@ -24,8 +24,8 @@ class Clipping:
         y1 = coords[0][1]
         x2 = coords[1][0]
         y2 = coords[1][1]
-        code1 = Clipping.regionCode(x1, y1, window)
-        code2 = Clipping.regionCode(x2, y2, window)
+        code1 = Clipping.CSRegionCode(x1, y1, window)
+        code2 = Clipping.CSRegionCode(x2, y2, window)
 
         while True:
             if code1 == code2 == 0b0000:
@@ -57,15 +57,15 @@ class Clipping:
                 if out == code1:
                     x1 = x
                     y1 = y
-                    code1 = Clipping.regionCode(x1, y1, window)
+                    code1 = Clipping.CSRegionCode(x1, y1, window)
                 
                 else:
                     x2 = x
                     y2 = y
-                    code2 = Clipping.regionCode(x2, y2, window)
+                    code2 = Clipping.CSRegionCode(x2, y2, window)
 
     @staticmethod
-    def regionCode(x, y, window):
+    def CSRegionCode(x, y, window):
         code = 0b0000
         if x < window.xmin_scn:
             code |= 0b0001
@@ -111,5 +111,48 @@ class Clipping:
         return (True, [[new_x1, new_y1], [new_x2, new_y2]])
     
     @staticmethod
-    def poligono(coords, window):
-        return (True, coords)
+    def sutherlandHodgeman(coords, window):
+        clipping_window = [[window.xmin_scn, window.ymin_scn],
+                       [window.xmin_scn, window.ymax_scn],
+                       [window.xmax_scn, window.ymax_scn],
+                       [window.xmax_scn, window.ymin_scn]]
+
+        clipped_coords = coords
+
+        for i in range(len(clipping_window)):
+            previous_coords = clipped_coords
+            clipped_coords = []
+
+            window_edge1 = clipping_window[i]
+            window_edge2 = clipping_window[(i+1)%len(clipping_window)]
+
+            for j in range(len(previous_coords)):
+                current_point = previous_coords[j]
+                next_point = previous_coords[(j+1)%len(previous_coords)]
+
+                current_inside = Clipping.SHInside(current_point, window_edge1, window_edge2)
+                next_inside = Clipping.SHInside(next_point, window_edge1, window_edge2)
+
+                if next_inside:
+                    if not current_inside:
+                        clipped_coords.append(Clipping.SHIntersection(current_point, next_point, window_edge1, window_edge2))
+                    clipped_coords.append(next_point)
+
+                elif current_inside:
+                    clipped_coords.append(Clipping.SHIntersection(current_point, next_point, window_edge1, window_edge2))
+
+        if len(clipped_coords) == 0:
+            return (False, coords)
+        else:
+            return (True, clipped_coords)
+    
+    @staticmethod
+    def SHInside(point, edge1, edge2):
+            return ((edge2[0]-edge1[0]) * (point[1]-edge1[1])) < ((edge2[1]-edge1[1]) * (point[0]-edge1[0]))
+
+    @staticmethod
+    def SHIntersection(point1, point2, edge1, edge2):
+        numx = (edge1[0]*edge2[1] - edge1[1]*edge2[0])*(point1[0]-point2[0]) - (edge1[0]-edge2[0])*(point1[0]*point2[1]-point1[1]*point2[0])
+        den = (edge1[0]-edge2[0])*(point1[1]-point2[1]) - (edge1[1]-edge2[1])*(point1[0]-point2[0])
+        numy = (edge1[0]*edge2[1] - edge1[1]*edge2[0])*(point1[1]-point2[1]) - (edge1[1]-edge2[1])*(point1[0]*point2[1]-point1[1]*point2[0])
+        return (numx/den, numy/den)
