@@ -109,7 +109,6 @@ class Clipping:
         new_y1 = y1 + fora_dentro*(y2-y1)
         new_x2 = x1 + dentro_fora*(x2-x1)
         new_y2 = y1 + dentro_fora*(y2-y1)
-        print(new_x1, new_y1, new_x2, new_y2)
         return (True, [[new_x1, new_y1], [new_x2, new_y2]])
     
     @staticmethod

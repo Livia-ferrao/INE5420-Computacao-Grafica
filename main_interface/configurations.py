@@ -21,9 +21,9 @@ class Configurations:
     def view_frame():
         return (320, 10, 520, 580)
     
-    # Geometria da 
+    # Geometria da area de desenho
     @staticmethod
-    def view_area():
+    def canvas():
         return (10, 10, 500, 500)
     
     # Geometria da viewport
