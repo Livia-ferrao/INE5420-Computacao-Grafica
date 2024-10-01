@@ -236,8 +236,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def __saveFile(self):
         filename = QFileDialog.getSaveFileName(caption="File to export", filter="Wavefront files (*.obj)")
         
-        generator = GenerateOBJ(self.__display_file)
-        generator.generateFileObj(filename[0])
+        generator = GenerateOBJ(self.__display_file, filename[0])
+        if not generator.erro:
+            generator.generateFileObj(filename[0])
     
     # Trocar algoritmo de clipping de linhas
     def __changeClipping(self):

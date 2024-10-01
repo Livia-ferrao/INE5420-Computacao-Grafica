@@ -7,6 +7,6 @@ class FileNotFound(QMessageBox):
         self.setText(f"O arquivo {nome_arquivo} não foi encontrado")
         self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
         self.setStandardButtons(QMessageBox.Ok)
-        botao_ok = self.button(QMessageBox.Ok)
-        botao_ok.setStyleSheet("background-color: rgb(212,208,200); color: black;")
+        button_ok = self.button(QMessageBox.Ok)
+        button_ok.setStyleSheet("background-color: rgb(212,208,200); color: black;")
         self.setIcon(QMessageBox.Warning)

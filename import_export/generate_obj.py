@@ -2,7 +2,13 @@ from import_export.descritor_obj import DescritorOBJ
 from tools.type import Type
 
 class GenerateOBJ(DescritorOBJ):
-    def __init__(self, display_file):
+    def __init__(self, display_file, name_file):
+        
+        # Verifica possíveis erros     
+        self.erro = self.verify_valid_write_file(name_file)
+        if self.erro:
+            return
+
         objects, edges = self.generateEdges(display_file)
 
         self.objects = objects
