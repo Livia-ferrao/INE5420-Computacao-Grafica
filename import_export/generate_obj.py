@@ -3,22 +3,10 @@ from os.path import exists, splitext
 from import_export.error_messages import ErrorMessages
 from PySide6.QtWidgets import QMessageBox
 
-<<<<<<< HEAD
-class GenerateOBJ(DescritorOBJ):
-    def __init__(self, display_file, name_file):
-        
-        # Verifica possíveis erros     
-        self.erro = self.verify_valid_write_file(name_file)
-        if self.erro:
-            return
-
-        objects, edges = self.generateEdges(display_file)
-=======
 class GenerateOBJ():
     def __init__(self, file_name, objects):
         self.__obj_file = file_name
         self.__objects = objects
->>>>>>> bianca
 
         # Verifica se nome do arquivo é válido
         self.__file_creation_success = self.__validateFileName()
@@ -38,6 +26,7 @@ class GenerateOBJ():
         # Arquivo .mtl tem o mesmo nome (porém com a extensão .mtl) e diretório que o .obj
         # Verifica se já existe um arquivo .mtl com esse nome, se sim pergunta se quer sobrescreve-lo
         self.__mtl_file = f'{base}.mtl'
+        print(self.__mtl_file)
         if exists(self.__mtl_file):
             erro = ErrorMessages.overwriteFile(self.__mtl_file)
             if erro.exec() == QMessageBox.Cancel:
