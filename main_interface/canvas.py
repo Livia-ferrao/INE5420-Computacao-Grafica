@@ -20,9 +20,6 @@ class Canvas(QLabel):
         self.__pix_map.fill(Qt.white)
         painter = QPainter(self.__pix_map)
 
-        # Desenha borda da viewport
-        self.__viewport.drawBorder(painter)
-
         # Normalizar as coordenadas
         normalized_coords = self.__viewport.normalizeCoords(obj_list)
 
@@ -36,5 +33,8 @@ class Canvas(QLabel):
                     y_viewport = self.__viewport.calcularYviewport(coord[1])
                     coord_viewport.append((x_viewport, y_viewport))
                 obj.draw(coord_viewport, painter)
+        
+        # Desenha borda da viewport
+        self.__viewport.drawBorder(painter)
         
         self.setPixmap(self.__pix_map)
