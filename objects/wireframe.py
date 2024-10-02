@@ -6,7 +6,7 @@ from tools.type import Type
 class Wireframe(Object):
     def __init__(self, name, coord, color, filled):
         super().__init__(name, Type.WIREFRAME, coord, color)
-        self.filled = filled
+        self.__filled = filled
 
     def draw(self, coord_viewport, painter):
         pen = QPen(self.color, 2)
@@ -20,7 +20,7 @@ class Wireframe(Object):
                 painter.drawLine(x, y, coord_viewport[i+1][0], coord_viewport[i+1][1])
 
         # Preencher o polígono se estiver configurado
-        if self.filled:
+        if self.__filled:
             painter.setBrush(QBrush(self.color, Qt.SolidPattern))
             
             path = QPainterPath()
@@ -31,3 +31,7 @@ class Wireframe(Object):
             
             path.lineTo(coord_viewport[0][0], coord_viewport[0][1])
             painter.fillPath(path, QColor(self.color))
+
+    @property
+    def filled(self):
+        return self.__filled

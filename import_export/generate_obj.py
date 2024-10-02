@@ -1,6 +1,9 @@
-from import_export.descritor_obj import DescritorOBJ
 from tools.type import Type
+from os.path import exists, splitext
+from import_export.error_messages import ErrorMessages
+from PySide6.QtWidgets import QMessageBox
 
+<<<<<<< HEAD
 class GenerateOBJ(DescritorOBJ):
     def __init__(self, display_file, name_file):
         
@@ -10,81 +13,109 @@ class GenerateOBJ(DescritorOBJ):
             return
 
         objects, edges = self.generateEdges(display_file)
+=======
+class GenerateOBJ():
+    def __init__(self, file_name, objects):
+        self.__obj_file = file_name
+        self.__objects = objects
+>>>>>>> bianca
 
-        self.objects = objects
-        self.edges = edges
-        self.colors = []
+        # Verifica se nome do arquivo é válido
+        self.__file_creation_success = self.__validateFileName()
 
-    # Cria arquivo com os objetos da viewport
-    def generateFileObj(self, name_file):        
-        with open("wavefront/cores.mtl", "w") as file:
-            file.write("")
-
-        with open(name_file, "w") as file:
-            for i in range(len(self.edges)):
-                saida = (
-                    "v "
-                    + "{:.1f}".format(self.edges[i][0]) + " "
-                    + "{:.1f}".format(self.edges[i][1]) + " "
-                    + "0.0\n"
-                )
-                file.write(saida)
-            file.write("mtllib cores.mtl\n\n")
-            for key, val in self.objects.items():
-                name = "o " + key + "\n"
-                file.write(name)
-                color = self.generateMTLFile(val[2])
-                file.write(color)
-                coords = (
-                    val[0]
-                    + " "
-                    + str(val[1]).replace("[", "").replace("]", "").replace(",", "")
-                    + "\n"
-                )
-                file.write(coords)
-
-    # Converte o QColor para valores RGB normais
-    def generateMTLFile(self, qcolor):
-        r, g, b, _ = qcolor.getRgbF()
-
-        r = int(r * 255)
-        g = int(g * 255)
-        b = int(b * 255)
-
-        rgb = (r, g, b)
-        new_color = False
-        if rgb not in self.colors:
-            new_color = True
-            self.colors.append(rgb)
+    def __validateFileName(self):
+        # Verifica se algum arquivo foi criado
+        if self.__obj_file.replace(" ", "") == "":
+            return False
         
-        name = "Cor_" + str(self.colors.index(rgb) + 1) + "\n"
+        # Verifica se a extensão está correta
+        base, extension = splitext(self.__obj_file)
+        if extension != ".obj":
+            erro = ErrorMessages.invalidExtension("", self.__obj_file, ".obj")
+            erro.exec()
+            return False
         
-        if new_color:
-            with open("wavefront/cores.mtl", "a") as file:
-                file.write("newmtl " + name)
-                color = "Kd {} {} {}\n\n".format(r, g, b)
-                file.write(color)
+        # Arquivo .mtl tem o mesmo nome (porém com a extensão .mtl) e diretório que o .obj
+        # Verifica se já existe um arquivo .mtl com esse nome, se sim pergunta se quer sobrescreve-lo
+        self.__mtl_file = f'{base}.mtl'
+        if exists(self.__mtl_file):
+            erro = ErrorMessages.overwriteFile(self.__mtl_file)
+            if erro.exec() == QMessageBox.Cancel:
+                return False
         
-        return "usemtl " + name
+        return True
 
-    # Cria os vértices
-    def generateEdges(self, display_file):
-        objects = {}
-        edges = []
-        for obj in display_file.objects_list:
-            objects[obj.name] = ["", [], ()]
+    def generateFiles(self):
+        self.__generateMTLFile()
+        self.__generateOBJFile()
+    
+    # Cria o arquivo .obj
+    def __generateOBJFile(self):
+        objects = []
+        points = []
+        # Passa por todos os objetos do display file salvando suas informações
+        # description = [nome, tipo, coordenadas]
+        for obj in self.__objects:
+            description = [obj.name]
+            if obj.tipo == Type.POINT:
+                description.append("p")
+            elif obj.tipo == Type.WIREFRAME and obj.filled:
+                description.append("f")
+            else:
+                description.append("l")
+
+            obj_points = []
             for coord in obj.coord:
-                if coord not in edges:
-                    edges.append(coord)
-                    
-                if obj.tipo == Type.POINT:
-                    objects[obj.name][0] = "p"
-                elif obj.tipo == Type.WIREFRAME and obj.filled:
-                    objects[obj.name][0] = "f"
+                # Coordenada não está na lista de pontos
+                if coord not in points:
+                    points.append(coord)
+                    obj_points.append(len(points))
+                # Coordenada já está na lista de pontos
                 else:
-                    objects[obj.name][0] = "l"
-                    
-                objects[obj.name][1].append(edges.index(coord) + 1)
-                objects[obj.name][2] = obj.color
+                    obj_points.append(points.index(coord) + 1)
+
+            description.append(obj_points)
+
+            objects.append(description)
                 
-        return objects, edges
+        # Escreve no arquivo .obj
+        with open(self.__obj_file, "w") as file:
+            # Escreve os vertices
+            for x, y in points:
+                file.write(f"v {x} {y} 0.0\n")
+
+            # Escreve o nome do arquivo .mtl
+            file.write("\n")
+            mtl_name = self.__mtl_file.split("/")[-1]
+            file.write(f"mtllib {mtl_name}\n\n")
+
+            # Escreve as informações dos objetos
+            for i, description in enumerate(objects):
+                file.write(f"o {description[0]}\n")
+                file.write(f"usemtl {self.__objects_mtl_color[i]}\n")
+                coords = " ".join(map(str, description[2]))
+                file.write(f"{description[1]} {coords}\n")
+
+    # Cria o arquivo .mtl
+    def __generateMTLFile(self):
+        colors = []
+        self.__objects_mtl_color = []  # Contém o nome das cores de cada objeto para depois escrever no .obj
+
+        with open(self.__mtl_file, "w") as file:
+            for obj in self.__objects:
+                # Cor nova (não está na lista de colors)
+                if obj.color not in colors:
+                    color_name = f"cor{len(colors)}"
+                    file.write(f"newmtl {color_name}\n")
+
+                    colors.append(obj.color)
+                    r, g, b, _ = obj.color.getRgb()
+                    file.write(f"Kd {r/255.0} {g/255.0} {b/255.0}\n")
+                # Cor já está na lista de colors
+                else:
+                    color_name = f"cor{colors.index(obj.color)}"
+                self.__objects_mtl_color.append(color_name)
+    
+    @property
+    def file_creation_success(self):
+        return self.__file_creation_success

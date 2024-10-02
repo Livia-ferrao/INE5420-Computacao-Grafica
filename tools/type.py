@@ -12,4 +12,4 @@ class RotationType(Enum):
 
 class ClippingAlgorithm(Enum):
     COHEN = "Método de Cohen Sutherland"
-    LIANG = "Método de Liang Barsky"
+    LIANG = "Método de Liang-Barsky"

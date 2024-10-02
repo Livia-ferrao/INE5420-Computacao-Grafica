@@ -221,12 +221,10 @@ class MainWindow(QtWidgets.QMainWindow):
     
     # Ler arquivo .obj
     def __readFile(self):
-        file_dialog = QFileDialog()
-        filepath = file_dialog.getOpenFileName(caption="Open Image", filter="Wavefront files (*.obj)")
-
+        filepath = QFileDialog.getOpenFileName(caption="Open Image", filter="Wavefront files (*.obj)")
         reader =  ReaderOBJ(filepath[0])
-        if not reader.erro:
-            reader.openFile(filepath[0], self.__display_file)
+        if reader.files_exist:
+            reader.createObjects()
             for obj in reader.objects:
                 self.__display_file.addObject(obj)
                 self.__object_list.addItem(str(obj.name))
@@ -235,10 +233,9 @@ class MainWindow(QtWidgets.QMainWindow):
     # Salvar arquivo .obj
     def __saveFile(self):
         filename = QFileDialog.getSaveFileName(caption="File to export", filter="Wavefront files (*.obj)")
-        
-        generator = GenerateOBJ(self.__display_file, filename[0])
-        if not generator.erro:
-            generator.generateFileObj(filename[0])
+        generator = GenerateOBJ(filename[0], self.__display_file.objects_list)
+        if generator.file_creation_success:
+            generator.generateFiles()
     
     # Trocar algoritmo de clipping de linhas
     def __changeClipping(self):

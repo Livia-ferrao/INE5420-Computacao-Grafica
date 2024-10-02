@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QSpinBox, QScrollArea, QWidget, QVBoxLayout, QMessageBox, QHBoxLayout
+from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QScrollArea, QWidget, QVBoxLayout, QMessageBox, QHBoxLayout, QDoubleSpinBox
 from PySide6.QtGui import QColor
 from main_interface.configurations import Configurations
 from abc import abstractmethod
@@ -40,10 +40,10 @@ class AddObject(QDialog):
         self.__y_inputs = []
         for i in range(self.n_coord):
             x_label = QLabel(f"x{i+1}")
-            self.__x_inputs.append(QSpinBox())
+            self.__x_inputs.append(QDoubleSpinBox())
             self.__x_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
             y_label = QLabel(f"y{i+1}")
-            self.__y_inputs.append(QSpinBox())
+            self.__y_inputs.append(QDoubleSpinBox())
             self.__y_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
 
             self.__layout.addWidget(x_label, 1+2*i, 0)
