@@ -26,7 +26,6 @@ class GenerateOBJ():
         # Arquivo .mtl tem o mesmo nome (porém com a extensão .mtl) e diretório que o .obj
         # Verifica se já existe um arquivo .mtl com esse nome, se sim pergunta se quer sobrescreve-lo
         self.__mtl_file = f'{base}.mtl'
-        print(self.__mtl_file)
         if exists(self.__mtl_file):
             erro = ErrorMessages.overwriteFile(self.__mtl_file)
             if erro.exec() == QMessageBox.Cancel:

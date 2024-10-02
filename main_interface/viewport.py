@@ -1,4 +1,5 @@
 from PySide6.QtGui import QPen, QColor
+from PySide6.QtCore import Qt
 from main_interface.configurations import Configurations
 import numpy as np
 
@@ -11,6 +12,7 @@ class Viewport():
     def drawBorder(self, painter):
         pen = QPen(QColor(255, 0, 0), 2)
         painter.setPen(pen)
+        painter.setBrush(Qt.NoBrush)
         painter.drawRect(*Configurations.viewport())
 
    # Normalizar coordenadas
