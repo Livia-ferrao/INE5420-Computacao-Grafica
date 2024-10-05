@@ -10,14 +10,15 @@ from popups.qtd_points import QtdPoints
 from popups.add_point import AddPoint
 from popups.add_line import AddLine
 from popups.add_wireframe import AddWireframe
+from popups.add_berzier_curve import AddBerzierCurve
 from main_interface.display_file import DisplayFile
 from popups.operations import Operations
 from popups.transformations_dialog import TransformationsDialog
 from import_export.generate_obj import GenerateOBJ
 from import_export.reader_obj import ReaderOBJ
-from tools.clipping import Clipping
 from tools.type import ClippingAlgorithm
 from main_interface.canvas import Canvas
+from popups.qtd_curves import QtdCurves
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -168,7 +169,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         # Combo box para escolher entre ponto, reta e polígono
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
-        self.__combo_box.addItems(["Ponto", "Reta", "Polígono"])
+        self.__combo_box.addItems(["Ponto", "Reta", "Polígono", "Curva de Bérzier"])
         self.__combo_box.setStyleSheet("background-color: rgb(212,208,200); color: black")
         
         # Botões no frame de objetos
@@ -247,6 +248,7 @@ class MainWindow(QtWidgets.QMainWindow):
     
     # Ação do botão de adicionar objeto
     def __addObject(self):
+        add_dialog = None
         selected_option = self.__combo_box.currentText()
         if selected_option == "Ponto":
             add_dialog = AddPoint(self.__display_file, self.__object_list)
@@ -256,8 +258,11 @@ class MainWindow(QtWidgets.QMainWindow):
             qtd_dialog = QtdPoints() # Tela para indicar a quantidade de pontos do polígono
             if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 add_dialog = AddWireframe(self.__display_file, self.__object_list, qtd_dialog.qtdPoints(),  qtd_dialog.isFilled())
-            else:
-                add_dialog = None
+        elif selected_option == "Curva de Bérzier":
+            qtd_dialog = QtdCurves()
+            if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                add_dialog = AddBerzierCurve(self.__display_file, self.__object_list, qtd_dialog.qtdCurves(), qtd_dialog.qtdPoints())
+        
         if add_dialog:
             if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 self.__updateViewframe()

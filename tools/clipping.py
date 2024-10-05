@@ -1,19 +1,6 @@
 from tools.type import Type, ClippingAlgorithm
 
 class Clipping:
-    # Chama o clipping de acordo com o tipo do objeto
-    @staticmethod
-    def clip(obj, coords, window, algorithm):
-        if obj.tipo == Type.POINT:
-            return Clipping.pointClipping(coords, window)
-        elif obj.tipo == Type.LINE:
-            if algorithm == ClippingAlgorithm.COHEN:
-                return Clipping.cohenSutherland(coords, window)
-            else:
-                return Clipping.liangBarsky(coords, window)
-        elif obj.tipo == Type.WIREFRAME:
-            return Clipping.sutherlandHodgeman(coords, window)
-    
     # Clipping de pontos
     @staticmethod
     def pointClipping(coords, window):

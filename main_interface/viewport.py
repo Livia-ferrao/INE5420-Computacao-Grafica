@@ -16,17 +16,14 @@ class Viewport():
         painter.drawRect(*Configurations.viewport())
 
    # Normalizar coordenadas
-    def normalizeCoords(self, obj_list):
+    def normalizeCoords(self, obj):
         transforming_matrix = self.__window.windowNormalize()
         
         # Coordenadas normalizadas de todos objetos da tela
         normalized_coords = []
-        for obj in obj_list:
-            obj_transformed_coords = []
-            for x, y in obj.coord:
-                transformed_coord = (np.dot(np.array([x, y, 1]), np.array(transforming_matrix))).tolist()
-                obj_transformed_coords.append(transformed_coord[:2])
-            normalized_coords.append(obj_transformed_coords)
+        for x, y in obj.coord:
+            transformed_coord = (np.dot(np.array([x, y, 1]), np.array(transforming_matrix))).tolist()
+            normalized_coords.append(transformed_coord[:2])
         return normalized_coords
 
     # Cálculo do x da viewport conforme a transformada de viewport
