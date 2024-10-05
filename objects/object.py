@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import numpy as np
 
 class Object(ABC):
     def __init__(self, name, tipo, coord, color):
@@ -8,9 +9,19 @@ class Object(ABC):
         self.__color = color
 
     @abstractmethod
-    def draw(self, transformed_coord, painter):
+    def draw(*args, **kwargs):
         pass
 
+    # Normaliza as coordenadas
+    def normalizeCoords(self, window):
+        transforming_matrix = window.windowNormalize()
+
+        normalized_coords = []
+        for x, y in self.coord:
+            transformed_coord = (np.dot(np.array([x, y, 1]), np.array(transforming_matrix))).tolist()
+            normalized_coords.append(transformed_coord[:2])
+        return normalized_coords
+    
     @property
     def name(self):
         return self.__name
