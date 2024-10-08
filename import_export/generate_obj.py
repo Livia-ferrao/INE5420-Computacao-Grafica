@@ -49,22 +49,23 @@ class GenerateOBJ():
                 description.append("p")
             elif obj.tipo == Type.WIREFRAME and obj.filled:
                 description.append("f")
-            else:
+            elif (obj.tipo == Type.LINE) or (obj.tipo == Type.WIREFRAME and not obj.filled):
                 description.append("l")
 
-            obj_points = []
-            for coord in obj.coord:
-                # Coordenada não está na lista de pontos
-                if coord not in points:
-                    points.append(coord)
-                    obj_points.append(len(points))
-                # Coordenada já está na lista de pontos
-                else:
-                    obj_points.append(points.index(coord) + 1)
+            if len(description) == 2:
+                obj_points = []
+                for coord in obj.coord:
+                    # Coordenada não está na lista de pontos
+                    if coord not in points:
+                        points.append(coord)
+                        obj_points.append(len(points))
+                    # Coordenada já está na lista de pontos
+                    else:
+                        obj_points.append(points.index(coord) + 1)
 
-            description.append(obj_points)
+                description.append(obj_points)
 
-            objects.append(description)
+                objects.append(description)
                 
         # Escreve no arquivo .obj
         with open(self.__obj_file, "w") as file:
@@ -91,18 +92,19 @@ class GenerateOBJ():
 
         with open(self.__mtl_file, "w") as file:
             for obj in self.__objects:
-                # Cor nova (não está na lista de colors)
-                if obj.color not in colors:
-                    color_name = f"cor{len(colors)}"
-                    file.write(f"newmtl {color_name}\n")
+                if obj.tipo == Type.POINT or obj.tipo == Type.LINE or obj.tipo == Type.WIREFRAME:
+                    # Cor nova (não está na lista de colors)
+                    if obj.color not in colors:
+                        color_name = f"cor{len(colors)}"
+                        file.write(f"newmtl {color_name}\n")
 
-                    colors.append(obj.color)
-                    r, g, b, _ = obj.color.getRgb()
-                    file.write(f"Kd {r/255.0} {g/255.0} {b/255.0}\n")
-                # Cor já está na lista de colors
-                else:
-                    color_name = f"cor{colors.index(obj.color)}"
-                self.__objects_mtl_color.append(color_name)
+                        colors.append(obj.color)
+                        r, g, b, _ = obj.color.getRgb()
+                        file.write(f"Kd {r/255.0} {g/255.0} {b/255.0}\n")
+                    # Cor já está na lista de colors
+                    else:
+                        color_name = f"cor{colors.index(obj.color)}"
+                    self.__objects_mtl_color.append(color_name)
     
     @property
     def file_creation_success(self):

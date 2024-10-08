@@ -261,7 +261,7 @@ class MainWindow(QtWidgets.QMainWindow):
         elif selected_option == "Curva de Bérzier":
             qtd_dialog = QtdCurves()
             if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                add_dialog = AddBerzierCurve(self.__display_file, self.__object_list, qtd_dialog.qtdCurves(), qtd_dialog.qtdPoints())
+                add_dialog = AddBerzierCurve(self.__display_file, self.__object_list, qtd_dialog.qtdCurves())
         
         if add_dialog:
             if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:

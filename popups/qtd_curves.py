@@ -8,12 +8,7 @@ class QtdCurves(QDialog):
         # Labels e Inputs
         self.__curves_label = QLabel("Quantidade de curvas:")
         self.__curves_input = QSpinBox()
-        self.__curves_input.setRange(1, 1000000)
-
-        self.__points_label = QLabel("Quantidade de pontos para continuidade:")
-        self.__points_input = QSpinBox()
-        self.__points_input.setRange(4, 1000000)
-        self.__points_input.setValue(10)
+        self.__curves_input.setRange(1, 100000000)  # maximo de curvas com valor grande para representar o infinito
         
         # Estilo
         self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
@@ -29,13 +24,8 @@ class QtdCurves(QDialog):
         self.__layout = QGridLayout(self)
         self.__layout.addWidget(self.__curves_label, 0, 0)
         self.__layout.addWidget(self.__curves_input, 0, 1)
-        self.__layout.addWidget(self.__points_label, 1, 0)
-        self.__layout.addWidget(self.__points_input, 1, 1)
-        self.__layout.addWidget(self.__ok_button, 2, 1)
-        self.__layout.addWidget(self.__cancel_button, 2, 0)
-
-    def qtdPoints(self):
-        return self.__points_input.value()
+        self.__layout.addWidget(self.__ok_button, 1, 1)
+        self.__layout.addWidget(self.__cancel_button, 1, 0)
 
     def qtdCurves(self):
         return self.__curves_input.value()
