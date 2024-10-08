@@ -54,8 +54,8 @@ class BerzierCurve(Object):
             x = self.__getBlendingFunctions(p1[0], p2[0], p3[0], p4[0])
             y = self.__getBlendingFunctions(p1[1], p2[1], p3[1], p4[1])
 
-            # Calcula os pontos da curva de acordo com o parametro t e um passo 0.05
-            passo = 1/20
+            # Calcula os pontos da curva de acordo com o parametro t e um passo 0.02
+            passo = 1/50
             for t in arange(0, 1.01, passo):
                 drawing_points.append((x(t), y(t)))
 
