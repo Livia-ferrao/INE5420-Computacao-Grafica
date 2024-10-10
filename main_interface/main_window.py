@@ -11,6 +11,7 @@ from popups.add_point import AddPoint
 from popups.add_line import AddLine
 from popups.add_wireframe import AddWireframe
 from popups.add_berzier_curve import AddBerzierCurve
+from popups.add_bspline import AddBSpline
 from main_interface.display_file import DisplayFile
 from popups.operations import Operations
 from popups.transformations_dialog import TransformationsDialog
@@ -19,6 +20,7 @@ from import_export.reader_obj import ReaderOBJ
 from tools.type import ClippingAlgorithm
 from main_interface.canvas import Canvas
 from popups.qtd_curves import QtdCurves
+from popups.qtd_points_bspline import QtdPointsBSpline
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -169,7 +171,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         # Combo box para escolher entre ponto, reta e polígono
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
-        self.__combo_box.addItems(["Ponto", "Reta", "Polígono", "Curva de Bérzier"])
+        self.__combo_box.addItems(["Ponto", "Reta", "Polígono", "Curva de Bérzier", "B-Spline"])
         self.__combo_box.setStyleSheet("background-color: rgb(212,208,200); color: black")
         
         # Botões no frame de objetos
@@ -262,6 +264,10 @@ class MainWindow(QtWidgets.QMainWindow):
             qtd_dialog = QtdCurves()
             if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 add_dialog = AddBerzierCurve(self.__display_file, self.__object_list, qtd_dialog.qtdCurves())
+        elif selected_option == "B-Spline":
+            qtd_dialog = QtdPointsBSpline()
+            if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                add_dialog = AddBSpline(self.__display_file, self.__object_list, qtd_dialog.qtdPointsControl(), qtd_dialog.qtdPointsPrecision())
         
         if add_dialog:
             if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
