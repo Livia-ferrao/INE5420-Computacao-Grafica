@@ -5,6 +5,7 @@ class Type(Enum):
     LINE = 2
     WIREFRAME = 3
     BERZIER_CURVE = 4
+    B_SPLINE = 5
     
 class RotationType(Enum):
     OBJECT_CENTER = "Centro do objeto"

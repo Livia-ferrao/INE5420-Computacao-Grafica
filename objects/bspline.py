@@ -7,20 +7,15 @@ import numpy as np
 
 class BSpline(Object):
     def __init__(self, name, coord, color, n_precision):
-        self.n_precision = n_precision
-        super().__init__(name, Type.BERZIER_CURVE, coord, color)
+        self.__n_precision = n_precision
+        super().__init__(name, Type.B_SPLINE, coord, color)
 
     def draw(self, window, painter, viewport, clipping_algorithm):
         # Normalizar as coordenadas (pontos de controle)
         points_control = self.normalizeCoords(window)
-
-        # Determina pontos da curva
-        points_precision = self.n_precision
         
         # Calcula os pontos da B-Spline
-        points = self.bspline(points_control, points_precision)
-        
-        print("points: ", points )
+        points = self.__getDrawingPoints(points_control, self.__n_precision)
 
         # Desenha linhas entre os pontos
         for i in range(len(points)-1):
@@ -44,77 +39,64 @@ class BSpline(Object):
                     coord_viewport[1][0],
                     coord_viewport[1][1]
                 )
-                
-    def calculate_differences(self, delta, a, b, c, d):
-        # Calcula as diferenças iniciais para os coeficientes de uma curva cúbica
-        delta_2 = delta**2
-        delta_3 = delta**3
-        return [
-            d,
-            a * delta_3 + b * delta_2 + c * delta,
-            6 * a * delta_3 + 2 * b * delta_2,
-            6 * a * delta_3,
-        ]
-
-    def calculate_coefficients(self, points, delta):
-        # Matriz de coeficientes para o cálculo da B-Spline
-        MBS = np.array(
-            [
-                [(-1 / 6), (1 / 2), (-1 / 2), (1 / 6)],
-                [(1 / 2), -1, (1 / 2), 0],
-                [(-1 / 2), 0, (1 / 2), 0],
-                [(1 / 6), (2 / 3), (1 / 6), 0],
-            ]
-        )
-
-        # Vetores das coordenadas x e y dos pontos de controle
-        GBS_x = []
-        GBS_y = []
-        for x, y in points:
-            GBS_x.append(x)
-            GBS_y.append(y)
-
-        # Calcula as diferenças iniciais para x e y
-        GBS_x = np.array([GBS_x]).T
-        coeff_x = MBS.dot(GBS_x).T[0]
-        dif_initial_x = self.calculate_differences(delta, *coeff_x)
-
-        GBS_y = np.array([GBS_y]).T
-        coeff_y = MBS.dot(GBS_y).T[0]
-        dif_initial_y = self.calculate_differences(delta, *coeff_y)
-        
-        return dif_initial_x, dif_initial_y
-
-    def bspline(self, points_control, points_precision):
-        points_spline = []
+    
+    # Determinar os pontos da bspline a serem desenhadas linhas entre eles
+    def __getDrawingPoints(self, points_control, points_precision):
+        drawing_points = []
         
         # Itera sobre os pontos de controle em blocos de 4
-        for i in range(len(points_control)):
-            upper_limit = i + 4
-
-            if upper_limit > len(points_control):
-                break
-            
-            # Seleciona o bloco de 4 pontos de controle
-            points = points_control[i:upper_limit]
+        for i in range(3, len(points_control)):
+            # Seleciona o segmento de 4 pontos de controle
+            segment = points_control[i-3:i+1]
             
             # Calcula as diferenças iniciais para o bloco de pontos de controle
-            delta_x, delta_y = self.calculate_coefficients(
-                points, (1 / points_precision)
-            )
-            x = delta_x[0]
-            y = delta_y[0]
-            points_spline.append((x, y))
+            x_f, x_df, x_d2f, x_d3f, y_f, y_df, y_d2f, y_d3f = self.__getInitialConditions(segment, (1 / points_precision))
             
-            # Calcula os demais pontos da curva usando diferenças sucessivas
-            for k in range(points_precision):
-                x += delta_x[1]
-                delta_x[1] += delta_x[2]
-                delta_x[2] += delta_x[3]
+            drawing_points.extend(self.__forwardDifferences(points_precision,
+                                                            x_f, x_df, x_d2f, x_d3f,
+                                                            y_f, y_df, y_d2f, y_d3f))
+        return drawing_points
+    
+    # Determinar condições iniciais para as forward differences
+    def __getInitialConditions(self, segment, passo):
+        # Matriz B-Spline base
+        Mbs = np.array([[-1/6, 3/6, -3/6, 1/6],
+                        [3/6, -1, 3/6, 0],
+                        [-3/6, 0, 3/6, 0],
+                        [1/6, 4/6, 1/6, 0]])
 
-                y += delta_y[1]
-                delta_y[1] += delta_y[2]
-                delta_y[2] += delta_y[3]
+        # Vetores de geometria x e y do segmento
+        x_Gbs = [point[0] for point in segment]
+        y_Gbs = [point[1] for point in segment]
 
-                points_spline.append((x, y))
-        return points_spline
+        # Coeficientes para calcular as condições iniciais
+        ax, bx, cx, dx = (np.dot(Mbs, x_Gbs)).tolist()
+        ay, by, cy, dy = (np.dot(Mbs, y_Gbs)).tolist()
+
+        passo2 = passo**2
+        passo3 = passo**3
+
+        x_f0 = dx
+        x_df0 = ax*passo3 + bx*passo2 + cx*passo
+        x_d2f0 = 6*ax*passo3 + 2*bx*passo2
+        x_d3f0 = 6*ax*passo3
+        y_f0 = dy
+        y_df0 = ay*passo3 + by*passo2 + cy*passo
+        y_d2f0 = 6*ay*passo3 + 2*by*passo2
+        y_d3f0 = 6*ay*passo3
+        
+        return x_f0, x_df0, x_d2f0, x_d3f0, y_f0, y_df0, y_d2f0, y_d3f0
+    
+    # Calcula pontos de acordo com algoritmo de forward differences
+    def __forwardDifferences(self, n, x, x_df, x_d2f, x_d3f, y, y_df, y_d2f, y_d3f):
+            points = [(x, y)]
+            
+            for _ in range(n):
+                x += x_df
+                x_df += x_d2f
+                x_d2f += x_d3f
+                y += y_df
+                y_df += y_d2f
+                y_d2f += y_d3f
+                points.append((x, y))
+            return points
