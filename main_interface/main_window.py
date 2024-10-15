@@ -267,7 +267,7 @@ class MainWindow(QtWidgets.QMainWindow):
         elif selected_option == "B-Spline":
             qtd_dialog = QtdPointsBSpline()
             if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                add_dialog = AddBSpline(self.__display_file, self.__object_list, qtd_dialog.qtdPointsControl(), qtd_dialog.qtdPointsPrecision())
+                add_dialog = AddBSpline(self.__display_file, self.__object_list, qtd_dialog.qtdPointsControl())
         
         if add_dialog:
             if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:

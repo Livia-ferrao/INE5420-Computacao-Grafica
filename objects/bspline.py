@@ -6,8 +6,7 @@ from numpy import arange
 import numpy as np
 
 class BSpline(Object):
-    def __init__(self, name, coord, color, n_precision):
-        self.__n_precision = n_precision
+    def __init__(self, name, coord, color):
         super().__init__(name, Type.B_SPLINE, coord, color)
 
     def draw(self, window, painter, viewport, clipping_algorithm):
@@ -15,7 +14,7 @@ class BSpline(Object):
         points_control = self.normalizeCoords(window)
         
         # Calcula os pontos da B-Spline
-        points = self.__getDrawingPoints(points_control, self.__n_precision)
+        points = self.__getDrawingPoints(points_control)
 
         # Desenha linhas entre os pontos
         for i in range(len(points)-1):
@@ -41,18 +40,18 @@ class BSpline(Object):
                 )
     
     # Determinar os pontos da bspline a serem desenhadas linhas entre eles
-    def __getDrawingPoints(self, points_control, points_precision):
+    def __getDrawingPoints(self, points_control):
         drawing_points = []
-        
+        precision = 50
         # Itera sobre os pontos de controle em blocos de 4
         for i in range(3, len(points_control)):
             # Seleciona o segmento de 4 pontos de controle
             segment = points_control[i-3:i+1]
             
             # Calcula as diferenças iniciais para o bloco de pontos de controle
-            x_f, x_df, x_d2f, x_d3f, y_f, y_df, y_d2f, y_d3f = self.__getInitialConditions(segment, (1 / points_precision))
+            x_f, x_df, x_d2f, x_d3f, y_f, y_df, y_d2f, y_d3f = self.__getInitialConditions(segment, (1/precision))
             
-            drawing_points.extend(self.__forwardDifferences(points_precision,
+            drawing_points.extend(self.__forwardDifferences(precision,
                                                             x_f, x_df, x_d2f, x_d3f,
                                                             y_f, y_df, y_d2f, y_d3f))
         return drawing_points
