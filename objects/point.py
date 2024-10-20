@@ -9,10 +9,13 @@ class Point(Object):
     
     def draw(self, window, painter, viewport):
         # Normalizar as coordenadas
-        normalized_coords = self.normalizeCoords(window)
+        #normalized_coords = self.normalizeCoords(window)
+        #print("normalized_coords: ", normalized_coords)
+        normalized_coords = self.projectAndNormalizeCoords(window)
 
         # Determina se vai desenhar o ponto
         (draw, coords) = Clipping.pointClipping(normalized_coords, window)
+        print("coords-clipping: ", coords)
 
         if draw:
             # Transforma para coordenadas da viewport

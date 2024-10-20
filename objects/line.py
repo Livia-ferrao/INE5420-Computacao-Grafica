@@ -10,7 +10,7 @@ class Line(Object):
     def draw(self, window, painter, viewport, clipping_algorithm):
         # Normalizar as coordenadas
         normalized_coords = self.normalizeCoords(window)
-
+        #normalized_coords = self.projectAndNormalizeCoords(window)
         # Determina se vai desenhar a linha/parte da linha
         if clipping_algorithm ==  ClippingAlgorithm.COHEN:
             (draw, coords) = Clipping.cohenSutherland(normalized_coords, window)

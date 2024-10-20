@@ -11,8 +11,8 @@ class Wireframe(Object):
 
     def draw(self, window, painter, viewport):
         # Normalizar as coordenadas
-        normalized_coords = self.normalizeCoords(window)
-
+        #normalized_coords = self.normalizeCoords(window)
+        normalized_coords = self.projectAndNormalizeCoords(window)
         # Determina se vai desenhar o wireframe/parte do wireframe
         (draw, coords) = Clipping.sutherlandHodgeman(normalized_coords, window)
 

@@ -7,11 +7,13 @@ from main_interface.configurations import Configurations
 from main_interface.window import Window
 from main_interface.viewport import Viewport
 from popups.qtd_points import QtdPoints
+from popups.qtd_points_obj_3d import QtdPointsObj3D
 from popups.add_point import AddPoint
 from popups.add_line import AddLine
 from popups.add_wireframe import AddWireframe
 from popups.add_berzier_curve import AddBerzierCurve
 from popups.add_bspline import AddBSpline
+from popups.add_object_3d import AddObject3D
 from main_interface.display_file import DisplayFile
 from popups.operations import Operations
 from popups.transformations_dialog import TransformationsDialog
@@ -52,11 +54,19 @@ class MainWindow(QtWidgets.QMainWindow):
         button.setIcon(QtGui.QIcon(path_icon))
         button.setToolTip(text)
         button.clicked.connect(function)
-        button.setStyleSheet("background-color: rgb(212,208,200);")
+        #button.setStyleSheet("background-color: rgb(212,208,200);")
+        button.setStyleSheet("""
+            QPushButton {
+                background-color: rgb(212,208,200)
+            }
+            QPushButton:disabled {
+                background-color: rgb(180, 175, 170)
+            }
+        """)
         return button
     
     # Construção dos botões do frame de objetos e arquivos
-    def __createObjectFileFrameButton(self, name, function, frame):
+    def __createNameButton(self, name, function, frame):
         button = QtWidgets.QPushButton(name, frame)
         button.clicked.connect(function)
         button.setStyleSheet("background-color: rgb(212,208,200); color: black")
@@ -128,6 +138,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__button_zoom_out = self.__createControlFrameButton("icons/zoom-out.png", self.__zoomOut, "Zoom out")
         self.__button_rotate_right = self.__createControlFrameButton("icons/rotate-right", self.__rotateRight, "Rotacionar window para direita")
         self.__button_rotate_left = self.__createControlFrameButton("icons/rotate-left.png", self.__rotateLeft, "Rotacionar window para esquerda")
+        self.__button_front = self.__createControlFrameButton("icons/arrow-upper-right.png", self.__moveFront, "Mover window para frente")
+        self.__button_back = self.__createControlFrameButton("icons/down-left-arrow.png", self.__moveBack, "Mover window para trás")
+        self.__button_front.setEnabled(False)
+        self.__button_back.setEnabled(False)
 
         # Spin box da porcentagem de movimentação/zoom
         self.__control_scale = QtWidgets.QDoubleSpinBox()
@@ -137,11 +151,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__control_scale.setSingleStep(1)
         self.__control_scale.setStyleSheet("background-color: rgb(212,208,200); color: black;")
 
-        # Label "%" do lado da spin box da porcentagem de movimentação/zoom
-        self.__scale_label = QtWidgets.QLabel("%")
+        # Label indicativo do lado da spin box da porcentagem de movimentação/zoom
+        self.__scale_label = QtWidgets.QLabel("Passo de navegação")
         self.__scale_label.setStyleSheet("color: black; border: none;")
+
+        # Label "%" do lado da spin box da porcentagem de movimentação/zoom
+        self.__scale_label_percentage = QtWidgets.QLabel("%")
+        self.__scale_label_percentage.setStyleSheet("color: black; border: none;")
         
-        # Label em cima do spin box do ângulo de rotação
+        # Label indicativo do lado do spin box do ângulo de rotação
         self.__rotation_label = QtWidgets.QLabel("Ângulo de rotação")
         self.__rotation_label.setStyleSheet("color: black; border: none;")
         self.__rotation_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -154,29 +172,45 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__angle_spin.setSingleStep(1)
         self.__angle_spin.setStyleSheet("background-color: rgb(212,208,200); color: black;")
 
+        # Label "°" do lado da spin box do angulo de rotação
+        self.__degrees_label = QtWidgets.QLabel("°")
+        self.__degrees_label.setStyleSheet("color: black; border: none;")
+
+        # 2D x 3D botão
+        self.__dimensions_button = self.__createNameButton("2D", self.__changeDimension, self.__control_frame)
+        
         # Layout do frame de controle
         self.__layout_control = QtWidgets.QGridLayout(self.__control_frame)
-        self.__layout_control.addWidget(self.__control_scale, 0, 0)
-        self.__layout_control.addWidget(self.__scale_label, 0, 1)
-        self.__layout_control.addWidget(self.__angle_spin, 4, 2)
-        self.__layout_control.addWidget(self.__button_up, 0, 2)
+        self.__layout_control.addWidget(self.__button_up, 0, 2, 1, 2)
         self.__layout_control.addWidget(self.__button_left, 1, 1)
-        self.__layout_control.addWidget(self.__button_right, 1, 3)
-        self.__layout_control.addWidget(self.__button_down, 2, 2)
-        self.__layout_control.addWidget(self.__button_zoom_in, 1, 0)
-        self.__layout_control.addWidget(self.__button_zoom_out, 2, 0)
-        self.__layout_control.addWidget(self.__button_rotate_right, 4, 3)
-        self.__layout_control.addWidget(self.__button_rotate_left, 4, 1)
-        self.__layout_control.addWidget(self.__rotation_label, 3, 1, 1, 3)
-        
+        self.__layout_control.addWidget(self.__button_right, 1, 4)
+        self.__layout_control.addWidget(self.__button_down, 2, 2, 1, 2)
+        self.__layout_control.addWidget(self.__button_zoom_in, 0, 0)
+        self.__layout_control.addWidget(self.__button_zoom_out, 1, 0)
+        self.__layout_control.addWidget(self.__button_rotate_right, 0, 1)
+        self.__layout_control.addWidget(self.__button_rotate_left, 0, 4)
+        self.__layout_control.addWidget(self.__dimensions_button, 2, 0)
+        self.__layout_control.addWidget(self.__button_front, 1, 3)
+        self.__layout_control.addWidget(self.__button_back, 1, 2)
+        scale_hbox = QtWidgets.QHBoxLayout()
+        scale_hbox.addWidget(self.__scale_label)
+        scale_hbox.addWidget(self.__control_scale)
+        scale_hbox.addWidget(self.__scale_label_percentage)
+        angle_hbox = QtWidgets.QHBoxLayout()
+        angle_hbox.addWidget(self.__rotation_label)
+        angle_hbox.addWidget(self.__angle_spin)
+        angle_hbox.addWidget(self.__degrees_label)
+        self.__layout_control.addLayout(scale_hbox, 3, 0, 1, 5)
+        self.__layout_control.addLayout(angle_hbox, 4, 0, 1, 5)
+
         # Combo box para escolher entre ponto, reta e polígono
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
-        self.__combo_box.addItems(["Ponto", "Reta", "Polígono", "Curva de Bérzier", "B-Spline"])
+        self.__combo_box.addItems(["Ponto", "Reta", "Polígono", "Curva de Bérzier", "B-Spline", "Objeto 3D"])
         self.__combo_box.setStyleSheet("background-color: rgb(212,208,200); color: black")
         
         # Botões no frame de objetos
-        self.__add_button = self.__createObjectFileFrameButton('Adicionar', self.__addObject, self.__objects_frame)
-        self.__operations_button = self.__createObjectFileFrameButton('Operações', self.__chooseOperation, self.__objects_frame)
+        self.__add_button = self.__createNameButton('Adicionar', self.__addObject, self.__objects_frame)
+        self.__operations_button = self.__createNameButton('Operações', self.__chooseOperation, self.__objects_frame)
 
         # Lista de objetos
         self.__object_list = QtWidgets.QListWidget(self.__objects_frame)
@@ -196,8 +230,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__layout_objects.addWidget(self.__obj_list_label, 0, 0)
         
         # Botões no frame de arquivos
-        self.__read_file_button = self.__createObjectFileFrameButton('Importar arquivo', self.__readFile, self.__files_frame)
-        self.__save_file_button = self.__createObjectFileFrameButton('Exportar arquivo', self.__saveFile, self.__files_frame)
+        self.__read_file_button = self.__createNameButton('Importar arquivo', self.__readFile, self.__files_frame)
+        self.__save_file_button = self.__createNameButton('Exportar arquivo', self.__saveFile, self.__files_frame)
         
         # Layout do frame de arquivos
         self.__layout_files = QtWidgets.QGridLayout(self.__files_frame)
@@ -268,6 +302,10 @@ class MainWindow(QtWidgets.QMainWindow):
             qtd_dialog = QtdPointsBSpline()
             if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 add_dialog = AddBSpline(self.__display_file, self.__object_list, qtd_dialog.qtdPointsControl())
+        elif selected_option == "Objeto 3D":
+            qtd_dialog = QtdPointsObj3D()
+            if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                add_dialog = AddObject3D(self.__display_file, self.__object_list, qtd_dialog.qtdPoints())
         
         if add_dialog:
             if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
@@ -350,6 +388,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__window.moveDown(self.__control_scale.value())
         self.__updateViewframe()
     
+    def __moveFront(self):
+        pass
+
+    def __moveBack(self):
+        pass
+
     # Zoom in
     def __zoomIn(self):
         self.__window.zoomIn(self.__control_scale.value())
@@ -359,3 +403,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def __zoomOut(self):
         self.__window.zoomOut(self.__control_scale.value())
         self.__updateViewframe()
+
+    def __changeDimension(self):
+        if self.__dimensions_button.text() == "2D":
+            self.__dimensions_button.setText("3D")
+            self.__button_back.setEnabled(True)
+            self.__button_front.setEnabled(True)
+        else:
+            self.__dimensions_button.setText("2D")
+            self.__button_back.setEnabled(False)
+            self.__button_front.setEnabled(False)
