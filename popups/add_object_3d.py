@@ -1,5 +1,5 @@
 from popups.add_object import AddObject
-from objects.bspline import BSpline
+from objects.object3D import Object3D
 
 class AddObject3D(AddObject):
     def __init__(self, display_file, object_list, n_coords):
@@ -10,7 +10,7 @@ class AddObject3D(AddObject):
         self.setWindowTitle("Adicionar Objeto 3D")
     
     def create(self):
-        return BSpline(self.name_input.text(), self.getListCoord(), self.color)
+        return Object3D(self.name_input.text(), self.getListCoord(), self.color)
 
     @property
     def n_coord(self):
