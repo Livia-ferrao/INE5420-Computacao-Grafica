@@ -10,9 +10,10 @@ class EditObject(AddObject):
     # Coloca o nome e coordenadas do objeto como valores iniciais da tela de edição
     def __populateFields(self):
         self.name_input.setText(self.__existing_object.name)
-        for i, (x, y) in enumerate(self.__existing_object.coord):
+        for i, (x, y, z) in enumerate(self.__existing_object.coord):
             self.x_inputs[i].setValue(x)
             self.y_inputs[i].setValue(y)
+            self.z_inputs[i].setValue(z)
         self._AddObject__updateColor(self.__existing_object.color)
 
     def setTitle(self):

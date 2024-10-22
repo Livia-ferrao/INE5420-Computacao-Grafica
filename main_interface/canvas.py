@@ -22,11 +22,16 @@ class Canvas(QLabel):
         self.__pix_map.fill(Qt.white)
         painter = QPainter(self.__pix_map)
 
+        projection_matrix = window.getParallelProjectionMatrix()
+        normalize_matrix = window.windowNormalize()
+
         for obj in obj_list:
+            normalized = obj.projectAndNormalize(projection_matrix, normalize_matrix)
+            
             if obj.tipo == Type.POINT or obj.tipo == Type.WIREFRAME:
-                obj.draw(window, painter, self.__viewport)
+                obj.draw(window, painter, self.__viewport, normalized)
             else:
-                obj.draw(window, painter, self.__viewport, clipping_algorithm)
+                obj.draw(window, painter, self.__viewport, clipping_algorithm, normalized)
         
         self.__viewport.drawBorder(painter)
         

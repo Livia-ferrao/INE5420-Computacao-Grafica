@@ -8,10 +8,7 @@ class BerzierCurve(Object):
     def __init__(self, name, coord, color):
         super().__init__(name, Type.BERZIER_CURVE, coord, color)
 
-    def draw(self, window, painter, viewport, clipping_algorithm):
-        # Normalizar as coordenadas
-        normalized_coords = self.normalizeCoords(window)
-
+    def draw(self, window, painter, viewport, clipping_algorithm, normalized_coords):
         # Determina pontos da curva
         points = self.__getDrawingPoints(normalized_coords)
 

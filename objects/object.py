@@ -11,34 +11,17 @@ class Object(ABC):
     @abstractmethod
     def draw(*args, **kwargs):
         pass
-
-     # Normaliza as coordenadas no espaço 3D
-    def normalizeCoords(self, window):
-        transforming_matrix = window.windowNormalize3D()
-
-        normalized_coords = []
-        for x, y, z in self.coord:
-            transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(transforming_matrix))).tolist()
-            normalized_coords.append(transformed_coord[:3])  # Mantém apenas as coordenadas 3D normalizadas
-        return normalized_coords
     
-    def project(self, window):
-        projection_matrix = window.getParallelProjectionMatrix()
-        projected_coords = []
+    def projectAndNormalize(self, project, normalize):
+        project_coords = []
         for x, y, z in self.coord:
-            transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(projection_matrix))).tolist()
-            projected_coords.append(transformed_coord[:3])  # Mantém apenas as coordenadas 3D normalizadas
-        return projected_coords
-    
-    def projectAndNormalizeCoords(self, window):
-        projection_matrix = window.getParallelProjectionMatrix()
-        normalizing_matrix = window.windowNormalize3D()
-        transforming_matrix = np.matmul(projection_matrix, normalizing_matrix)
-        resulting_coords = []
-        for x, y, z in self.coord:
-            transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(transforming_matrix))).tolist()
-            resulting_coords.append(transformed_coord[:3])  # Mantém apenas as coordenadas 3D normalizadas
-        return resulting_coords
+            transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(project))).tolist()
+            project_coords.append(transformed_coord[:2])
+        normalize_coords = []
+        for x, y in project_coords:
+            transformed_coord = (np.dot(np.array([x, y, 1]), np.array(normalize))).tolist()
+            normalize_coords.append(transformed_coord[:2])
+        return normalize_coords
     
     @property
     def name(self):

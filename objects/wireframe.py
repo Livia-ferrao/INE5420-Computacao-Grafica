@@ -9,10 +9,7 @@ class Wireframe(Object):
         super().__init__(name, Type.WIREFRAME, coord, color)
         self.__filled = filled
 
-    def draw(self, window, painter, viewport):
-        # Normalizar as coordenadas
-        #normalized_coords = self.normalizeCoords(window)
-        normalized_coords = self.projectAndNormalizeCoords(window)
+    def draw(self, window, painter, viewport, normalized_coords):
         # Determina se vai desenhar o wireframe/parte do wireframe
         (draw, coords) = Clipping.sutherlandHodgeman(normalized_coords, window)
 

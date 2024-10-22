@@ -9,12 +9,9 @@ class BSpline(Object):
     def __init__(self, name, coord, color):
         super().__init__(name, Type.B_SPLINE, coord, color)
 
-    def draw(self, window, painter, viewport, clipping_algorithm):
-        # Normalizar as coordenadas (pontos de controle)
-        points_control = self.normalizeCoords(window)
-        
+    def draw(self, window, painter, viewport, clipping_algorithm, normalized_coords):
         # Calcula os pontos da B-Spline
-        points = self.__getDrawingPoints(points_control)
+        points = self.__getDrawingPoints(normalized_coords)
 
         # Desenha linhas entre os pontos
         for i in range(len(points)-1):

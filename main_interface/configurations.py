@@ -80,16 +80,6 @@ class Configurations:
     @staticmethod
     def windowYmin():
         return -1000
-    
-    # z max inicial da window
-    @staticmethod
-    def windowZmax():
-        return 1000
-
-    # z min inicial da window
-    @staticmethod
-    def windowZmin():
-        return -1000
 
     # x min da viewport
     @staticmethod

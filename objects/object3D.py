@@ -7,10 +7,7 @@ class Object3D(Object):
     def __init__(self, name, coord, color):
         super().__init__(name, Type.OBJECT_3D, coord, color)
     
-    def draw(self, window, painter, viewport, clipping_algorithm):
-        # Normalizar as coordenadas
-        normalized_coords = self.normalizeCoords(window)
-
+    def draw(self, window, painter, viewport, clipping_algorithm, normalized_coords):
         # Criar arestas (linhas) ligando os pontos consecutivos
         edges = [((normalized_coords[i]), (normalized_coords[i + 1])) for i in range(len(normalized_coords) - 1)]
         
