@@ -360,39 +360,53 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Rotacionar para esquerda
     def __rotateLeft(self):
-        self.__window.rotate(-self.__angle_spin.value())
+        self.__window.rotate_z_axis(-self.__angle_spin.value())
         self.__updateViewframe() 
 
      # Rotacionar para direita
     def __rotateRight(self):
-        self.__window.rotate(self.__angle_spin.value())
+        self.__window.rotate_z_axis(self.__angle_spin.value())
         self.__updateViewframe()      
 
-    # Movimentação para esquerda
+   # Movimentação para esquerda
     def __moveLeft(self):
-        self.__window.moveLeft(self.__control_scale.value())
+        if self.__dimensions_button.text() == "2D":
+            self.__window.moveLeft(self.__control_scale.value())
+        else:
+            self.__window.rotate_y_axis(-self.__angle_spin.value())
         self.__updateViewframe()
     
     # Movimentação para direita
     def __moveRight(self):
-        self.__window.moveRight(self.__control_scale.value())
+        if self.__dimensions_button.text() == "2D":
+            self.__window.moveRight(self.__control_scale.value())
+        else:
+            self.__window.rotate_y_axis(self.__angle_spin.value())
         self.__updateViewframe()
 
     # Movimentação para cima
     def __moveUp(self):
-        self.__window.moveUp(self.__control_scale.value())
+        if self.__dimensions_button.text() == "2D":
+            self.__window.moveUp(self.__control_scale.value())
+        else:
+            self.__window.rotate_x_axis(self.__angle_spin.value())
         self.__updateViewframe()
     
     # Movimentação para baixo
     def __moveDown(self):
-        self.__window.moveDown(self.__control_scale.value())
+        if self.__dimensions_button.text() == "2D":
+            self.__window.moveDown(self.__control_scale.value())
+        else:
+            self.__window.rotate_x_axis(-self.__angle_spin.value())
         self.__updateViewframe()
     
     def __moveFront(self):
-        pass
+        self.__window.moveFront(self.__control_scale.value())
+        self.__updateViewframe()
 
     def __moveBack(self):
-        pass
+        self.__window.moveBack(self.__control_scale.value())
+        self.__updateViewframe()
 
     # Zoom in
     def __zoomIn(self):
