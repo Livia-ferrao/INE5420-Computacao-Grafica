@@ -46,8 +46,8 @@ class MatrixGenerator:
         cos = np.cos(angle)
         sin = np.sin(angle)
         return np.array([[1,   0,    0, 0],
-                         [0,  cos, -sin, 0],
-                         [0,  sin,  cos, 0],
+                         [0,  cos, sin, 0],
+                         [0,  -sin,  cos, 0],
                          [0,   0,    0, 1]])
 
     # Matriz de rotação 3D ao redor do eixo Y
@@ -56,9 +56,9 @@ class MatrixGenerator:
         angle = np.radians(theta)
         cos = np.cos(angle)
         sin = np.sin(angle)
-        return np.array([[ cos,  0, sin, 0],
+        return np.array([[ cos,  0, -sin, 0],
                          [   0,  1,   0, 0],
-                         [-sin,  0, cos, 0],
+                         [sin,  0, cos, 0],
                          [   0,  0,   0, 1]])
 
     # Matriz de rotação 3D ao redor do eixo Z
@@ -67,8 +67,8 @@ class MatrixGenerator:
         angle = np.radians(theta)
         cos = np.cos(angle)
         sin = np.sin(angle)
-        return np.array([[cos, -sin, 0, 0],
-                         [sin,  cos, 0, 0],
+        return np.array([[cos, sin, 0, 0],
+                         [-sin,  cos, 0, 0],
                          [  0,    0, 1, 0],
                          [  0,    0, 0, 1]])
 
