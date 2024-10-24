@@ -24,42 +24,30 @@ class Window:
     # Movimentação para esquerda
     def moveLeft(self, scale):
         distance = (self.__w_max - self.__w_min) * (scale/100)
-        rotation = MatrixGenerator.generateAllRotationMatrixes3D(-self.__x_angle, -self.__y_angle, -self.__z_angle)
-        (dx, dy, dz, _) = np.matmul(np.array([-distance, 0, 0, 1]), rotation).tolist()
-        self.__move(dx, dy, dz)
+        self.__move(-distance, 0, 0)
 
    # Movimentação para direita
     def moveRight(self, scale):
         distance = (self.__w_max - self.__w_min) * (scale/100)
-        rotation = MatrixGenerator.generateAllRotationMatrixes3D(-self.__x_angle, -self.__y_angle, -self.__z_angle)
-        (dx, dy, dz, _) = np.matmul(np.array([distance, 0, 0, 1]), rotation).tolist()
-        self.__move(dx, dy, dz)
+        self.__move(distance, 0, 0)
 
     # Movimentação para cima
     def moveUp(self, scale):
         distance = (self.__w_max - self.__w_min) * (scale/100)
-        rotation = MatrixGenerator.generateAllRotationMatrixes3D(-self.__x_angle, -self.__y_angle, -self.__z_angle)
-        (dx, dy, dz, _) = np.matmul(np.array([0, distance, 0, 1]), rotation).tolist()
-        self.__move(dx, dy, dz)
+        self.__move(0, distance, 0)
 
     # Movimentação para baixo
     def moveDown(self, scale):
         distance = (self.__w_max - self.__w_min) * (scale/100)
-        rotation = MatrixGenerator.generateAllRotationMatrixes3D(-self.__x_angle, -self.__y_angle, -self.__z_angle)
-        (dx, dy, dz, _) = np.matmul(np.array([0, -distance, 0, 1]), rotation).tolist()
-        self.__move(dx, dy, dz)
+        self.__move(0, -distance, 0)
 
     def moveFront(self, scale):
         distance = (self.__w_max - self.__w_min) * (scale/100)
-        rotation = MatrixGenerator.generateAllRotationMatrixes3D(-self.__x_angle, -self.__y_angle, -self.__z_angle)
-        (dx, dy, dz, _) = np.matmul(np.array([0, 0, distance, 1]), rotation).tolist()
-        self.__move(dx, dy, dz)
+        self.__move(0, 0, distance)
 
     def moveBack(self, scale):
         distance = (self.__w_max - self.__w_min) * (scale/100)
-        rotation = MatrixGenerator.generateAllRotationMatrixes3D(-self.__x_angle, -self.__y_angle, -self.__z_angle)
-        (dx, dy, dz, _) = np.matmul(np.array([0, 0, -distance, 1]), rotation).tolist()
-        self.__move(dx, dy, dz)
+        self.__move(0, 0, -distance)
 
     # Função chamada por todas as movimentações para mover a window efetivamente
     def __move(self, dx, dy, dz):
