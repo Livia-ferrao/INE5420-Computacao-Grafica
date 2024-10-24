@@ -10,7 +10,7 @@ class Window:
         self.__ymin_scn = -1
         self.__ymax_scn = 1
 
-        # X e Y max e min da window para controlar o escalonamento
+        # Ponto máximo e mínimo da altura e largura da window para controlar o escalonamento
         self.__w_min = Configurations.windowXmin()
         self.__w_max = Configurations.windowXmax()
         self.__h_min = Configurations.windowYmin()
@@ -41,10 +41,12 @@ class Window:
         distance = (self.__w_max - self.__w_min) * (scale/100)
         self.__move(0, -distance, 0)
 
+    # Movimentação para frente
     def moveFront(self, scale):
         distance = (self.__w_max - self.__w_min) * (scale/100)
         self.__move(0, 0, distance)
 
+    # Movimentação para trás
     def moveBack(self, scale):
         distance = (self.__w_max - self.__w_min) * (scale/100)
         self.__move(0, 0, -distance)
@@ -78,22 +80,26 @@ class Window:
         self.__h_min -= dh
         self.__h_max += dh
     
+    # Rotaciona a window no eixo z
     def rotate_z_axis(self, theta):
         self.__z_angle += theta
     
+    # Rotaciona no eixo x
     def rotate_x_axis(self, theta):
         self.__x_angle += theta
 
+    # Rotaciona no eixo y
     def rotate_y_axis(self, theta):
         self.__y_angle += theta
     
-     # Retorna a matriz de transformação para normalizar os objetos no espaço 3D
+    # Retorna a matriz de transformação para normalizar os objetos
     def windowNormalize(self):
         (Wxc, Wyc, _) = self.__center
 
         Sx = 2 / (self.__w_max - self.__w_min)
         Sy = 2 / (self.__h_max - self.__h_min)
 
+        # Translação já é feita na projeção paralela
         #translating_matrix = MatrixGenerator.generateTranslationMatrix(-Wxc, -Wyc)
         rotating_matrix = MatrixGenerator.generateRotationMatrix(-self.__z_angle)
         scaling_matrix = MatrixGenerator.generateScalingMatrix(Sx, Sy)
@@ -101,6 +107,7 @@ class Window:
         result = np.matmul(rotating_matrix, scaling_matrix)
         return result.tolist()
 
+    # Retorna a matriz de projeção paralela ortogonal para projetar os objetos no espaço 3D
     def getParallelProjectionMatrix(self):
         vpr = self.__center
         translating_vpr = MatrixGenerator.generateTranslationMatrix3D(-vpr[0], -vpr[1], -vpr[2])

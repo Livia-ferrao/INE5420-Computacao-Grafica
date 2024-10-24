@@ -12,6 +12,7 @@ class Object(ABC):
     def draw(*args, **kwargs):
         pass
     
+    # Projeta e normaliza as coordenadas do objeto
     def projectAndNormalize(self, project, normalize):
         project_coords = []
         for x, y, z in self.coord:
@@ -51,7 +52,7 @@ class Object(ABC):
     def color(self, new_color):
         self.__color = new_color
     
-    # Calcula o centro do objeto 3D
+    # Calcula o centro do objeto
     def getCenter(self):
         coord_len = len(self.__coord)
         center_x = center_y = center_z = 0

@@ -34,7 +34,7 @@ class AddObject(QDialog):
         self.__drawButtons()
         self.setTitle()
 
-    # Labels xi e yi e input para pontos xi e yi
+    # Labels xi, yi e zi e input para pontos xi, yi e zi
     def __drawXYZinputs(self):
         self.__x_inputs = []
         self.__y_inputs = []

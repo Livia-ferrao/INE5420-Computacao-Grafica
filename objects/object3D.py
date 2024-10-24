@@ -15,18 +15,17 @@ class Object3D(Object):
         for i in edges:
             line = [i[0], i[1]]
 
-            # Determina se vai desenhar a linha ou parte da linha
+            # Determina se vai desenhar a aresta ou parte da aresta
             if clipping_algorithm == ClippingAlgorithm.COHEN:
                 draw, coords = Clipping.cohenSutherland(line, window)
             else:
                 draw, coords = Clipping.liangBarsky(line, window)
 
-            # Se o clipping permitir desenhar a linha
             if draw:
-                # Transforma as coordenadas para o espaço da viewport
+                # Transforma para coordenadas da viewport
                 coord_viewport = viewport.calcularCoordsViewport(coords)
 
-                # Desenha a linha no espaço da viewport
+                # Desenha a aresta
                 pen = QPen(self.color, 2)
                 painter.setPen(pen)
                 painter.drawLine(

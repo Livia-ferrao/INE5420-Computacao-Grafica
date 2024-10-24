@@ -139,8 +139,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__button_right = self.__createControlFrameButton("icons/right-arrow.png", self.__moveRight, "Mover window para direita")
         self.__button_zoom_in = self.__createControlFrameButton("icons/zoom-in.png", self.__zoomIn, "Zoom in")
         self.__button_zoom_out = self.__createControlFrameButton("icons/zoom-out.png", self.__zoomOut, "Zoom out")
-        self.__button_rotate_right = self.__createControlFrameButton("icons/rotate-right", self.__rotateRight, "Rotacionar window para direita")
-        self.__button_rotate_left = self.__createControlFrameButton("icons/rotate-left.png", self.__rotateLeft, "Rotacionar window para esquerda")
+        self.__button_rotate_right = self.__createControlFrameButton("icons/rotate-right", self.__rotateRight, "Rotacionar window para direita no eixo z")
+        self.__button_rotate_left = self.__createControlFrameButton("icons/rotate-left.png", self.__rotateLeft, "Rotacionar window para esquerda no eixo z")
         self.__button_front = self.__createControlFrameButton("icons/arrow-upper-right.png", self.__moveFront, "Mover window para frente")
         self.__button_back = self.__createControlFrameButton("icons/down-left-arrow.png", self.__moveBack, "Mover window para trás")
         self.__button_front.setEnabled(False)
@@ -377,12 +377,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__window.rotate_z_axis(-self.__angle_spin.value())
         self.__updateViewframe() 
 
-     # Rotacionar para direita
+    # Rotacionar para direita
     def __rotateRight(self):
         self.__window.rotate_z_axis(self.__angle_spin.value())
         self.__updateViewframe()      
 
-   # Movimentação para esquerda
+   # Botão movimentação para esquerda
     def __moveLeft(self):
         if self.__dimensions_button.text() == "2D":
             self.__window.moveLeft(self.__control_scale.value())
@@ -390,7 +390,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.__window.rotate_y_axis(-self.__angle_spin.value())
         self.__updateViewframe()
     
-    # Movimentação para direita
+    # Botão movimentação para direita
     def __moveRight(self):
         if self.__dimensions_button.text() == "2D":
             self.__window.moveRight(self.__control_scale.value())
@@ -398,7 +398,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.__window.rotate_y_axis(self.__angle_spin.value())
         self.__updateViewframe()
 
-    # Movimentação para cima
+    # Botão movimentação para cima
     def __moveUp(self):
         if self.__dimensions_button.text() == "2D":
             self.__window.moveUp(self.__control_scale.value())
@@ -406,7 +406,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.__window.rotate_x_axis(self.__angle_spin.value())
         self.__updateViewframe()
     
-    # Movimentação para baixo
+    # Botão movimentação para baixo
     def __moveDown(self):
         if self.__dimensions_button.text() == "2D":
             self.__window.moveDown(self.__control_scale.value())
@@ -414,10 +414,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.__window.rotate_x_axis(-self.__angle_spin.value())
         self.__updateViewframe()
     
+    # Botão movimentação para frente
     def __moveFront(self):
         self.__window.moveFront(self.__control_scale.value())
         self.__updateViewframe()
 
+    # Botão movimentação para trás
     def __moveBack(self):
         self.__window.moveBack(self.__control_scale.value())
         self.__updateViewframe()
@@ -432,12 +434,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__window.zoomOut(self.__control_scale.value())
         self.__updateViewframe()
 
+    # Muda forma de "movimentação" entre 2D e 3D:
+    # Em 2D movimenta nos eixos x e y
+    # Em 3D rotaciona pelos eixos x e y e movimenta no eixo z
     def __changeDimension(self):
         if self.__dimensions_button.text() == "2D":
             self.__dimensions_button.setText("3D")
             self.__button_back.setEnabled(True)
             self.__button_front.setEnabled(True)
+            self.__button_left.setToolTip("Rotacionar para esquerda no eixo y")
+            self.__button_right.setToolTip("Rotacionar para direita no eixo y")
+            self.__button_up.setToolTip("Rotationar para cima no eixo x")
+            self.__button_down.setToolTip("Rotacionar para baixo no eixo x")
         else:
             self.__dimensions_button.setText("2D")
             self.__button_back.setEnabled(False)
             self.__button_front.setEnabled(False)
+            self.__button_left.setToolTip("Mover window para esquerda")
+            self.__button_right.setToolTip("Mover window para direita")
+            self.__button_up.setToolTip("Mover window para cima")
+            self.__button_down.setToolTip("Mover window para baixo")

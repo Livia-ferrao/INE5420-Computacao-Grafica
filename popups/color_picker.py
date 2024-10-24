@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QDialog, QLabel, QGridLayout, QSlider, QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QDialog, QLabel, QGridLayout, QDoubleSpinBox, QPushButton, QHBoxLayout
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QPixmap, QImage, QColor, QPainter
 
@@ -20,14 +20,19 @@ class ColorPicker(QDialog):
         self.__color_spectrum.setFixedSize(256, 256)
         self.__drawColorSpectrum(self.__color_spectrum.width(),
                                 self.__color_spectrum.height())
-        layout.addWidget(self.__color_spectrum, 0, 0, 1, 2)
+        layout.addWidget(self.__color_spectrum, 0, 0, 1, 3)
 
-        # # Slider para controlar o brilho
-        # brightness_slider = QSlider(Qt.Horizontal)
-        # brightness_slider.setRange(0, 100)
-        # brightness_slider.setValue(100)
-        # brightness_slider.valueChanged.connect(self.__updateBrightness)
-        # layout.addWidget(brightness_slider, 1, 0, 1, 2)
+        # Spin box para controlar o brilho
+        brightness_label = QLabel("Brilho:")
+        self.__brightness_slider = QDoubleSpinBox()
+        self.__brightness_slider.setRange(0, 1)
+        self.__brightness_slider.setValue(1)
+        self.__brightness_slider.setSingleStep(0.01)
+        brightness_change = QPushButton("Trocar brilho")
+        brightness_change.clicked.connect(self.__updateBrightness)
+        layout.addWidget(brightness_label, 1, 0)
+        layout.addWidget(self.__brightness_slider, 1, 1)
+        layout.addWidget(brightness_change, 1, 2)
 
         # Mostrar cor selecionada
         line_layout = QHBoxLayout()
@@ -42,7 +47,7 @@ class ColorPicker(QDialog):
         line_layout.addWidget(self.__color_code_label)
         # Cor selecionada inicialmente: cor passada na inicialização da classe
         self.__updateSelectedColor(color)
-        layout.addLayout(line_layout, 2, 0, 1, 2)
+        layout.addLayout(line_layout, 2, 0, 1, 3)
 
         # Botões ok e cancelar
         ok_button = QPushButton("Ok")
@@ -86,11 +91,11 @@ class ColorPicker(QDialog):
         self.__color_display.setStyleSheet(f"background-color: {self.__selected_color.name()};")
         self.__color_code_label.setText(self.__selected_color.name())
 
-    # # Atualiza o brilho
-    # def __updateBrightness(self, value):
-    #     self.__brightness = value/100
-    #     self.__drawColorSpectrum(self.__color_spectrum.width(),
-    #                             self.__color_spectrum.height())
+    # Atualiza o brilho
+    def __updateBrightness(self):
+        self.__brightness = self.__brightness_slider.value()
+        self.__drawColorSpectrum(self.__color_spectrum.width(),
+                                self.__color_spectrum.height())
 
     @property
     def selected_color(self):
