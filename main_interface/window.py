@@ -136,3 +136,15 @@ class Window:
     @property
     def ymax_scn(self):
         return self.__ymax_scn
+    
+    @property
+    def x_angle(self):
+        return self.__x_angle
+    
+    @property
+    def y_angle(self):
+        return self.__y_angle
+    
+    @property
+    def z_angle(self):
+        return self.__z_angle

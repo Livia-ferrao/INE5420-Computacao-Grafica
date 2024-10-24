@@ -7,7 +7,7 @@ class QtdPointsObj3D(QDialog):
         self.setWindowTitle("Criar Objeto 3D")
 
         # Labels e Inputs
-        self.__info_label = QLabel("As arestas começam nos pontos de índice ímpar e terminam nos de índice par\n\nEscolha as arestas na forma: (X1, Y1, Z1) -> (X2, Y2, Z2)")
+        self.__info_label = QLabel("As arestas começam nos pontos de índice ímpar e terminam nos de índice par\n\nEscolha as arestas na forma: (x1, y1, z1) -> (x2, y2, z2)")
         self.__info_label.setAlignment(Qt.AlignCenter)
         self.__info_label.setWordWrap(True)
         

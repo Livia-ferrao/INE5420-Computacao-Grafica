@@ -16,3 +16,9 @@ class RotationType(Enum):
 class ClippingAlgorithm(Enum):
     COHEN = "Método de Cohen Sutherland"
     LIANG = "Método de Liang-Barsky"
+
+class RotationAxis(Enum):
+    X = "X"
+    Y = "Y"
+    Z = "Z"
+    ARBRITRARY = "Arbitrário entre 2 pontos"
