@@ -19,7 +19,7 @@ class TransformationsDialog(QDialog):
         self.__layout = QGridLayout(self)
         self.__layout.addWidget(self.__tab_widget, 0, 0)
 
-        self.setFixedSize(400, 300)
+        self.setFixedSize(500, 350)
         self.setWindowTitle("Transformações")
         self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
     
@@ -216,11 +216,8 @@ class TransformationsDialog(QDialog):
 
     # Faz a translação do objeto
     def __translateObject(self):
-        rotation = MatrixGenerator.generateAllRotationMatrixes3D(-self.__window.x_angle, -self.__window.y_angle, -self.__window.z_angle)
         translating_matrix = MatrixGenerator.generateTranslationMatrix3D(self.__translation_dx.value(), self.__translation_dy.value(), self.__translation_dz.value())
-        rotation_back = MatrixGenerator.generateAllRotationMatrixes3D(self.__window.x_angle, self.__window.y_angle, self.__window.z_angle)
-        transforming_matrix = np.matmul(np.matmul(rotation, translating_matrix), rotation_back)
-        self.__transformObject(transforming_matrix)
+        self.__transformObject(translating_matrix)
         self.accept()
         
     # Faz o escalonamento do objeto

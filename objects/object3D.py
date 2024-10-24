@@ -9,7 +9,7 @@ class Object3D(Object):
     
     def draw(self, window, painter, viewport, clipping_algorithm, normalized_coords):
         # Criar arestas (linhas) ligando os pontos consecutivos
-        edges = [((normalized_coords[i]), (normalized_coords[i + 1])) for i in range(len(normalized_coords) - 1)]
+        edges = [((normalized_coords[i]), (normalized_coords[i + 1])) for i in range(0, len(normalized_coords) - 1, 2)]
         
         # Desenhar cada uma das arestas como retas 2D normalizadas
         for i in edges:

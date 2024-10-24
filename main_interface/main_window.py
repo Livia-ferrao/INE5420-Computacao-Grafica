@@ -23,6 +23,9 @@ from tools.type import ClippingAlgorithm
 from main_interface.canvas import Canvas
 from popups.qtd_curves import QtdCurves
 from popups.qtd_points_bspline import QtdPointsBSpline
+from objects.line import Line
+from objects.wireframe import Wireframe
+from objects.object3D import Object3D
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -166,7 +169,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Spin box do ângulo para rotação
         self.__angle_spin = QtWidgets.QSpinBox()
-        self.__angle_spin.setValue(30)
+        self.__angle_spin.setValue(15)
         self.__angle_spin.setMinimum(0)
         self.__angle_spin.setMaximum(360)
         self.__angle_spin.setSingleStep(1)
@@ -250,6 +253,17 @@ class MainWindow(QtWidgets.QMainWindow):
             radio.setStyleSheet("color: black;")
             self.__layout_clipping.addWidget(radio)
 
+        # Adicionando objetos para teste
+        obj1 = Line("linha1", [(200, 0, 0), (400, 0, 0)], QtGui.QColor(0,0,0))
+        self.__display_file.addObject(obj1)
+        self.__object_list.addItem(str(obj1.name))
+        obj2 = Wireframe("wireframe1", [(300, -200, 0), (-300, -200, 0), (0, 200, 0)], QtGui.QColor(255,0,0), True)
+        self.__display_file.addObject(obj2)
+        self.__object_list.addItem(str(obj2.name))
+        obj3 = Object3D("cubo", [(-800, -800, 0), (-800, -400, 0), (-800, -400, 0), (-400, -400, 0), (-400, -400, 0), (-400, -800, 0), (-400, -800, 0), (-800, -800, 0), (-800, -800, -400), (-800, -400, -400), (-800, -400, -400), (-400, -400, -400), (-400, -400, -400), (-400, -800, -400), (-400, -800, -400), (-800, -800, -400), (-800, -800, 0), (-800, -800, -400), (-800, -400, 0), (-800, -400, -400), (-400, -800, 0), (-400, -800, -400), (-400, -400, 0), (-400, -400, -400)], QtGui.QColor(0,255,0))
+        self.__display_file.addObject(obj3)
+        self.__object_list.addItem(str(obj3.name))
+        
         self.__updateViewframe()
 
     # Redesenha objetos
