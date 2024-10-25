@@ -7,11 +7,6 @@ class Type(Enum):
     BERZIER_CURVE = 4
     B_SPLINE = 5
     OBJECT_3D = 6
-    
-class RotationType(Enum):
-    OBJECT_CENTER = "Centro do objeto"
-    WORLD_CENTER = "Centro do mundo"
-    ARBITRARY_POINT = "Ponto Arbitrário"
 
 class ClippingAlgorithm(Enum):
     COHEN = "Método de Cohen Sutherland"
@@ -21,4 +16,4 @@ class RotationAxis(Enum):
     X = "X"
     Y = "Y"
     Z = "Z"
-    ARBRITRARY = "Arbitrário entre 2 pontos"
+    ARBRITRARY = "Arbitrário"

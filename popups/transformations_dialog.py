@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QComboBox, QDialog, QLabel, QGridLayout, QPushButt
 from main_interface.configurations import Configurations
 from tools.matrix_generator import MatrixGenerator
 import numpy as np
-from tools.type import RotationType, RotationAxis
+from tools.type import RotationAxis
 
 class TransformationsDialog(QDialog):
     def __init__(self, selected_obj, window):
@@ -102,33 +102,11 @@ class TransformationsDialog(QDialog):
     def __drawRotationTab(self):
         self.__rotation_tab = QWidget()
         
-        # Escolha do ponto em torno do qual a rotação acontece
-        rotation_label = QLabel("Rotação relativa ao:")
-        self.__rotation_type = QComboBox()
-        self.__rotation_type.addItems([RotationType.OBJECT_CENTER.value,
-                                     RotationType.WORLD_CENTER.value,
-                                     RotationType.ARBITRARY_POINT.value])
-        self.__rotation_type.currentIndexChanged.connect(self.__rotationTypeChanged)
-        
         # Input do ângulo de rotação
         angle_label = QLabel("Ângulo de rotação (graus):")
         self.__angle_input = QSpinBox()
         self.__angle_input.setRange(-360, 360)
         self.__angle_input.setValue(0)  # Ângulo inicial
-        
-        # Labels e SpinBoxes para coordenadas do ponto arbitrário
-        self.__rotation_dx_label = QLabel("x:")
-        self.__rotation_dx_input = QSpinBox()
-        self.__rotation_dx_input.setRange(Configurations.min_coord(), Configurations.max_coord())
-        self.__rotation_dy_label = QLabel("y:")
-        self.__rotation_dy_input = QSpinBox()
-        self.__rotation_dy_input.setRange(Configurations.min_coord(), Configurations.max_coord())
-        self.__rotation_dz_label = QLabel("z:")
-        self.__rotation_dz_input = QSpinBox()
-        self.__rotation_dz_input.setRange(Configurations.min_coord(), Configurations.max_coord())
-
-        # Mostrar ou esconder labels e spinboxes do ponto arbitrário inicialmente de acordo com o tipo de rotação inicial
-        self.__rotationTypeChanged()
 
         # Escolha do eixo de rotação
         axis_label = QLabel("Eixo de rotação:")
@@ -139,13 +117,18 @@ class TransformationsDialog(QDialog):
                                      RotationAxis.ARBRITRARY.value])
         self.__rotation_axis.currentIndexChanged.connect(self.__rotationAxisChanged)
 
-        self.__axis_labels = []
-        self.__axis_inputs = []
-        for i in ["x1:", "y1:", "z1:", "x2:", "y2:", "z2:"]:
-            self.__axis_labels.append(QLabel(i))
-            spin_box = QSpinBox()
-            spin_box.setRange(Configurations.min_coord(), Configurations.max_coord())
-            self.__axis_inputs.append(spin_box)
+        # Labels e SpinBoxes para coordenadas do ponto do eixo arbitrárro
+        self.__arbitrary_explanation = QLabel("O eixo arbitrário é o eixo entre o centro do objeto e o ponto:")
+        self.__arbitrary_explanation.setFixedHeight(20) 
+        self.__rotation_x_label = QLabel("x:")
+        self.__rotation_x_input = QSpinBox()
+        self.__rotation_x_input.setRange(Configurations.min_coord(), Configurations.max_coord())
+        self.__rotation_y_label = QLabel("y:")
+        self.__rotation_y_input = QSpinBox()
+        self.__rotation_y_input.setRange(Configurations.min_coord(), Configurations.max_coord())
+        self.__rotation_z_label = QLabel("z:")
+        self.__rotation_z_input = QSpinBox()
+        self.__rotation_z_input.setRange(Configurations.min_coord(), Configurations.max_coord())
 
         self.__rotationAxisChanged()
 
@@ -153,148 +136,72 @@ class TransformationsDialog(QDialog):
         layout = QGridLayout(self.__rotation_tab)
         layout.addWidget(angle_label, 0, 0)
         layout.addWidget(self.__angle_input, 0, 1)
-        layout.addWidget(rotation_label, 1, 0)
-        layout.addWidget(self.__rotation_type, 1, 1)
+        layout.addWidget(axis_label, 1, 0)
+        layout.addWidget(self.__rotation_axis, 1, 1)
+        layout.addWidget(self.__arbitrary_explanation, 2, 0, 1, 2)
         coords_hbox = QHBoxLayout()
-        coords_hbox.addWidget(self.__rotation_dx_label)
-        coords_hbox.addWidget(self.__rotation_dx_input)
-        coords_hbox.addWidget(self.__rotation_dy_label)
-        coords_hbox.addWidget(self.__rotation_dy_input)
-        coords_hbox.addWidget(self.__rotation_dz_label)
-        coords_hbox.addWidget(self.__rotation_dz_input)
-        layout.addLayout(coords_hbox, 2, 0, 1, 2)
-        layout.addWidget(axis_label, 3, 0)
-        layout.addWidget(self.__rotation_axis, 3, 1)
-        for i in range(2):
-            hbox = QHBoxLayout()
-            for j in range(3):
-                hbox.addWidget(self.__axis_labels[i*3+j])
-                hbox.addWidget(self.__axis_inputs[i*3+j])
-            layout.addLayout(hbox, 4+i, 0, 1, 2)
-
+        coords_hbox.addWidget(self.__rotation_x_label)
+        coords_hbox.addWidget(self.__rotation_x_input)
+        coords_hbox.addWidget(self.__rotation_y_label)
+        coords_hbox.addWidget(self.__rotation_y_input)
+        coords_hbox.addWidget(self.__rotation_z_label)
+        coords_hbox.addWidget(self.__rotation_z_input)
+        layout.addLayout(coords_hbox, 3, 0, 1, 2)
+        
         # Desenha os botões da aba de rotação
-        self.__drawButtons(layout, 6, self.__rotateObject)
+        self.__drawButtons(layout, 4, self.__rotateObject)
         
         # Adiciona a aba de rotação ao widget principal do dialog
         self.__tab_widget.addTab(self.__rotation_tab, "Rotação")
     
-    # Mostra ou esconde labels e spinboxes do ponto arbitrário quando um tipo de rotação é selecionado
-    def __rotationTypeChanged(self):
-        current_text = self.__rotation_type.currentText()
-        if current_text == RotationType.ARBITRARY_POINT.value:
-            self.__rotation_dx_input.setEnabled(True)
-            self.__rotation_dy_input.setEnabled(True)
-            self.__rotation_dz_input.setEnabled(True)
-            self.__rotation_dx_input.show()
-            self.__rotation_dy_input.show()
-            self.__rotation_dz_input.show()
-            self.__rotation_dx_label.show()
-            self.__rotation_dy_label.show()
-            self.__rotation_dz_label.show()
-        else:
-            self.__rotation_dx_input.setEnabled(False)
-            self.__rotation_dy_input.setEnabled(False)
-            self.__rotation_dz_input.setEnabled(False)
-            self.__rotation_dx_input.hide()
-            self.__rotation_dy_input.hide()
-            self.__rotation_dz_input.hide()
-            self.__rotation_dx_label.hide()
-            self.__rotation_dy_label.hide()
-            self.__rotation_dz_label.hide()
-
+    # Mostra ou esconde labels e spinboxes do ponto do eixo arbitrário quando um eixo é selecionado
     def __rotationAxisChanged(self):
         if self.__rotation_axis.currentText() == RotationAxis.ARBRITRARY.value:
-            for i in range(6):
-                self.__axis_labels[i].show()
-                self.__axis_inputs[i].setEnabled(True)
-                self.__axis_inputs[i].show()
+            self.__rotation_x_input.setEnabled(True)
+            self.__rotation_y_input.setEnabled(True)
+            self.__rotation_z_input.setEnabled(True)
+            self.__rotation_x_input.show()
+            self.__rotation_y_input.show()
+            self.__rotation_z_input.show()
+            self.__rotation_x_label.show()
+            self.__rotation_y_label.show()
+            self.__rotation_z_label.show()
+            self.__arbitrary_explanation.show()
         else:
-            for i in range(6):
-                self.__axis_labels[i].hide()
-                self.__axis_inputs[i].setEnabled(False)
-                self.__axis_inputs[i].hide()
+            self.__rotation_x_input.setEnabled(False)
+            self.__rotation_y_input.setEnabled(False)
+            self.__rotation_z_input.setEnabled(False)
+            self.__rotation_x_input.hide()
+            self.__rotation_y_input.hide()
+            self.__rotation_z_input.hide()
+            self.__rotation_x_label.hide()
+            self.__rotation_y_label.hide()
+            self.__rotation_z_label.hide()
+            self.__arbitrary_explanation.hide()
 
     # Faz a translação do objeto
     def __translateObject(self):
-        translating_matrix = MatrixGenerator.generateTranslationMatrix3D(self.__translation_dx.value(), self.__translation_dy.value(), self.__translation_dz.value())
-        self.__transformObject(translating_matrix)
+        self.__selected_obj.translate(self.__translation_dx.value(), self.__translation_dy.value(), self.__translation_dz.value())
         self.accept()
         
     # Faz o escalonamento do objeto
     def __scalingObject(self):
-        center_coord = self.__selected_obj.getCenter()
-
-        translating = MatrixGenerator.generateTranslationMatrix3D(-center_coord[0], -center_coord[1], -center_coord[2])
-        scaling = MatrixGenerator.generateScalingMatrix3D(self.__input_sx.value(), self.__input_sy.value(), self.__input_sz.value())
-        translating_back = MatrixGenerator.generateTranslationMatrix3D(center_coord[0], center_coord[1], center_coord[2])
-
-        transforming_matrix = np.matmul(np.matmul(translating, scaling), translating_back)
-        self.__transformObject(transforming_matrix)
+        self.__selected_obj.scale(self.__input_sx.value(), self.__input_sy.value(), self.__input_sz.value())
         self.accept()
-        print(transforming_matrix)
     
     # Faz a rotação do objeto chamando a função adequada de rotação de acordo com o tipo de rotação escolhida
     def __rotateObject(self):
         rotation_axis = self.__rotation_axis.currentText()
         theta = self.__angle_input.value()
-        rotation_point = self.__getRotationPoint()
 
         if rotation_axis == RotationAxis.X.value:
-            self.__rotateX(theta, rotation_point)
+            self.__selected_obj.rotateXAxis(theta)
         elif rotation_axis == RotationAxis.Y.value:
-            self.__rotateY(theta, rotation_point)
+            self.__selected_obj.rotateYAxis(theta)
         elif rotation_axis == RotationAxis.Z.value:
-            self.__rotateZ(theta, rotation_point)
+            self.__selected_obj.rotateZAxis(theta)
         elif rotation_axis == RotationAxis.ARBRITRARY.value:
-            p1 = (self.__axis_inputs[0].value(), self.__axis_inputs[1].value(), self.__axis_inputs[2].value())
-            p2 = (self.__axis_inputs[3].value(), self.__axis_inputs[4].value(), self.__axis_inputs[5].value())
-            self.__rotateArbitrary(theta, rotation_point, p1, p2)
+            point = (self.__rotation_x_input.value(), self.__rotation_y_input.value(), self.__rotation_z_input.value())
+            self.__selected_obj.rotateArbitrary(theta, point)
         self.accept()
-    
-    def __getRotationPoint(self):
-        point = self.__rotation_type.currentText()
-        if point == RotationType.OBJECT_CENTER.value:
-            return self.__selected_obj.getCenter()
-        elif point == RotationType.WORLD_CENTER.value:
-            return (0, 0, 0)
-        else:
-            return (self.__rotation_dx_input.value(), self.__rotation_dy_input.value(), self.__rotation_dz_input.value())
-    
-    # Faz a rotação do objeto em torno do eixo x
-    def __rotateX(self, theta, point):
-        translating = MatrixGenerator.generateTranslationMatrix3D(-point[0], -point[1], -point[2])
-        rotation_matrix = MatrixGenerator.generateRotationMatrix3D_X(theta)
-        translating_back = MatrixGenerator.generateTranslationMatrix3D(point[0], point[1], point[2])
-        
-        transforming_matrix = np.matmul(np.matmul(translating, rotation_matrix), translating_back)
-        self.__transformObject(transforming_matrix)
-    
-    # Faz a rotação do objeto em torno do eixo y
-    def __rotateY(self, theta, point):
-        translating = MatrixGenerator.generateTranslationMatrix3D(-point[0], -point[1], -point[2])
-        rotation_matrix = MatrixGenerator.generateRotationMatrix3D_Y(theta)
-        translating_back = MatrixGenerator.generateTranslationMatrix3D(point[0], point[1], point[2])
-        
-        transforming_matrix = np.matmul(np.matmul(translating, rotation_matrix), translating_back)
-        self.__transformObject(transforming_matrix)
-
-    # Faz a rotação do objeto em torno do eixo z
-    def __rotateZ(self, theta, point):
-        translating = MatrixGenerator.generateTranslationMatrix3D(-point[0], -point[1], -point[2])
-        rotation_matrix = MatrixGenerator.generateRotationMatrix3D_Z(theta)
-        translating_back = MatrixGenerator.generateTranslationMatrix3D(point[0], point[1], point[2])
-        
-        transforming_matrix = np.matmul(np.matmul(translating, rotation_matrix), translating_back)
-        self.__transformObject(transforming_matrix)
-
-    def __rotateArbitrary(self, theta, rotation_point, p1, p2):
-        pass
-
-    # Faz a transformação do objeto de acordo com uma matriz de transformação
-    def __transformObject(self, matrix):
-        new_coord = []
-        for x, y, z in self.__selected_obj.coord:
-            new = np.matmul(np.array([x, y, z, 1]), matrix).tolist()
-            new_coord.append([new[0], new[1], new[2]])
-        self.__selected_obj.coord = new_coord
         

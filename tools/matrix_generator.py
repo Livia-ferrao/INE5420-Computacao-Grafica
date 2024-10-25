@@ -83,10 +83,3 @@ class MatrixGenerator:
             return MatrixGenerator.generateRotationMatrix3D_Z(theta)
         else:
             raise ValueError(f"Eixo inválido '{axis}'. Escolha entre 'x', 'y' ou 'z'.")
-    
-    @staticmethod
-    def generateAllRotationMatrixes3D(x, y, z):
-        Mx = MatrixGenerator.generateRotationMatrix3D_X(x)
-        My = MatrixGenerator.generateRotationMatrix3D_Y(y)
-        Mz = MatrixGenerator.generateRotationMatrix3D_Z(z)
-        return np.matmul(np.matmul(Mx, My), Mz)
