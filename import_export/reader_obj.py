@@ -1,6 +1,7 @@
 from objects.point import Point
 from objects.line import Line
 from objects.wireframe import Wireframe
+from objects.object3D import Object3D
 from PySide6.QtGui import QColor
 from os.path import exists, dirname, splitext
 from import_export.error_messages import ErrorMessages
@@ -76,8 +77,10 @@ class ReaderOBJ():
                 obj = Point(description[1], description[2], description[3])
             elif description[0] == Type.LINE:
                 obj = Line(description[1], description[2], description[3])
-            else:
+            elif description[0] == Type.WIREFRAME:
                 obj = Wireframe(description[1], description[2], description[3], description[4])
+            elif description[0] == Type.OBJECT_3D:
+                obj = Object3D(description[1], description[2], description[3])
 
             self.__objects.append(obj)
         
@@ -107,8 +110,10 @@ class ReaderOBJ():
         # Salva as descricoes dos objetos em self.__objs_description
         # descricao = [tipo, nome, coordenadas, cor, filled (para polígonos)]
         with open(self.__obj_file, "r") as file:
-            for line in file:
-                word = line.split(" ")
+            lines = file.readlines()
+            i = 0
+            while True:
+                word = lines[i].split(" ")
                 word = [w.strip() for w in word]
                 if word[0] == "usemtl":
                     colorObj = self.__colors[word[1]]
@@ -126,6 +131,18 @@ class ReaderOBJ():
                 elif word[0] == "l":
                     typeObj = Type.LINE if len(word) == 3 else Type.WIREFRAME
                     points = [int(x) for x in word[1:]]
+
+                    linhas_restantes = lines[i+1:]
+                    for next in linhas_restantes:
+                        word = next.split(" ")
+                        word = [w.strip() for w in word]
+                        if word[0] == "l":
+                            typeObj = Type.OBJECT_3D
+                            points.extend(int(x) for x in word[1:])
+                        elif word[0] == "o" or word[0] == "v":
+                            break
+                        i += 1
+                    
                     if typeObj == Type.WIREFRAME:
                         self.__objs_description.append([typeObj, nameObj, self.__getPoints(points), colorObj, False])
                     else:
@@ -136,12 +153,15 @@ class ReaderOBJ():
                     points = [int(x) for x in word[1:]]
                     self.__objs_description.append([typeObj, nameObj, self.__getPoints(points), colorObj, True])
 
+                i += 1
+                if i >= len(lines):
+                    break
     
     # Retorna as coordenadas dos vértices 
     def __getPoints(self, indexes):
         coords = []
         for i in indexes:
-            coords.append((self.__points[i - 1][0], self.__points[i - 1][1]))
+            coords.append((self.__points[i - 1][0], self.__points[i - 1][1], self.__points[i - 1][2]))
         return coords
     
     @property

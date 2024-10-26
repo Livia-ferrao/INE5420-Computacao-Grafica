@@ -52,6 +52,7 @@ class GenerateOBJ():
             elif (obj.tipo == Type.LINE) or (obj.tipo == Type.WIREFRAME and not obj.filled):
                 description.append("l")
 
+            # Salva os vertices de pontos, linhas e wireframes
             if len(description) == 2:
                 obj_points = []
                 for coord in obj.coord:
@@ -66,12 +67,29 @@ class GenerateOBJ():
                 description.append(obj_points)
 
                 objects.append(description)
+            
+            # Salva os vertices de objetos 3d
+            elif obj.tipo == Type.OBJECT_3D:
+                for i in range(len(obj.coord)//2):
+                    obj_points = []
+                    for j in range(2):
+                        coord = obj.coord[i*2+j]
+                        # Coordenada não está na lista de pontos
+                        if coord not in points:
+                            points.append(coord)
+                            obj_points.append(len(points))
+                        # Coordenada já está na lista de pontos
+                        else:
+                            obj_points.append(points.index(coord) + 1)
+                    description.append("l")
+                    description.append(obj_points)
+                objects.append(description)
                 
         # Escreve no arquivo .obj
         with open(self.__obj_file, "w") as file:
             # Escreve os vertices
-            for x, y in points:
-                file.write(f"v {x} {y} 0.0\n")
+            for x, y, z in points:
+                file.write(f"v {x} {y} {z}\n")
 
             # Escreve o nome do arquivo .mtl
             file.write("\n")
@@ -80,10 +98,19 @@ class GenerateOBJ():
 
             # Escreve as informações dos objetos
             for i, description in enumerate(objects):
-                file.write(f"o {description[0]}\n")
-                file.write(f"usemtl {self.__objects_mtl_color[i]}\n")
-                coords = " ".join(map(str, description[2]))
-                file.write(f"{description[1]} {coords}\n")
+                # Pontos, linhas e wireframes
+                if len(description) == 3:
+                    file.write(f"o {description[0]}\n")
+                    file.write(f"usemtl {self.__objects_mtl_color[i]}\n")
+                    coords = " ".join(map(str, description[2]))
+                    file.write(f"{description[1]} {coords}\n")
+                # Objeto 3d (é diferente pois tem que colocar cada aresta)
+                else:
+                    file.write(f"o {description[0]}\n")
+                    file.write(f"usemtl {self.__objects_mtl_color[i]}\n")
+                    for i in range(len(description[1:])//2):
+                        coords = " ".join(map(str, description[i*2 + 2]))
+                        file.write(f"{description[i*2 + 1]} {coords}\n")
 
     # Cria o arquivo .mtl
     def __generateMTLFile(self):
@@ -92,7 +119,7 @@ class GenerateOBJ():
 
         with open(self.__mtl_file, "w") as file:
             for obj in self.__objects:
-                if obj.tipo == Type.POINT or obj.tipo == Type.LINE or obj.tipo == Type.WIREFRAME:
+                if obj.tipo == Type.POINT or obj.tipo == Type.LINE or obj.tipo == Type.WIREFRAME or obj.tipo == Type.OBJECT_3D:
                     # Cor nova (não está na lista de colors)
                     if obj.color not in colors:
                         color_name = f"cor{len(colors)}"
