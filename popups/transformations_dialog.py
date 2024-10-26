@@ -38,13 +38,13 @@ class TransformationsDialog(QDialog):
         
         # Inputs para dx e dy
         dx_label = QLabel("Deslocamento eixo x")
-        self.__translation_dx = QSpinBox()
+        self.__translation_dx = QDoubleSpinBox()
         self.__translation_dx.setRange(Configurations.min_coord(), Configurations.max_coord())
         dy_label = QLabel("Deslocamento eixo y")
-        self.__translation_dy = QSpinBox()
+        self.__translation_dy = QDoubleSpinBox()
         self.__translation_dy.setRange(Configurations.min_coord(), Configurations.max_coord())
         dz_label = QLabel("Deslocamento eixo z")
-        self.__translation_dz = QSpinBox()
+        self.__translation_dz = QDoubleSpinBox()
         self.__translation_dz.setRange(Configurations.min_coord(), Configurations.max_coord())
 
         # Layout
@@ -121,13 +121,13 @@ class TransformationsDialog(QDialog):
         self.__arbitrary_explanation = QLabel("O eixo arbitrário é o eixo entre o centro do objeto e o ponto:")
         self.__arbitrary_explanation.setFixedHeight(20) 
         self.__rotation_x_label = QLabel("x:")
-        self.__rotation_x_input = QSpinBox()
+        self.__rotation_x_input = QDoubleSpinBox()
         self.__rotation_x_input.setRange(Configurations.min_coord(), Configurations.max_coord())
         self.__rotation_y_label = QLabel("y:")
-        self.__rotation_y_input = QSpinBox()
+        self.__rotation_y_input = QDoubleSpinBox()
         self.__rotation_y_input.setRange(Configurations.min_coord(), Configurations.max_coord())
         self.__rotation_z_label = QLabel("z:")
-        self.__rotation_z_input = QSpinBox()
+        self.__rotation_z_input = QDoubleSpinBox()
         self.__rotation_z_input.setRange(Configurations.min_coord(), Configurations.max_coord())
 
         self.__rotationAxisChanged()

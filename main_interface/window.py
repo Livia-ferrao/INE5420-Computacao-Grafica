@@ -111,8 +111,8 @@ class Window:
     def getParallelProjectionMatrix(self):
         vpr = self.__center
         translating_vpr = MatrixGenerator.generateTranslationMatrix3D(-vpr[0], -vpr[1], -vpr[2])
-        rotating_x = MatrixGenerator.generateRotationMatrix3D(-self.__x_angle, axis='x')
-        rotating_y = MatrixGenerator.generateRotationMatrix3D(-self.__y_angle, axis='y')
+        rotating_x = MatrixGenerator.generateRotationMatrix3D_X(-self.__x_angle)
+        rotating_y = MatrixGenerator.generateRotationMatrix3D_Y(-self.__y_angle)
         result = np.matmul(np.matmul(translating_vpr, rotating_x), rotating_y)
         return result
 

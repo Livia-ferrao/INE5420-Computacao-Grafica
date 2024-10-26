@@ -72,14 +72,3 @@ class MatrixGenerator:
                          [  0,    0, 1, 0],
                          [  0,    0, 0, 1]])
 
-    # Gera matriz de rotação 3D com base no eixo (X, Y ou Z)
-    @staticmethod
-    def generateRotationMatrix3D(theta, axis):
-        if axis == 'x':
-            return MatrixGenerator.generateRotationMatrix3D_X(theta)
-        elif axis == 'y':
-            return MatrixGenerator.generateRotationMatrix3D_Y(theta)
-        elif axis == 'z':
-            return MatrixGenerator.generateRotationMatrix3D_Z(theta)
-        else:
-            raise ValueError(f"Eixo inválido '{axis}'. Escolha entre 'x', 'y' ou 'z'.")

@@ -84,7 +84,7 @@ class Object(ABC):
                                [0,  1,   0, 0],
                                [-sin_y,  0, cos_y, 0],
                                [0,  0,   0, 1]])
-        # Rotação em torno do eixo angulo desejado
+        # Rotação em torno do eixo z com o angulo desejado
         rotation_z = MatrixGenerator.generateRotationMatrix3D_Z(theta)
         # Rotação de volta em torno do eixo y
         rotation_y_back = np.array([[ cos_y,  0, -sin_y, 0],
