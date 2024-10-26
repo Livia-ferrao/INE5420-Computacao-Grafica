@@ -34,12 +34,12 @@ class Configurations:
     # Geometria do frame de objetos
     @staticmethod
     def objects_frame():
-        return (10, 30, 280, 165)
+        return (10, 30, 280, 140)
     
     # Geometria do frame de controle
     @staticmethod
     def control_frame():
-        return (10, 225, 280, 165)
+        return (10, 200, 280, 190)
     
     # Geometria do frame de gerência de arquivos
     @staticmethod

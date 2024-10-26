@@ -5,6 +5,7 @@ class AddPoint(AddObject):
     def __init__(self, display_file, object_list):
         self.__n_coord = 1
         super().__init__(display_file, object_list)
+        self.setFixedSize(430, 180)
 
     def setTitle(self):
         self.setWindowTitle("Adicionar Ponto")

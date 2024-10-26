@@ -10,7 +10,7 @@ class AddObject(QDialog):
         self.__display_file = display_file
         self.__object_list = object_list
     
-        self.setFixedSize(400, 300)
+        self.setFixedSize(430, 300)
         # Definindo área de scrool e layout
         self.__main_layout = QVBoxLayout(self)
         self.__scroll_area = QScrollArea()
@@ -43,23 +43,28 @@ class AddObject(QDialog):
             x_label = QLabel(f"x{i+1}")
             self.__x_inputs.append(QDoubleSpinBox())
             self.__x_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
+            self.__x_inputs[i].setFixedWidth(90)
             y_label = QLabel(f"y{i+1}")
             self.__y_inputs.append(QDoubleSpinBox())
             self.__y_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
+            self.__y_inputs[i].setFixedWidth(90)
             z_label = QLabel(f"z{i+1}")
             self.__z_inputs.append(QDoubleSpinBox())
             self.__z_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
+            self.__z_inputs[i].setFixedWidth(90)
 
-            self.__layout.addWidget(x_label, 1+3*i, 0)
-            self.__layout.addWidget(self.__x_inputs[i], 1+3*i, 1)
-            self.__layout.addWidget(y_label, 2+3*i, 0)
-            self.__layout.addWidget(self.__y_inputs[i], 2+3*i, 1)
-            self.__layout.addWidget(z_label, 3+3*i, 0)
-            self.__layout.addWidget(self.__z_inputs[i], 3+3*i, 1)
+            point_layout = QHBoxLayout()
+            point_layout.addWidget(x_label)
+            point_layout.addWidget(self.__x_inputs[i])
+            point_layout.addWidget(y_label)
+            point_layout.addWidget(self.__y_inputs[i])
+            point_layout.addWidget(z_label)
+            point_layout.addWidget(self.__z_inputs[i])
+            self.__layout.addLayout(point_layout, 1+i, 0, 1, 2)
     
     # Botões ok e cancelar
     def __drawButtons(self):
-        line = self.n_coord*3 + 2
+        line = self.n_coord + 2
         self.__ok_button = QPushButton("OK")
         self.__layout.addWidget(self.__ok_button, line, 1)
         self.__cancel_button = QPushButton("Cancelar")
@@ -71,7 +76,7 @@ class AddObject(QDialog):
     
     # Seleção de cor
     def __drawColorInput(self):
-        line = self.n_coord*3 + 1
+        line = self.n_coord + 1
         
         color_label = QLabel("Cor")
         self.__layout.addWidget(color_label, line, 0)
@@ -79,7 +84,7 @@ class AddObject(QDialog):
         line_layout = QHBoxLayout()
         # Retângulo da cor selecionada
         self.__color_display = QLabel()
-        self.__color_display.setFixedSize(80, 20)
+        self.__color_display.setFixedSize(120, 20)
         line_layout.addWidget(self.__color_display)
 
         # Label do código da cor selecionada

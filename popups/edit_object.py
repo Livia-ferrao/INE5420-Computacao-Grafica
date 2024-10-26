@@ -1,10 +1,15 @@
 from popups.add_object import AddObject
+from tools.type import Type
 
 class EditObject(AddObject):
     def __init__(self, existing_object, display_file, object_list):
         self.__n_coord = len(existing_object.coord)
         self.__existing_object = existing_object
         super().__init__(display_file, object_list)
+        if existing_object.tipo == Type.POINT:
+            self.setFixedSize(430, 180)
+        elif existing_object.tipo == Type.LINE:
+            self.setFixedSize(430, 240)
         self.__populateFields()
 
     # Coloca o nome e coordenadas do objeto como valores iniciais da tela de edição
