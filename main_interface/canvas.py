@@ -23,7 +23,8 @@ class Canvas(QLabel):
         painter = QPainter(self.__pix_map)
 
         # Matriz de projeção paralela
-        projection_matrix = window.getParallelProjectionMatrix()
+        projection_matrix = window.getPerspectiveProjectionMatrix()
+        print("projection_matrix: ", projection_matrix)
         # Matriz de normalização
         normalize_matrix = window.windowNormalize()
 
