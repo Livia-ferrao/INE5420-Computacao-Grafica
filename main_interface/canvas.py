@@ -3,7 +3,7 @@ from PySide6.QtGui import QPixmap, QPainter
 from PySide6.QtCore import Qt
 from main_interface.configurations import Configurations
 from tools.clipping import Clipping
-from tools.type import Type, ClippingAlgorithm
+from tools.type import Type, ClippingAlgorithm, Projection
 from objects.line import Line
 
 class Canvas(QLabel):
@@ -18,13 +18,16 @@ class Canvas(QLabel):
         self.__pix_map.fill(Qt.white)
         self.setPixmap(self.__pix_map)
     
-    def drawObjects(self, obj_list, clipping_algorithm, window):
+    def drawObjects(self, obj_list, clipping_algorithm, window, projection):
         self.__pix_map.fill(Qt.white)
         painter = QPainter(self.__pix_map)
 
-        # Matriz de projeção paralela
-        projection_matrix = window.getPerspectiveProjectionMatrix()
-        print("projection_matrix: ", projection_matrix)
+        # Matriz de projeção
+        if projection == Projection.PARALLEL:
+            projection_matrix = window.getParallelProjectionMatrix()
+        else:
+            projection_matrix = window.getPerspectiveProjectionMatrix()
+
         # Matriz de normalização
         normalize_matrix = window.windowNormalize()
 

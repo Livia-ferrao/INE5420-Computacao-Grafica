@@ -106,12 +106,12 @@ class Window:
         Sx = 2 / (self.__w_max - self.__w_min)
         Sy = 2 / (self.__h_max - self.__h_min)
 
-        # Translação já é feita na projeção paralela
-        translating_matrix = MatrixGenerator.generateTranslationMatrix(-Wxc, -Wyc)
+        # Translação já é feita na projeção
+        # translating_matrix = MatrixGenerator.generateTranslationMatrix(-Wxc, -Wyc)
         rotating_matrix = MatrixGenerator.generateRotationMatrix(-self.__z_angle)
         scaling_matrix = MatrixGenerator.generateScalingMatrix(Sx, Sy)
-        result = np.matmul(np.matmul(translating_matrix, rotating_matrix), scaling_matrix)
-        # result = np.matmul(rotating_matrix, scaling_matrix)
+        # result = np.matmul(np.matmul(translating_matrix, rotating_matrix), scaling_matrix)
+        result = np.matmul(rotating_matrix, scaling_matrix)
         return result.tolist()
 
     # Retorna a matriz de projeção paralela ortogonal para projetar os objetos no espaço 3D
@@ -123,24 +123,26 @@ class Window:
         result = np.matmul(np.matmul(translating_vpr, rotating_x), rotating_y)
         return result
 
+    # Retorna a matriz de projeção em perspectiva para projetar os objetos no espaço 3D
     def getPerspectiveProjectionMatrix(self):
+        vpr = self.__center
+        translating_vpr = MatrixGenerator.generateTranslationMatrix3D(-vpr[0], -vpr[1], -vpr[2])
+        rotating_x = MatrixGenerator.generateRotationMatrix3D_X(-self.__x_angle)
+        rotating_y = MatrixGenerator.generateRotationMatrix3D_Y(-self.__y_angle)
+
+        # Distancia COP
         d = 800
-        perspective_matrix = np.array([
+        # Matriz de perspectiva transposta para fazer a multiplicação [x y z 1] x Mper transposta
+        perspective_matrix = np.transpose(np.array([
             [1, 0, 0, 0],
             [0, 1, 0, 0],
             [0, 0, 1, 0],
             [0, 0, -1/d, 1]
-        ])
-        
-        vpr = self.__center
-        # translating_vpr = MatrixGenerator.generateTranslationMatrix3D(-vpr[0], -vpr[1], -vpr[2])
-        rotating_x = MatrixGenerator.generateRotationMatrix3D_X(-self.__x_angle)
-        rotating_y = MatrixGenerator.generateRotationMatrix3D_Y(-self.__y_angle)
+        ]))
 
         # Combina translação, rotação e projeção em perspectiva
-        # result = np.matmul(np.matmul(np.matmul(translating_vpr, rotating_x), rotating_y), perspective_matrix)
-        result = np.matmul(np.matmul(rotating_x, rotating_y), perspective_matrix)
-
+        result = np.matmul(np.matmul(np.matmul(translating_vpr, rotating_x), rotating_y), perspective_matrix)
+        # result = np.matmul(np.matmul(rotating_x, rotating_y), perspective_matrix)
         return result
     
     @property

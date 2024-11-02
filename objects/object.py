@@ -18,32 +18,14 @@ class Object(ABC):
     def projectAndNormalize(self, project, normalize):
         project_coords = []
         for x, y, z in self.coord:
-            print(f"Coordenadas projetadas (antes da projeção): {[x, y, z, 1]}")
-            
-            # transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(project))).tolist()
-            transformed_coord = (np.dot(np.array(project), np.array([x, y, z, 1]))).tolist()
-            
-            # Divide x', y' e z' pelo valor de w' para voltar ao espaço 3D
+            transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(project))).tolist()
             w = transformed_coord[3] if transformed_coord[3] != 0 else 1  # evita divisão por zero
-            x_perspective = transformed_coord[0] / w
-            y_perspective = transformed_coord[1] / w
-            z_perspective = transformed_coord[2] / w
-            
-            print(f"Valor de w: {w}")
-            print(f"Coordenadas projetadas (depois da projeção): {x_perspective, y_perspective, z_perspective}")
-            print("-----------------------------")
-              
-            project_coords.append((x_perspective, y_perspective))
-            # project_coords.append(transformed_coord[:2])
-            
+            project_coords.append([transformed_coord[0] / w, transformed_coord[1] / w])
+
         normalize_coords = []
         for x, y in project_coords:
-            transformed_coord = np.dot(np.array([x, y, 1]), normalize).tolist()
-            
-            # Imprime as coordenadas normalizadas
-            print(f"Coordenadas normalizadas: {transformed_coord[:2]}")
-        
-            normalize_coords.append(transformed_coord[:2])  # pega x e y normalizados
+            transformed_coord = (np.dot(np.array([x, y, 1]), np.array(normalize))).tolist()
+            normalize_coords.append(transformed_coord[:2])
     
         return normalize_coords
     

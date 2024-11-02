@@ -19,7 +19,7 @@ from popups.operations import Operations
 from popups.transformations_dialog import TransformationsDialog
 from import_export.generate_obj import GenerateOBJ
 from import_export.reader_obj import ReaderOBJ
-from tools.type import ClippingAlgorithm
+from tools.type import ClippingAlgorithm, Projection
 from main_interface.canvas import Canvas
 from popups.qtd_curves import QtdCurves
 from popups.qtd_points_bspline import QtdPointsBSpline
@@ -86,6 +86,21 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Área de desenho
         self.__canvas = Canvas(self.__view_frame, self.__viewport)
+
+        # Botões de projeção paralela x projeção em perspectiva
+        projection_buttons = QtWidgets.QButtonGroup()
+        self.__parallel_button = QtWidgets.QRadioButton(Projection.PARALLEL.value, self.__view_frame)
+        self.__parallel_button.setGeometry(10, 550, 150, 20)
+        self.__parallel_button.setChecked(True)
+        self.__projection = Projection.PARALLEL
+        self.__parallel_button.setStyleSheet("color: black;")
+        self.__parallel_button.toggled.connect(self.__changeProjection)
+        self.__perspective_button = QtWidgets.QRadioButton(Projection.PERSPECTIVE.value, self.__view_frame)
+        self.__perspective_button.setGeometry(160, 550, 200, 20)
+        projection_buttons.addButton(self.__parallel_button)
+        projection_buttons.addButton(self.__perspective_button)
+        self.__perspective_button.toggled.connect(self.__changeProjection)
+        self.__perspective_button.setStyleSheet("color: black;")
 
         # Frame de objetos
         self.__objects_frame = self.__buildFrame(self.__tools_frame, Configurations.objects_frame()[0],
@@ -261,9 +276,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # obj2 = Wireframe("wireframe1", [(300, -200, 0), (-300, -200, 0), (0, 200, 0)], QtGui.QColor(255,0,0), True)
         # self.__display_file.addObject(obj2)
         # self.__object_list.addItem(str(obj2.name))
-        # obj3 = Object3D("cubo", [(-800, -800, 0), (-800, -400, 0), (-800, -400, 0), (-400, -400, 0), (-400, -400, 0), (-400, -800, 0), (-400, -800, 0), (-800, -800, 0), (-800, -800, -400), (-800, -400, -400), (-800, -400, -400), (-400, -400, -400), (-400, -400, -400), (-400, -800, -400), (-400, -800, -400), (-800, -800, -400), (-800, -800, 0), (-800, -800, -400), (-800, -400, 0), (-800, -400, -400), (-400, -800, 0), (-400, -800, -400), (-400, -400, 0), (-400, -400, -400)], QtGui.QColor(0,255,0))
-        # self.__display_file.addObject(obj3)
-        # self.__object_list.addItem(str(obj3.name))
+        obj3 = Object3D("cubo", [(-800, -800, 0), (-800, -400, 0), (-800, -400, 0), (-400, -400, 0), (-400, -400, 0), (-400, -800, 0), (-400, -800, 0), (-800, -800, 0), (-800, -800, -400), (-800, -400, -400), (-800, -400, -400), (-400, -400, -400), (-400, -400, -400), (-400, -800, -400), (-400, -800, -400), (-800, -800, -400), (-800, -800, 0), (-800, -800, -400), (-800, -400, 0), (-800, -400, -400), (-400, -800, 0), (-400, -800, -400), (-400, -400, 0), (-400, -400, -400)], QtGui.QColor(0,255,0))
+        self.__display_file.addObject(obj3)
+        self.__object_list.addItem(str(obj3.name))
         
         cubo_coords = [
             (-800, -800, 0), (-800, -400, 0), (-800, -400, 0), (-400, -400, 0), 
@@ -275,12 +290,12 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
         
         cubo_coords = [
-            (800, 800, 0), (800, -500, 0), (800, -500, 0), (-500, -500, 0), 
-            (-500, -500, 0), (-500, 800, 0), (-500, 800, 0), (800, 800, 0), 
-            (800, 800, -500), (800, -500, -500), (800, -500, -500), (-500, -500, -500), 
-            (-500, -500, -500), (-500, 800, -500), (-500, 800, -500), (800, 800, -500), 
-            (800, 800, 0), (800, 800, -500), (800, -500, 0), (800, -500, -500), 
-            (-500, 800, 0), (-500, 800, -500), (-500, -500, 0), (-500, -500, -500)
+            (500, 500, 0), (500, -500, 0), (500, -500, 0), (-500, -500, 0), 
+            (-500, -500, 0), (-500, 500, 0), (-500, 500, 0), (500, 500, 0), 
+            (500, 500, -500), (500, -500, -500), (500, -500, -500), (-500, -500, -500), 
+            (-500, -500, -500), (-500, 500, -500), (-500, 500, -500), (500, 500, -500), 
+            (500, 500, 0), (500, 500, -500), (500, -500, 0), (500, -500, -500), 
+            (-500, 500, 0), (-500, 500, -500), (-500, -500, 0), (-500, -500, -500)
         ]
         obj3 = Object3D("cubo1", cubo_coords , QtGui.QColor(0,255,0))
         self.__display_file.addObject(obj3)
@@ -290,7 +305,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Redesenha objetos
     def __updateViewframe(self):
-        self.__canvas.drawObjects(self.__display_file.objects_list, self.__clipping_algorithm, self.__window)
+        self.__canvas.drawObjects(self.__display_file.objects_list, self.__clipping_algorithm, self.__window, self.__projection)
     
     # Ler arquivo .obj
     def __readFile(self):
@@ -484,3 +499,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.__button_right.setToolTip("Rotacionar para direita no eixo y")
             self.__button_up.setToolTip("Rotationar para cima no eixo x")
             self.__button_down.setToolTip("Rotacionar para baixo no eixo x")
+    
+    def __changeProjection(self):
+        if self.__parallel_button.isChecked():
+            self.__projection = Projection.PARALLEL
+        else:
+            self.__projection = Projection.PERSPECTIVE
+        self.__updateViewframe()
