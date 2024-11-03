@@ -17,58 +17,58 @@ class AddObject(QDialog):
         self.__scroll_area.setWidgetResizable(True)
         self.__scroll_content = QWidget()
         self.__scroll_area.setWidget(self.__scroll_content)
-        self.__layout = QGridLayout(self.__scroll_content)
-        self.__scroll_content.setLayout(self.__layout)
+        self.layout = QGridLayout(self.__scroll_content)
+        self.__scroll_content.setLayout(self.layout)
         self.__main_layout.addWidget(self.__scroll_area)
 
         # Label "Nome" e input para nome
         self.__name_label = QLabel("Nome:")
         self.__name_input = QLineEdit()
-        self.__layout.addWidget(self.__name_label, 0, 0)
-        self.__layout.addWidget(self.__name_input, 0, 1)
+        self.layout.addWidget(self.__name_label, 0, 0)
+        self.layout.addWidget(self.__name_input, 0, 1)
 
         self.setStyleSheet("background-color: rgb(212,208,200); color: black;")
 
-        self.__drawXYZinputs()
+        self.drawXYZinputs()
         self.__drawColorInput()
         self.__drawButtons()
         self.setTitle()
 
     # Labels xi, yi e zi e input para pontos xi, yi e zi
-    def __drawXYZinputs(self):
-        self.__x_inputs = []
-        self.__y_inputs = []
-        self.__z_inputs = []
+    def drawXYZinputs(self):
+        self.x_inputs = []
+        self.y_inputs = []
+        self.z_inputs = []
         for i in range(self.n_coord):
             x_label = QLabel(f"x{i+1}")
-            self.__x_inputs.append(QDoubleSpinBox())
-            self.__x_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
-            self.__x_inputs[i].setFixedWidth(90)
+            self.x_inputs.append(QDoubleSpinBox())
+            self.x_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
+            self.x_inputs[i].setFixedWidth(90)
             y_label = QLabel(f"y{i+1}")
-            self.__y_inputs.append(QDoubleSpinBox())
-            self.__y_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
-            self.__y_inputs[i].setFixedWidth(90)
+            self.y_inputs.append(QDoubleSpinBox())
+            self.y_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
+            self.y_inputs[i].setFixedWidth(90)
             z_label = QLabel(f"z{i+1}")
-            self.__z_inputs.append(QDoubleSpinBox())
-            self.__z_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
-            self.__z_inputs[i].setFixedWidth(90)
+            self.z_inputs.append(QDoubleSpinBox())
+            self.z_inputs[i].setRange(Configurations.min_coord(), Configurations.max_coord())
+            self.z_inputs[i].setFixedWidth(90)
 
             point_layout = QHBoxLayout()
             point_layout.addWidget(x_label)
-            point_layout.addWidget(self.__x_inputs[i])
+            point_layout.addWidget(self.x_inputs[i])
             point_layout.addWidget(y_label)
-            point_layout.addWidget(self.__y_inputs[i])
+            point_layout.addWidget(self.y_inputs[i])
             point_layout.addWidget(z_label)
-            point_layout.addWidget(self.__z_inputs[i])
-            self.__layout.addLayout(point_layout, 1+i, 0, 1, 2)
+            point_layout.addWidget(self.z_inputs[i])
+            self.layout.addLayout(point_layout, 1+i, 0, 1, 2)
     
     # Botões ok e cancelar
     def __drawButtons(self):
         line = self.n_coord + 2
         self.__ok_button = QPushButton("OK")
-        self.__layout.addWidget(self.__ok_button, line, 1)
+        self.layout.addWidget(self.__ok_button, line, 1)
         self.__cancel_button = QPushButton("Cancelar")
-        self.__layout.addWidget(self.__cancel_button, line, 0)
+        self.layout.addWidget(self.__cancel_button, line, 0)
 
         self.__cancel_button.clicked.connect(self.reject)
         self.__ok_button.clicked.connect(self.ok)
@@ -77,9 +77,8 @@ class AddObject(QDialog):
     # Seleção de cor
     def __drawColorInput(self):
         line = self.n_coord + 1
-        
         color_label = QLabel("Cor")
-        self.__layout.addWidget(color_label, line, 0)
+        self.layout.addWidget(color_label, line, 0)
 
         line_layout = QHBoxLayout()
         # Retângulo da cor selecionada
@@ -99,7 +98,7 @@ class AddObject(QDialog):
         self.__select_color_button.clicked.connect(self.__drawColorPicker)
         line_layout.addWidget(self.__select_color_button)
 
-        self.__layout.addLayout(line_layout, line, 1)
+        self.layout.addLayout(line_layout, line, 1)
         
     # Desenha um QDialog (ColorPicker) para selecionar a cor
     def __drawColorPicker(self):
@@ -117,7 +116,7 @@ class AddObject(QDialog):
     def getListCoord(self):
         list_coord = []
         for i in range(self.n_coord):
-            list_coord.append((self.__x_inputs[i].value(), self.__y_inputs[i].value(), self.__z_inputs[i].value()))
+            list_coord.append((self.x_inputs[i].value(), self.y_inputs[i].value(), self.z_inputs[i].value()))
         return list_coord
 
     def ok(self):
@@ -166,18 +165,6 @@ class AddObject(QDialog):
     @property
     def name_input(self):
         return self.__name_input
-    
-    @property
-    def x_inputs(self):
-        return self.__x_inputs
-    
-    @property
-    def y_inputs(self):
-        return self.__y_inputs
-
-    @property
-    def z_inputs(self):
-        return self.__z_inputs
 
     @property
     def color(self):
