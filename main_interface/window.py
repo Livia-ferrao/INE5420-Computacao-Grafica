@@ -21,13 +21,6 @@ class Window:
         self.__y_angle = 0
         self.__z_angle = 0
         
-        # Distância do observador para projeção em perspectiva
-        self.__d = 5.0  # valor ajustável para efeito de profundidade
-
-     # Ajuste do parâmetro de profundidade para projeção em perspectiva
-    def setObserverDistance(self, distance):
-        self.__d = distance
-        
     # Movimentação para esquerda
     def moveLeft(self, scale):
         distance = (self.__w_max - self.__w_min) * (scale/100)
@@ -137,7 +130,7 @@ class Window:
             [1, 0, 0, 0],
             [0, 1, 0, 0],
             [0, 0, 1, 0],
-            [0, 0, -1/d, 1]
+            [0, 0, 1/d, 0]
         ]))
 
         # Combina translação, rotação e projeção em perspectiva

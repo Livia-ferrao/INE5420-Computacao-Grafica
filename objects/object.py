@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from tools.matrix_generator import MatrixGenerator
 import numpy as np
 from math import sqrt
+from tools.type import Projection
 
 class Object(ABC):
     def __init__(self, name, tipo, coord, color):
@@ -15,12 +16,20 @@ class Object(ABC):
         pass
     
     # Projeta e normaliza as coordenadas do objeto
-    def projectAndNormalize(self, project, normalize):
+    def projectAndNormalize(self, project, normalize, projection_type):
         project_coords = []
-        for x, y, z in self.coord:
-            transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(project))).tolist()
-            w = transformed_coord[3] if transformed_coord[3] != 0 else 1  # evita divisão por zero
-            project_coords.append([transformed_coord[0] / w, transformed_coord[1] / w])
+        if projection_type == Projection.PARALLEL:
+            for x, y, z in self.coord:
+                transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(project))).tolist()
+                project_coords.append(transformed_coord[:2])
+        else:
+            for x, y, z in self.coord:
+                transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(project))).tolist()
+                w = transformed_coord[3] if transformed_coord[3] != 0 else 1  # evita divisão por zero
+                project_coords.append([transformed_coord[0] / w, transformed_coord[1] / w])
+                # Na projeção em perspectiva, se algum ponto estiver atrás da window nao é desenhado
+                if transformed_coord[2] <= 0:
+                    return []
 
         normalize_coords = []
         for x, y in project_coords:
