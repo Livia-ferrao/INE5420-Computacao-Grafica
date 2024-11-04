@@ -7,7 +7,7 @@ class AddBerzierSurface(AddObject):
     def __init__(self, display_file, object_list, n_matrixes):
         # n_coord passado com esse valor apenas para determinar posições do layout corretamente
         self.__n_coord = n_matrixes * 16 + n_matrixes
-        self.__n_matrixes = n_matrixes
+        self.n_matrixes = n_matrixes
         super().__init__(display_file, object_list)
         # atualizando n_coord com valor correto
         self.__n_coord = n_matrixes * 16 
@@ -17,7 +17,7 @@ class AddBerzierSurface(AddObject):
         self.x_inputs = []
         self.y_inputs = []
         self.z_inputs = []
-        for n in range(self.__n_matrixes):
+        for n in range(self.n_matrixes):
             label = QLabel(f"{n+1}ª matriz de pontos de controle")
             self.layout.addWidget(label, n*16+n+1, 0, 1, 2)
             for i in range(16):
