@@ -283,10 +283,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__display_file.addObject(obj3)
         self.__object_list.addItem(str(obj3.name))
 
-        surface_coords = [(0, 0, 0), (0, 100, 0), (0, 200, 0), (0, 300, 0),
-                           (100, 0, 0), (100, 100, 100), (100, 200, 100), (100, 300, 0),
-                           (200, 0, 0), (200, 100, 100), (200, 200, 100), (200, 300, 0),
-                           (300, 0, 0), (300, 100, 0), (300, 200, 0), (300, 300, 0)]
+        surface_coords = [(300, 300, 300), (500, 300, 400), (700, 300, 400), (900, 300, 300),
+                        (300, 500, 400), (500, 500, 600), (700, 500, 600), (900, 500, 400),
+                        (300, 700, 400), (500, 700, 600), (700, 700, 600), (900, 700, 400),
+                        (300, 900, 300), (500, 900, 400), (700, 900, 400), (900, 900, 300)]
         obj4 = BerzierSurface("surf", surface_coords, QtGui.QColor(0,0,255))
         self.__display_file.addObject(obj4)
         self.__object_list.addItem(str(obj4.name))
