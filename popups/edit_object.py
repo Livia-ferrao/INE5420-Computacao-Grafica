@@ -1,5 +1,6 @@
 from popups.add_object import AddObject
 from tools.type import Type
+from popups.add_berzier_surface import AddBerzierSurface
 
 class EditObject(AddObject):
     def __init__(self, existing_object, display_file, object_list):
@@ -10,6 +11,8 @@ class EditObject(AddObject):
             self.setFixedSize(430, 180)
         elif existing_object.tipo == Type.LINE:
             self.setFixedSize(430, 240)
+        elif existing_object.tipo == Type.BERZIER_SURFACE:
+            self.__n_coord = len(existing_object.coord)
         self.__populateFields()
 
     # Coloca o nome e coordenadas do objeto como valores iniciais da tela de edição
@@ -46,3 +49,11 @@ class EditObject(AddObject):
     @property
     def n_coord(self):
         return self.__n_coord
+    
+    def drawXYZinputs(self):
+        if self.__existing_object.tipo == Type.BERZIER_SURFACE:
+            self.n_matrixes = int(self.__n_coord/16)
+            self.__n_coord = self.__n_coord + self.n_matrixes
+            AddBerzierSurface.drawXYZinputs(self)
+        else:
+            super().drawXYZinputs()

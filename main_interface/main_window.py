@@ -14,6 +14,7 @@ from popups.add_wireframe import AddWireframe
 from popups.add_berzier_curve import AddBerzierCurve
 from popups.add_bspline import AddBSpline
 from popups.add_object_3d import AddObject3D
+from popups.add_berzier_surface import AddBerzierSurface
 from main_interface.display_file import DisplayFile
 from popups.operations import Operations
 from popups.transformations_dialog import TransformationsDialog
@@ -26,6 +27,8 @@ from popups.qtd_points_bspline import QtdPointsBSpline
 from objects.line import Line
 from objects.wireframe import Wireframe
 from objects.object3D import Object3D
+from popups.qtd_matrixes_berzier import QtdMatrixesBerzier
+from objects.berzier_surface import BerzierSurface
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -224,7 +227,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Combo box para escolher entre ponto, reta e polígono
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
-        self.__combo_box.addItems(["Ponto", "Reta", "Polígono", "Curva de Bérzier", "B-Spline", "Objeto 3D"])
+        self.__combo_box.addItems(["Ponto", "Reta", "Polígono", "Curva de Bérzier", "B-Spline", "Objeto 3D", "Superfície de Bérzier"])
         self.__combo_box.setStyleSheet("background-color: rgb(212,208,200); color: black")
         
         # Botões no frame de objetos
@@ -279,6 +282,14 @@ class MainWindow(QtWidgets.QMainWindow):
         obj3 = Object3D("cubo", [(-800, -800, 400), (-800, -400, 400), (-800, -400, 400), (-400, -400, 400), (-400, -400, 400), (-400, -800, 400), (-400, -800, 400), (-800, -800, 400), (-800, -800, 800), (-800, -400, 800), (-800, -400, 800), (-400, -400, 800), (-400, -400, 800), (-400, -800, 800), (-400, -800, 800), (-800, -800, 800), (-800, -800, 400), (-800, -800, 800), (-800, -400, 400), (-800, -400, 800), (-400, -800, 400), (-400, -800, 800), (-400, -400, 400), (-400, -400, 800)], QtGui.QColor(0,255,0))
         self.__display_file.addObject(obj3)
         self.__object_list.addItem(str(obj3.name))
+
+        surface_coords = [(0, 0, 0), (0, 100, 0), (0, 200, 0), (0, 300, 0),
+                           (100, 0, 0), (100, 100, 100), (100, 200, 100), (100, 300, 0),
+                           (200, 0, 0), (200, 100, 100), (200, 200, 100), (200, 300, 0),
+                           (300, 0, 0), (300, 100, 0), (300, 200, 0), (300, 300, 0)]
+        obj4 = BerzierSurface("surf", surface_coords, QtGui.QColor(0,0,255))
+        self.__display_file.addObject(obj4)
+        self.__object_list.addItem(str(obj4.name))
         
         self.__updateViewframe()
 
@@ -336,6 +347,10 @@ class MainWindow(QtWidgets.QMainWindow):
             qtd_dialog = QtdPointsObj3D()
             if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 add_dialog = AddObject3D(self.__display_file, self.__object_list, qtd_dialog.qtdPoints())
+        elif selected_option == "Superfície de Bérzier":
+            qtd_dialog = QtdMatrixesBerzier()
+            if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                add_dialog = AddBerzierSurface(self.__display_file, self.__object_list, qtd_dialog.qtdMatrixes())
         
         if add_dialog:
             if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
