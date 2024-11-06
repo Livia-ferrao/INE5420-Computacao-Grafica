@@ -10,7 +10,7 @@ class BerzierCurve(Object):
 
     def draw(self, window, painter, viewport, clipping_algorithm, projection_matrix, normalize_matrix, projection):
         # Determina pontos da curva
-        points = self.__getDrawingPoints(self.coord)
+        points = self.getDrawingPoints(self.coord)
 
         # Projeta e normaliza
         normalized_coords = self.projectAndNormalize(points, projection_matrix, normalize_matrix, projection)
@@ -42,7 +42,7 @@ class BerzierCurve(Object):
                     )
 
     # Determinar os pontos da curva a serem desenhadas linhas entre eles
-    def __getDrawingPoints(self, coords):
+    def getDrawingPoints(self, coords):
         drawing_points = []
 
         # Loop para cada curva

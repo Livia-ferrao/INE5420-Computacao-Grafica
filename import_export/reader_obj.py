@@ -68,11 +68,20 @@ class ReaderOBJ():
         return True
 
     # Cria os objetos
-    def createObjects(self):
+    def createObjects(self, existing_names):
         self.__readMTLFile()
         self.__readOBJFile()
         
         for description in self.__objs_description:
+            i = 1
+            # Para nao existir objetos com o mesmo nome
+            if description[1] in existing_names:
+                description[1] += "_1"
+            while description[1] in existing_names:
+                i += 1
+                description[1] = description[1][:-1] + f"{i}"
+            existing_names.append(description[1])
+
             if description[0] == Type.POINT:
                 obj = Point(description[1], description[2], description[3])
             elif description[0] == Type.LINE:

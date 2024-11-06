@@ -11,11 +11,11 @@ class BSpline(Object):
 
     def draw(self, window, painter, viewport, clipping_algorithm, projection_matrix, normalize_matrix, projection):
         # Calcula os pontos da B-Spline
-        points = self.__getDrawingPoints(self.coord)
+        points = self.getDrawingPoints(self.coord)
 
         # Projeta e normaliza
         normalized_coords = self.projectAndNormalize(points, projection_matrix, normalize_matrix, projection)
-        
+
         # Se len(normalized_coords) for 0 é porque tem algum z <= 0, então não desenha
         if len(normalized_coords) != 0:
 
@@ -43,7 +43,7 @@ class BSpline(Object):
                     )
     
     # Determinar os pontos da bspline a serem desenhadas linhas entre eles
-    def __getDrawingPoints(self, points_control):
+    def getDrawingPoints(self, points_control):
         drawing_points = []
         precision = 50
         # Itera sobre os pontos de controle em blocos de 4

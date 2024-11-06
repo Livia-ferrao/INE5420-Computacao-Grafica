@@ -302,7 +302,7 @@ class MainWindow(QtWidgets.QMainWindow):
         filepath = QFileDialog.getOpenFileName(caption="Open Image", filter="Wavefront files (*.obj)")
         reader =  ReaderOBJ(filepath[0])
         if reader.files_exist:
-            reader.createObjects()
+            reader.createObjects([self.__object_list.item(i).text() for i in range(self.__object_list.count())])
             for obj in reader.objects:
                 self.__display_file.addObject(obj)
                 self.__object_list.addItem(str(obj.name))

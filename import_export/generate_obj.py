@@ -84,7 +84,44 @@ class GenerateOBJ():
                     description.append("l")
                     description.append(obj_points)
                 objects.append(description)
-                
+            
+            # Salva a superficie de berzier como um objeto 3d, salvando suas linhas
+            elif obj.tipo == Type.BERZIER_SURFACE:
+                curves = obj.getDrawingPoints(obj.coord)
+                for curv in curves:
+                    for i in range(len(curv)-1):
+                        obj_points = []
+                        for j in range(2):
+                            coord = curv[i+j]
+                            # Coordenada não está na lista de pontos
+                            if coord not in points:
+                                points.append(coord)
+                                obj_points.append(len(points))
+                            # Coordenada já está na lista de pontos
+                            else:
+                                obj_points.append(points.index(coord) + 1)
+                        description.append("l")
+                        description.append(obj_points)
+                objects.append(description)
+            
+            # Salva a curva como um objeto 3d, salvando suas linhas
+            elif obj.tipo == Type.BERZIER_CURVE or obj.tipo == Type.B_SPLINE:
+                curv = obj.getDrawingPoints(obj.coord)
+                for i in range(len(curv)-1):
+                    obj_points = []
+                    for j in range(2):
+                        coord = curv[i+j]
+                        # Coordenada não está na lista de pontos
+                        if coord not in points:
+                            points.append(coord)
+                            obj_points.append(len(points))
+                        # Coordenada já está na lista de pontos
+                        else:
+                            obj_points.append(points.index(coord) + 1)
+                    description.append("l")
+                    description.append(obj_points)
+                objects.append(description)
+                        
         # Escreve no arquivo .obj
         with open(self.__obj_file, "w") as file:
             # Escreve os vertices
@@ -119,19 +156,18 @@ class GenerateOBJ():
 
         with open(self.__mtl_file, "w") as file:
             for obj in self.__objects:
-                if obj.tipo == Type.POINT or obj.tipo == Type.LINE or obj.tipo == Type.WIREFRAME or obj.tipo == Type.OBJECT_3D:
-                    # Cor nova (não está na lista de colors)
-                    if obj.color not in colors:
-                        color_name = f"cor{len(colors)}"
-                        file.write(f"newmtl {color_name}\n")
+                # Cor nova (não está na lista de colors)
+                if obj.color not in colors:
+                    color_name = f"cor{len(colors)}"
+                    file.write(f"newmtl {color_name}\n")
 
-                        colors.append(obj.color)
-                        r, g, b, _ = obj.color.getRgb()
-                        file.write(f"Kd {r/255.0} {g/255.0} {b/255.0}\n")
-                    # Cor já está na lista de colors
-                    else:
-                        color_name = f"cor{colors.index(obj.color)}"
-                    self.__objects_mtl_color.append(color_name)
+                    colors.append(obj.color)
+                    r, g, b, _ = obj.color.getRgb()
+                    file.write(f"Kd {r/255.0} {g/255.0} {b/255.0}\n")
+                # Cor já está na lista de colors
+                else:
+                    color_name = f"cor{colors.index(obj.color)}"
+                self.__objects_mtl_color.append(color_name)
     
     @property
     def file_creation_success(self):
