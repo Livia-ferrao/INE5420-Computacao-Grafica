@@ -9,32 +9,38 @@ class BSpline(Object):
     def __init__(self, name, coord, color):
         super().__init__(name, Type.B_SPLINE, coord, color)
 
-    def draw(self, window, painter, viewport, clipping_algorithm, normalized_coords):
+    def draw(self, window, painter, viewport, clipping_algorithm, projection_matrix, normalize_matrix, projection):
         # Calcula os pontos da B-Spline
-        points = self.__getDrawingPoints(normalized_coords)
+        points = self.__getDrawingPoints(self.coord)
 
-        # Desenha linhas entre os pontos
-        for i in range(len(points)-1):
-            line = [points[i], points[i+1]]
-            # Determina se vai desenhar a linha/parte da linha
-            if clipping_algorithm ==  ClippingAlgorithm.COHEN:
-                (draw, coords) = Clipping.cohenSutherland(line, window)
-            else:
-                (draw, coords) = Clipping.liangBarsky(line, window)
+        # Projeta e normaliza
+        normalized_coords = self.projectAndNormalize(points, projection_matrix, normalize_matrix, projection)
+        
+        # Se len(normalized_coords) for 0 é porque tem algum z <= 0, então não desenha
+        if len(normalized_coords) != 0:
 
-            if draw:
-                # Transforma para coordenadas da viewport
-                coord_viewport = viewport.calcularCoordsViewport(coords)
+            # Desenha linhas entre os pontos
+            for i in range(len(normalized_coords)-1):
+                line = [normalized_coords[i], normalized_coords[i+1]]
+                # Determina se vai desenhar a linha/parte da linha
+                if clipping_algorithm ==  ClippingAlgorithm.COHEN:
+                    (draw, coords) = Clipping.cohenSutherland(line, window)
+                else:
+                    (draw, coords) = Clipping.liangBarsky(line, window)
 
-                # Desenha a linha
-                pen = QPen(self.color, 2)
-                painter.setPen(pen)
-                painter.drawLine(
-                    coord_viewport[0][0],
-                    coord_viewport[0][1],
-                    coord_viewport[1][0],
-                    coord_viewport[1][1]
-                )
+                if draw:
+                    # Transforma para coordenadas da viewport
+                    coord_viewport = viewport.calcularCoordsViewport(coords)
+
+                    # Desenha a linha
+                    pen = QPen(self.color, 2)
+                    painter.setPen(pen)
+                    painter.drawLine(
+                        coord_viewport[0][0],
+                        coord_viewport[0][1],
+                        coord_viewport[1][0],
+                        coord_viewport[1][1]
+                    )
     
     # Determinar os pontos da bspline a serem desenhadas linhas entre eles
     def __getDrawingPoints(self, points_control):
@@ -46,11 +52,12 @@ class BSpline(Object):
             segment = points_control[i-3:i+1]
             
             # Calcula as diferenças iniciais para o bloco de pontos de controle
-            x_f, x_df, x_d2f, x_d3f, y_f, y_df, y_d2f, y_d3f = self.__getInitialConditions(segment, (1/precision))
+            x_f, x_df, x_d2f, x_d3f, y_f, y_df, y_d2f, y_d3f, z_f, z_df, z_d2f, z_d3f = self.__getInitialConditions(segment, (1/precision))
             
             drawing_points.extend(self.__forwardDifferences(precision,
                                                             x_f, x_df, x_d2f, x_d3f,
-                                                            y_f, y_df, y_d2f, y_d3f))
+                                                            y_f, y_df, y_d2f, y_d3f,
+                                                            z_f, z_df, z_d2f, z_d3f))
         return drawing_points
     
     # Determinar condições iniciais para as forward differences
@@ -64,10 +71,12 @@ class BSpline(Object):
         # Vetores de geometria x e y do segmento
         x_Gbs = [point[0] for point in segment]
         y_Gbs = [point[1] for point in segment]
+        z_Gbs = [point[2] for point in segment]
 
         # Coeficientes para calcular as condições iniciais
         ax, bx, cx, dx = (np.dot(Mbs, x_Gbs)).tolist()
         ay, by, cy, dy = (np.dot(Mbs, y_Gbs)).tolist()
+        az, bz, cz, dz = (np.dot(Mbs, z_Gbs)).tolist()
 
         passo2 = passo**2
         passo3 = passo**3
@@ -80,12 +89,16 @@ class BSpline(Object):
         y_df0 = ay*passo3 + by*passo2 + cy*passo
         y_d2f0 = 6*ay*passo3 + 2*by*passo2
         y_d3f0 = 6*ay*passo3
+        z_f0 = dz
+        z_df0 = az*passo3 + bz*passo2 + cz*passo
+        z_d2f0 = 6*az*passo3 + 2*bz*passo2
+        z_d3f0 = 6*az*passo3
         
-        return x_f0, x_df0, x_d2f0, x_d3f0, y_f0, y_df0, y_d2f0, y_d3f0
+        return x_f0, x_df0, x_d2f0, x_d3f0, y_f0, y_df0, y_d2f0, y_d3f0, z_f0, z_df0, z_d2f0, z_d3f0
     
     # Calcula pontos de acordo com algoritmo de forward differences
-    def __forwardDifferences(self, n, x, x_df, x_d2f, x_d3f, y, y_df, y_d2f, y_d3f):
-            points = [(x, y)]
+    def __forwardDifferences(self, n, x, x_df, x_d2f, x_d3f, y, y_df, y_d2f, y_d3f, z, z_df, z_d2f, z_d3f):
+            points = [(x, y, z)]
             
             for _ in range(n):
                 x += x_df
@@ -94,5 +107,8 @@ class BSpline(Object):
                 y += y_df
                 y_df += y_d2f
                 y_d2f += y_d3f
-                points.append((x, y))
+                z += z_df
+                z_df += z_d2f
+                z_d2f += z_d3f
+                points.append((x, y, z))
             return points

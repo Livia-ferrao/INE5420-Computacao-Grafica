@@ -9,36 +9,42 @@ class Wireframe(Object):
         super().__init__(name, Type.WIREFRAME, coord, color)
         self.__filled = filled
 
-    def draw(self, window, painter, viewport, normalized_coords):
-        # Determina se vai desenhar o wireframe/parte do wireframe
-        (draw, coords) = Clipping.sutherlandHodgeman(normalized_coords, window)
+    def draw(self, window, painter, viewport, projection_matrix, normalize_matrix, projection):
+        # Projeta e normaliza
+        normalized_coords = self.projectAndNormalize(self.coord, projection_matrix, normalize_matrix, projection)
 
-        if draw:
-            # Transforma para coordenadas da viewport
-            coord_viewport = viewport.calcularCoordsViewport(coords)
+        # Se len(normalized_coords) for 0 é porque tem algum z <= 0, então não desenha
+        if len(normalized_coords) != 0:
 
-            pen = QPen(self.color, 2)
-            painter.setPen(pen)
+            # Determina se vai desenhar o wireframe/parte do wireframe
+            (draw, coords) = Clipping.sutherlandHodgeman(normalized_coords, window)
 
-            # Desenhar as linhas do polígono
-            for i, (x, y) in enumerate(coord_viewport):
-                if i == len(coord_viewport)-1:
-                    painter.drawLine(x, y, coord_viewport[0][0], coord_viewport[0][1])
-                else:
-                    painter.drawLine(x, y, coord_viewport[i+1][0], coord_viewport[i+1][1])
+            if draw:
+                # Transforma para coordenadas da viewport
+                coord_viewport = viewport.calcularCoordsViewport(coords)
 
-            # Preencher o polígono se estiver configurado
-            if self.__filled:
-                painter.setBrush(QBrush(self.color, Qt.SolidPattern))
-                
-                path = QPainterPath()
-                path.moveTo(coord_viewport[0][0], coord_viewport[0][1])
-                
-                for x, y in coord_viewport[1:]:
-                    path.lineTo(x, y)
-                
-                path.lineTo(coord_viewport[0][0], coord_viewport[0][1])
-                painter.fillPath(path, QColor(self.color))
+                pen = QPen(self.color, 2)
+                painter.setPen(pen)
+
+                # Desenhar as linhas do polígono
+                for i, (x, y) in enumerate(coord_viewport):
+                    if i == len(coord_viewport)-1:
+                        painter.drawLine(x, y, coord_viewport[0][0], coord_viewport[0][1])
+                    else:
+                        painter.drawLine(x, y, coord_viewport[i+1][0], coord_viewport[i+1][1])
+
+                # Preencher o polígono se estiver configurado
+                if self.__filled:
+                    painter.setBrush(QBrush(self.color, Qt.SolidPattern))
+                    
+                    path = QPainterPath()
+                    path.moveTo(coord_viewport[0][0], coord_viewport[0][1])
+                    
+                    for x, y in coord_viewport[1:]:
+                        path.lineTo(x, y)
+                    
+                    path.lineTo(coord_viewport[0][0], coord_viewport[0][1])
+                    painter.fillPath(path, QColor(self.color))
 
     @property
     def filled(self):

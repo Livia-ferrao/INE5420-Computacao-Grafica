@@ -32,14 +32,11 @@ class Canvas(QLabel):
         normalize_matrix = window.windowNormalize()
 
         for obj in obj_list:
-            # Projeta e normaliza os objetos
-            normalized = obj.projectAndNormalize(projection_matrix, normalize_matrix, projection)
-            if len(normalized) != 0:
-                # Chama a função de desenhar dos objetos
-                if obj.tipo == Type.POINT or obj.tipo == Type.WIREFRAME:
-                    obj.draw(window, painter, self.__viewport, normalized)
-                else:
-                    obj.draw(window, painter, self.__viewport, clipping_algorithm, normalized)
+            # Chama a função de desenhar dos objetos
+            if obj.tipo == Type.POINT or obj.tipo == Type.WIREFRAME:
+                obj.draw(window, painter, self.__viewport, projection_matrix, normalize_matrix, projection)
+            else:
+                obj.draw(window, painter, self.__viewport, clipping_algorithm, projection_matrix, normalize_matrix, projection)
         
         # Desenha borda da viewport
         self.__viewport.drawBorder(painter)

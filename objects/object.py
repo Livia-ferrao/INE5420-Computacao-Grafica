@@ -16,14 +16,14 @@ class Object(ABC):
         pass
     
     # Projeta e normaliza as coordenadas do objeto
-    def projectAndNormalize(self, project, normalize, projection_type):
+    def projectAndNormalize(self, coords, project, normalize, projection_type):
         project_coords = []
         if projection_type == Projection.PARALLEL:
-            for x, y, z in self.coord:
+            for x, y, z in coords:
                 transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(project))).tolist()
                 project_coords.append(transformed_coord[:2])
         else:
-            for x, y, z in self.coord:
+            for x, y, z in coords:
                 transformed_coord = (np.dot(np.array([x, y, z, 1]), np.array(project))).tolist()
                 w = transformed_coord[3] if transformed_coord[3] != 0 else 1  # evita divisão por zero
                 project_coords.append([transformed_coord[0] / w, transformed_coord[1] / w])
