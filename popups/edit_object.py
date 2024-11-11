@@ -1,6 +1,7 @@
 from popups.add_object import AddObject
 from tools.type import Type
 from popups.add_berzier_surface import AddBerzierSurface
+from popups.add_bspline_surface import AddBSplineSurface
 
 class EditObject(AddObject):
     def __init__(self, existing_object, display_file, object_list):
@@ -55,5 +56,9 @@ class EditObject(AddObject):
             self.n_matrixes = int(self.__n_coord/16)
             self.__n_coord = self.__n_coord + self.n_matrixes
             AddBerzierSurface.drawXYZinputs(self)
+        elif self.__existing_object.tipo == Type.BSPLINE_SURFACE:
+            self.n_lines = self.__existing_object.n_lines
+            self.n_columns = self.__existing_object.n_columns
+            AddBSplineSurface.drawXYZinputs(self)
         else:
             super().drawXYZinputs()

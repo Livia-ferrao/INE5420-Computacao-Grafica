@@ -6,3 +6,5 @@ newmtl cor2
 Kd 0.0 1.0 0.0
 newmtl cor3
 Kd 0.0 0.0 1.0
+newmtl cor4
+Kd 0.0 1.0 1.0

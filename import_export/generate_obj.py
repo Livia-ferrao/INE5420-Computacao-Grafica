@@ -104,6 +104,25 @@ class GenerateOBJ():
                         description.append(obj_points)
                 objects.append(description)
             
+            # Salva a superficie bspline como um objeto 3d, salvando suas linhas
+            elif obj.tipo == Type.BSPLINE_SURFACE:
+                curves = obj.getDrawingPoints(obj.coord)
+                for curv in curves:
+                    for i in range(len(curv)-1):
+                        obj_points = []
+                        for j in range(2):
+                            coord = curv[i+j]
+                            # Coordenada não está na lista de pontos
+                            if coord not in points:
+                                points.append(coord)
+                                obj_points.append(len(points))
+                            # Coordenada já está na lista de pontos
+                            else:
+                                obj_points.append(points.index(coord) + 1)
+                        description.append("l")
+                        description.append(obj_points)
+                objects.append(description)
+            
             # Salva a curva como um objeto 3d, salvando suas linhas
             elif obj.tipo == Type.BERZIER_CURVE or obj.tipo == Type.B_SPLINE:
                 curv = obj.getDrawingPoints(obj.coord)

@@ -12,41 +12,34 @@ class BerzierSurface(Object):
         # Determina pontos da curva
         points = self.getDrawingPoints(self.coord)
 
-        curvs = []
         for curv in points:
-            # Projeta e normaliza cada curva
-            normalized_coords = self.projectAndNormalize(curv, projection_matrix, normalize_matrix, projection)
-
-            # Se len(normalized_coords) for 0 é porque tem algum z <= 0, então não desenha
-            if len(normalized_coords) == 0:
-                return
-            
-            curvs.append(normalized_coords)
-
-        # Se len(normalized_coords) =! 0 para todas as curvas, ou seja, se z > 0 em todos os pontos da superfície
-        for curv in curvs:
             # Desenha linhas entre os pontos
             for i in range(len(curv)-1):
                 line = [curv[i], curv[i+1]]
+
+                line = self.projectAndNormalize(line, projection_matrix, normalize_matrix, projection)
+
+                # Se len(line) =! 0, ou seja, se z > 0 nos 2 pontos da linha
+                if len(line) != 0:
                 # Determina se vai desenhar a linha/parte da linha
-                if clipping_algorithm ==  ClippingAlgorithm.COHEN:
-                    (draw, coords) = Clipping.cohenSutherland(line, window)
-                else:
-                    (draw, coords) = Clipping.liangBarsky(line, window)
+                    if clipping_algorithm ==  ClippingAlgorithm.COHEN:
+                        (draw, coords) = Clipping.cohenSutherland(line, window)
+                    else:
+                        (draw, coords) = Clipping.liangBarsky(line, window)
 
-                if draw:
-                    # Transforma para coordenadas da viewport
-                    coord_viewport = viewport.calcularCoordsViewport(coords)
+                    if draw:
+                        # Transforma para coordenadas da viewport
+                        coord_viewport = viewport.calcularCoordsViewport(coords)
 
-                    # Desenha a linha
-                    pen = QPen(self.color, 2)
-                    painter.setPen(pen)
-                    painter.drawLine(
-                        coord_viewport[0][0],
-                        coord_viewport[0][1],
-                        coord_viewport[1][0],
-                        coord_viewport[1][1]
-                    )
+                        # Desenha a linha
+                        pen = QPen(self.color, 2)
+                        painter.setPen(pen)
+                        painter.drawLine(
+                            coord_viewport[0][0],
+                            coord_viewport[0][1],
+                            coord_viewport[1][0],
+                            coord_viewport[1][1]
+                        )
 
     # Determinar os pontos da curva a serem desenhadas linhas entre eles
     def getDrawingPoints(self, coords):

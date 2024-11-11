@@ -29,6 +29,9 @@ from objects.wireframe import Wireframe
 from objects.object3D import Object3D
 from popups.qtd_matrixes_berzier import QtdMatrixesBerzier
 from objects.berzier_surface import BerzierSurface
+from popups.matrix_dimension_bspline import MatrixDimensionBSpline
+from popups.add_bspline_surface import AddBSplineSurface
+from objects.bspline_surface import BSplineSurface
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -227,7 +230,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Combo box para escolher entre ponto, reta e polígono
         self.__combo_box = QtWidgets.QComboBox(self.__objects_frame)
-        self.__combo_box.addItems(["Ponto", "Reta", "Polígono", "Curva de Bérzier", "B-Spline", "Objeto 3D", "Superfície de Bérzier"])
+        self.__combo_box.addItems(["Ponto", "Reta", "Polígono", "Curva de Bérzier", "B-Spline", "Objeto 3D", "Superfície de Bérzier", "Superfície B-Spline"])
         self.__combo_box.setStyleSheet("background-color: rgb(212,208,200); color: black")
         
         # Botões no frame de objetos
@@ -287,10 +290,17 @@ class MainWindow(QtWidgets.QMainWindow):
                         (300, 500, 400), (500, 500, 600), (700, 500, 600), (900, 500, 400),
                         (300, 700, 400), (500, 700, 600), (700, 700, 600), (900, 700, 400),
                         (300, 900, 300), (500, 900, 400), (700, 900, 400), (900, 900, 300)]
-        obj4 = BerzierSurface("surf", surface_coords, QtGui.QColor(0,0,255))
+        obj4 = BerzierSurface("berzier surf", surface_coords, QtGui.QColor(0,0,255))
         self.__display_file.addObject(obj4)
         self.__object_list.addItem(str(obj4.name))
         
+        surface_coords = [(-1200, 1000, 0), (-700, 1000, 400), (-200, 1000, 0), (300, 1000, -400),
+                         (-1200, 500, -400), (-700, 500, 800), (-200, 500, 400), (300, 500, 0),
+                         (-1200, 0, 0), (-700, 0, 400), (-200, 0, -400), (300, 0, 800),
+                         (-1200, -500, -400), (-700, -500, 0), (-200, -500, 400), (300, -500, 0)]
+        obj5 = BSplineSurface("bspline surf", surface_coords, QtGui.QColor(0, 255, 255), 4, 4)
+        self.__display_file.addObject(obj5)
+        self.__object_list.addItem(str(obj5.name))
         self.__updateViewframe()
 
     # Redesenha objetos
@@ -351,7 +361,11 @@ class MainWindow(QtWidgets.QMainWindow):
             qtd_dialog = QtdMatrixesBerzier()
             if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 add_dialog = AddBerzierSurface(self.__display_file, self.__object_list, qtd_dialog.qtdMatrixes())
-        
+        elif selected_option == "Superfície B-Spline":
+            qtd_dialog = MatrixDimensionBSpline()
+            if qtd_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                add_dialog = AddBSplineSurface(self.__display_file, self.__object_list, qtd_dialog.qtdLines(), qtd_dialog.qtdColumns())
+
         if add_dialog:
             if add_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 self.__updateViewframe()

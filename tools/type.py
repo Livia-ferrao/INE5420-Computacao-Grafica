@@ -8,6 +8,7 @@ class Type(Enum):
     B_SPLINE = 5
     OBJECT_3D = 6
     BERZIER_SURFACE = 7
+    BSPLINE_SURFACE = 8
 
 class ClippingAlgorithm(Enum):
     COHEN = "Método de Cohen Sutherland"

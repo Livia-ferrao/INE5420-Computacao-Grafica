@@ -12,15 +12,14 @@ class BerzierCurve(Object):
         # Determina pontos da curva
         points = self.getDrawingPoints(self.coord)
 
-        # Projeta e normaliza
-        normalized_coords = self.projectAndNormalize(points, projection_matrix, normalize_matrix, projection)
+        # Desenha linhas entre os pontos
+        for i in range(len(points)-1):
+            line = [points[i], points[i+1]]
 
-        # Se len(normalized_coords) for 0 é porque tem algum z <= 0, então não desenha
-        if len(normalized_coords) != 0:
+            line = self.projectAndNormalize(line, projection_matrix, normalize_matrix, projection)
 
-            # Desenha linhas entre os pontos
-            for i in range(len(normalized_coords)-1):
-                line = [normalized_coords[i], normalized_coords[i+1]]
+            # Se len(line) =! 0, ou seja, se z > 0 nos 2 pontos da linha
+            if len(line) != 0:
                 # Determina se vai desenhar a linha/parte da linha
                 if clipping_algorithm ==  ClippingAlgorithm.COHEN:
                     (draw, coords) = Clipping.cohenSutherland(line, window)

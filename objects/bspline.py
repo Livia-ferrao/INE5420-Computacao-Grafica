@@ -4,6 +4,7 @@ from tools.type import Type, ClippingAlgorithm
 from tools.clipping import Clipping
 from numpy import arange
 import numpy as np
+from tools.math_utils import MathUtils
 
 class BSpline(Object):
     def __init__(self, name, coord, color):
@@ -13,15 +14,14 @@ class BSpline(Object):
         # Calcula os pontos da B-Spline
         points = self.getDrawingPoints(self.coord)
 
-        # Projeta e normaliza
-        normalized_coords = self.projectAndNormalize(points, projection_matrix, normalize_matrix, projection)
+        # Desenha linhas entre os pontos
+        for i in range(len(points)-1):
+            line = [points[i], points[i+1]]
 
-        # Se len(normalized_coords) for 0 é porque tem algum z <= 0, então não desenha
-        if len(normalized_coords) != 0:
+            line = self.projectAndNormalize(line, projection_matrix, normalize_matrix, projection)
 
-            # Desenha linhas entre os pontos
-            for i in range(len(normalized_coords)-1):
-                line = [normalized_coords[i], normalized_coords[i+1]]
+            # Se len(line) =! 0, ou seja, se z > 0 nos 2 pontos da linha
+            if len(line) != 0:
                 # Determina se vai desenhar a linha/parte da linha
                 if clipping_algorithm ==  ClippingAlgorithm.COHEN:
                     (draw, coords) = Clipping.cohenSutherland(line, window)
@@ -45,16 +45,16 @@ class BSpline(Object):
     # Determinar os pontos da bspline a serem desenhadas linhas entre eles
     def getDrawingPoints(self, points_control):
         drawing_points = []
-        precision = 50
+        precision = 51
         # Itera sobre os pontos de controle em blocos de 4
         for i in range(3, len(points_control)):
             # Seleciona o segmento de 4 pontos de controle
             segment = points_control[i-3:i+1]
             
             # Calcula as diferenças iniciais para o bloco de pontos de controle
-            x_f, x_df, x_d2f, x_d3f, y_f, y_df, y_d2f, y_d3f, z_f, z_df, z_d2f, z_d3f = self.__getInitialConditions(segment, (1/precision))
+            x_f, x_df, x_d2f, x_d3f, y_f, y_df, y_d2f, y_d3f, z_f, z_df, z_d2f, z_d3f = self.__getInitialConditions(segment, (1/(precision-1)))
             
-            drawing_points.extend(self.__forwardDifferences(precision,
+            drawing_points.extend(MathUtils.forwardDifferences(precision,
                                                             x_f, x_df, x_d2f, x_d3f,
                                                             y_f, y_df, y_d2f, y_d3f,
                                                             z_f, z_df, z_d2f, z_d3f))
@@ -95,20 +95,3 @@ class BSpline(Object):
         z_d3f0 = 6*az*passo3
         
         return x_f0, x_df0, x_d2f0, x_d3f0, y_f0, y_df0, y_d2f0, y_d3f0, z_f0, z_df0, z_d2f0, z_d3f0
-    
-    # Calcula pontos de acordo com algoritmo de forward differences
-    def __forwardDifferences(self, n, x, x_df, x_d2f, x_d3f, y, y_df, y_d2f, y_d3f, z, z_df, z_d2f, z_d3f):
-            points = [(x, y, z)]
-            
-            for _ in range(n):
-                x += x_df
-                x_df += x_d2f
-                x_d2f += x_d3f
-                y += y_df
-                y_df += y_d2f
-                y_d2f += y_d3f
-                z += z_df
-                z_df += z_d2f
-                z_d2f += z_d3f
-                points.append((x, y, z))
-            return points
