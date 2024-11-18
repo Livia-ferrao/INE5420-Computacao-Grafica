@@ -89,7 +89,7 @@ class ReaderOBJ():
             elif description[0] == Type.WIREFRAME:
                 obj = Wireframe(description[1], description[2], description[3], description[4])
             elif description[0] == Type.OBJECT_3D:
-                obj = Object3D(description[1], description[2], description[3])
+                obj = Object3D(description[1], description[2], description[3], description[4])
 
             self.__objects.append(obj)
         
@@ -117,7 +117,9 @@ class ReaderOBJ():
     def __readOBJFile(self):
         # Salva os vertices em self.__points
         # Salva as descricoes dos objetos em self.__objs_description
-        # descricao = [tipo, nome, coordenadas, cor, filled (para polígonos)]
+        # descricao = [tipo, nome, coordenadas, cor, filled (para polígonos) ou faces (para objetos 3d preenchidos)]
+        default_color_blender = QColor(204, 204, 204)
+        colorObj = default_color_blender
         with open(self.__obj_file, "r") as file:
             lines = file.readlines()
             i = 0
@@ -132,6 +134,7 @@ class ReaderOBJ():
                     
                 elif word[0] == "o":
                     nameObj = " ".join(word[1:])
+                    colorObj = default_color_blender
                     
                 elif word[0] == "p":
                     typeObj = Type.POINT
@@ -155,12 +158,41 @@ class ReaderOBJ():
                     if typeObj == Type.WIREFRAME:
                         self.__objs_description.append([typeObj, nameObj, self.__getPoints(points), colorObj, False])
                     else:
-                        self.__objs_description.append([typeObj, nameObj, self.__getPoints(points), colorObj])
-                        
+                        self.__objs_description.append([typeObj, nameObj, self.__getPoints(points), colorObj, None])
+
                 elif word[0] == "f":
+                    points = []
                     typeObj = Type.WIREFRAME
-                    points = [int(x) for x in word[1:]]
-                    self.__objs_description.append([typeObj, nameObj, self.__getPoints(points), colorObj, True])
+                    face = []
+                    for n, x in enumerate(word[1:]):
+                        v = x.split("/")
+                        points.append(int(v[0]))
+                        face.append(n)
+                    faces = [face]
+                    linhas_restantes = lines[i+1:]
+                    for next in linhas_restantes:
+                        word = next.split(" ")
+                        word = [w.strip() for w in word]
+                        face = []
+                        if word[0] == "f":
+                            typeObj = Type.OBJECT_3D
+                            for x in word[1:]:
+                                v = x.split('/')
+                                v = int(v[0])
+                                if v not in points:
+                                    points.append(v)
+                                    face.append(len(points)-1)
+                                else:
+                                    face.append(points.index(v))
+                            faces.append(face)
+                        else:
+                            break
+                        i += 1
+
+                    if typeObj == Type.WIREFRAME:
+                        self.__objs_description.append([typeObj, nameObj, self.__getPoints(points), colorObj, True])
+                    else:
+                        self.__objs_description.append([typeObj, nameObj, self.__getPoints(points), colorObj, faces])
 
                 i += 1
                 if i >= len(lines):

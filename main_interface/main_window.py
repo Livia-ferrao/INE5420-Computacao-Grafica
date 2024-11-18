@@ -301,6 +301,15 @@ class MainWindow(QtWidgets.QMainWindow):
         obj5 = BSplineSurface("bspline surf", surface_coords, QtGui.QColor(0, 255, 255), 4, 4)
         self.__display_file.addObject(obj5)
         self.__object_list.addItem(str(obj5.name))
+
+        # obj6 = Object3D("cubo2", [(-800, -800, 400), (-800, -400, 400),
+        #                           (-400, -400, 400), (-400, -800, 400),
+        #                           (-800, -800, 800), (-800, -400, 800),
+        #                           (-400, -400, 800), (-400, -800, 800)], QtGui.QColor(0,100,0),
+        #                           [[0,1,2,3],[1,2,6,5],[4,5,6,7],[0,3,7,4],[2,3,7,6],[0,1,5,4]])
+        # self.__display_file.addObject(obj6)
+        # self.__object_list.addItem(str(obj6.name))
+
         self.__updateViewframe()
 
     # Redesenha objetos

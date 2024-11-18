@@ -70,29 +70,11 @@ class GenerateOBJ():
             
             # Salva os vertices de objetos 3d
             elif obj.tipo == Type.OBJECT_3D:
-                for i in range(len(obj.coord)//2):
-                    obj_points = []
-                    for j in range(2):
-                        coord = obj.coord[i*2+j]
-                        # Coordenada não está na lista de pontos
-                        if coord not in points:
-                            points.append(coord)
-                            obj_points.append(len(points))
-                        # Coordenada já está na lista de pontos
-                        else:
-                            obj_points.append(points.index(coord) + 1)
-                    description.append("l")
-                    description.append(obj_points)
-                objects.append(description)
-            
-            # Salva a superficie de berzier como um objeto 3d, salvando suas linhas
-            elif obj.tipo == Type.BERZIER_SURFACE:
-                curves = obj.getDrawingPoints(obj.coord)
-                for curv in curves:
-                    for i in range(len(curv)-1):
+                if not obj.faces:
+                    for i in range(len(obj.coord)//2):
                         obj_points = []
                         for j in range(2):
-                            coord = curv[i+j]
+                            coord = obj.coord[i*2+j]
                             # Coordenada não está na lista de pontos
                             if coord not in points:
                                 points.append(coord)
@@ -102,10 +84,25 @@ class GenerateOBJ():
                                 obj_points.append(points.index(coord) + 1)
                         description.append("l")
                         description.append(obj_points)
-                objects.append(description)
-            
-            # Salva a superficie bspline como um objeto 3d, salvando suas linhas
-            elif obj.tipo == Type.BSPLINE_SURFACE:
+                    objects.append(description)
+                else:
+                    for face in obj.faces:
+                        obj_points = []
+                        for i in face:
+                            coord = obj.coord[i]
+                            # Coordenada não está na lista de pontos
+                            if coord not in points:
+                                points.append(coord)
+                                obj_points.append(len(points))
+                            # Coordenada já está na lista de pontos
+                            else:
+                                obj_points.append(points.index(coord) + 1)
+                        description.append("f")
+                        description.append(obj_points)
+                    objects.append(description)
+
+            # Salva superficie como um objeto 3d, salvando suas linhas
+            elif obj.tipo == Type.BERZIER_SURFACE or obj.tipo == Type.BSPLINE_SURFACE:
                 curves = obj.getDrawingPoints(obj.coord)
                 for curv in curves:
                     for i in range(len(curv)-1):
