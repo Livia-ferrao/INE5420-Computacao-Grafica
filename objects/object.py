@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from tools.matrix_generator import MatrixGenerator
 import numpy as np
-from math import sqrt
+from math import sqrt, isclose
 from tools.type import Projection
 
 class Object(ABC):
@@ -78,42 +78,46 @@ class Object(ABC):
 
         # Cos e sin dos angulos theta x e theta y
         v = sqrt(axis[1]**2 + axis[2]**2)
-        cos_x = axis[2] / v
-        sin_x = axis[1] / v
+        if isclose(v, 0):
+            cos_x, sin_x = 1, 0
+        else:
+            cos_x = axis[2] / v
+            sin_x = axis[1] / v
         l = sqrt(axis[0]**2 + v**2)
-        cos_y = v/l
-        sin_y = axis[0] / l
+        if not isclose(l, 0):
+            cos_y = v/l
+            sin_y = axis[0] / l
 
-        # Translação para a origem
-        translating = MatrixGenerator.generateTranslationMatrix3D(-center[0], -center[1], -center[2])
-        # Rotação em torno do eixo x para trazer o eixo sobre o plano yz
-        rotation_x = np.array([[1,   0,    0, 0],
-                               [0,  cos_x, sin_x, 0],
-                               [0,  -sin_x,  cos_x, 0],
-                               [0,   0,    0, 1]])
-        # Rotação em torno do eixo y para alinhar o eixo com o eixo z
-        rotation_y = np.array([[ cos_y,  0, sin_y, 0],
-                               [0,  1,   0, 0],
-                               [-sin_y,  0, cos_y, 0],
-                               [0,  0,   0, 1]])
-        # Rotação em torno do eixo z com o angulo desejado
-        rotation_z = MatrixGenerator.generateRotationMatrix3D_Z(theta)
-        # Rotação de volta em torno do eixo y
-        rotation_y_back = np.array([[ cos_y,  0, -sin_y, 0],
-                               [0,  1,   0, 0],
-                               [sin_y,  0, cos_y, 0],
-                               [0,  0,   0, 1]])
-        # Rotação de volta em torno do eixo x
-        rotation_x_back = np.array([[1,   0,    0, 0],
-                               [0,  cos_x, -sin_x, 0],
-                               [0, sin_x,  cos_x, 0],
-                               [0,   0,    0, 1]])
-        # Translação de volta
-        translating_back = MatrixGenerator.generateTranslationMatrix3D(center[0], center[1], center[2])
+            # Translação para a origem
+            translating = MatrixGenerator.generateTranslationMatrix3D(-center[0], -center[1], -center[2])
+            # Rotação em torno do eixo x para trazer o eixo sobre o plano yz
+            rotation_x = np.array([[1,   0,    0, 0],
+                                [0,  cos_x, sin_x, 0],
+                                [0,  -sin_x,  cos_x, 0],
+                                [0,   0,    0, 1]])
+            # Rotação em torno do eixo y para alinhar o eixo com o eixo z
+            rotation_y = np.array([[ cos_y,  0, sin_y, 0],
+                                [0,  1,   0, 0],
+                                [-sin_y,  0, cos_y, 0],
+                                [0,  0,   0, 1]])
+            # Rotação em torno do eixo z com o angulo desejado
+            rotation_z = MatrixGenerator.generateRotationMatrix3D_Z(theta)
+            # Rotação de volta em torno do eixo y
+            rotation_y_back = np.array([[ cos_y,  0, -sin_y, 0],
+                                [0,  1,   0, 0],
+                                [sin_y,  0, cos_y, 0],
+                                [0,  0,   0, 1]])
+            # Rotação de volta em torno do eixo x
+            rotation_x_back = np.array([[1,   0,    0, 0],
+                                [0,  cos_x, -sin_x, 0],
+                                [0, sin_x,  cos_x, 0],
+                                [0,   0,    0, 1]])
+            # Translação de volta
+            translating_back = MatrixGenerator.generateTranslationMatrix3D(center[0], center[1], center[2])
 
-        # Matriz de transformação é o resultado da multiplicação de todas as matrizes
-        transforming_matrix = translating @ rotation_x @ rotation_y @ rotation_z @ rotation_y_back @ rotation_x_back @ translating_back
-        self.__transform(transforming_matrix)
+            # Matriz de transformação é o resultado da multiplicação de todas as matrizes
+            transforming_matrix = translating @ rotation_x @ rotation_y @ rotation_z @ rotation_y_back @ rotation_x_back @ translating_back
+            self.__transform(transforming_matrix)
 
     # Faz a transformação do objeto de acordo com uma matriz de transformação
     def __transform(self, matrix):
